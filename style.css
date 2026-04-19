@@ -8,7 +8,7 @@
 }
 
 body {
-    /*font-family: "";*/
+    font-family: "FingerPaint";
 }
 
 header {
@@ -37,6 +37,11 @@ footer {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+h1{
+    font-size: 56px;
+    text-align: center;
 }
 
 .game-canvas {
