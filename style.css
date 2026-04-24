@@ -13,7 +13,7 @@ body {
 
 header {
     height: 100px;
-    color:white;
+    color: white;
     background-color: black;
     display: flex;
     justify-content: center;
@@ -39,9 +39,31 @@ footer {
     align-items: center;
 }
 
-h1{
+h1 {
     font-size: 56px;
     text-align: center;
+}
+
+.background-layer-one {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url("./assets/sprites/environments/Backgrounds/SunnyLandForest/background.png");
+    background-size: cover;
+    background-position: bottom;
+}
+
+.background-layer-two {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url("./assets/sprites/environments/Backgrounds/SunnyLandForest/middleground.png");
+    background-size: cover;
+    background-position: bottom;
 }
 
 .game-canvas {
