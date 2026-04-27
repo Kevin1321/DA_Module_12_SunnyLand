@@ -18,10 +18,10 @@ class World {
     draw() {
         this.context.clearRect(0, 0, canvas.widht, canvas.height);
 
-        this.context.drawImage(this.character.img, this.character.x, this.character.y, this.character.widht, this.character.height);
+        this.context.drawImage(this.character.img, this.character.x, this.character.y, this.character.width, this.character.height);
 
         this.enemies.forEach(enemy => {
-            this.context.drawImage(this.enemies[0].img, enemy.x, enemy.y, enemy.widht, enemy.height);
+            this.context.drawImage(this.enemies[0].img, enemy.x, enemy.y, enemy.width, enemy.height);
         });
 
 

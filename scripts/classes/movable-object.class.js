@@ -3,10 +3,10 @@ class MovableObject {
     y = 64;
     img;
     height = 32;
-    widht = 32;
+    width = 32;
 
     loadImage(path) {
-        this.img = new Image(this.height, this.widht);
+        this.img = new Image(this.height, this.width);
         this.img.src = path;
     }
 
