@@ -68,7 +68,5 @@ h1 {
 }
 
 .game-canvas {
-    width: 720px;
-    height: 480px;
     background-color: black;
 }
