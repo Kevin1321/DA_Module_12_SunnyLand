@@ -9,11 +9,15 @@
     <link rel="stylesheet" href="styles/colors.css">
     <link rel="stylesheet" href="styles/fonts.css">
     <link rel="stylesheet" href="style.css">
-    <script src="scripts/classes/movable-object.class.js"></script>
-    <script src="scripts/classes/character.class.js"></script>
-    <script src="scripts/classes/enemy.class.js"></script>
-    <script src="scripts/classes/world.class.js"></script>
-    <script src="scripts/game.js"></script>
+
+    <script src="scripts/classes/Transform.js"></script>
+    <script src="scripts/classes/Vector2.js"></script>
+    <script src="scripts/classes/GameObject.js"></script>
+    <script src="scripts/classes/Characters/Character.js"></script>
+    <script src="scripts/classes/Characters/Player/Player.js"></script>
+    <script src="scripts/classes/Characters/Enemies/Enemy.js"></script>
+    <script src="scripts/classes/Characters/Enemies/Minion.js"></script>
+    <script src="scripts/World.js"></script>
     <script src="script.js"></script>
 </head>
 
@@ -25,7 +29,7 @@
     <main>
         <div class="background-layer-one">
             <div class="background-layer-two">
-                <canvas id="game-canvas" class="game-canvas"></canvas>
+                <canvas id="game-canvas" class="game-canvas" width="720" height="480"></canvas>
             </div>
         </div>
 
