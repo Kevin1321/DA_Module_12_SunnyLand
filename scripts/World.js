@@ -1,6 +1,7 @@
 class World {
     context;
     lastTime;
+    //requiredElapsed = 1000 / 10; // desired interval is 10fps
     gameObjects = [];
 
     constructor(canvas) {
@@ -18,6 +19,11 @@ class World {
         }
 
         let deltaTime = now - this.lastTime;
+
+        /*if (elapsed > requiredElapsed) { Uncomment if we need to limit the framerate ourselves
+            // do stuff
+            lastTime = now;
+        }*/ 
         this.OnTick(deltaTime);
         this.lastTime = now;
     }
