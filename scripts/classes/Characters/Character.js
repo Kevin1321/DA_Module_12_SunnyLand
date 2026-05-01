@@ -3,8 +3,11 @@ class Character extends GameObject{
         super(positionX, positionY, sizeX, sizeY);
     }
 
+    setAnimationFrame(frame){
+        this.img.src = frame;
+    }
+
     OnTick(deltaTime){
         super.OnTick(deltaTime);
-        
     }
 }

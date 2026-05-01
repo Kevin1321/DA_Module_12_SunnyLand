@@ -4,7 +4,6 @@ class Enemy extends Character {
     }
 
     OnTick(deltaTime){
-        super.OnTick(deltaTime);
-        
+        super.OnTick(deltaTime);   
     }
 }
