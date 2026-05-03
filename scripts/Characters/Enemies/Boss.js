@@ -3,8 +3,8 @@ class Boss extends Enemy{
         super(positionX, positionY, sizeX, sizeY);
     }
 
-    OnTick(deltaTime) {
-        super.OnTick(deltaTime);
+    OnTick(frame, deltaTime) {
+        super.OnTick(frame, deltaTime);
         
     }
 }

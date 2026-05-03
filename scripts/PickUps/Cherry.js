@@ -1,0 +1,3 @@
+class Cherry extends PickUp {
+
+}

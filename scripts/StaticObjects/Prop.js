@@ -5,8 +5,8 @@ class Prop extends GameObject {
         this.context = context;
     }
 
-    OnTick(deltaTime) {
-        super.OnTick(deltaTime);
+    OnTick(frame, deltaTime) {
+        super.OnTick(frame, deltaTime);
         this.context.drawImage(this.img, this.positionX, this.positionY, this.sizeX, this.sizeY);
     }
 }

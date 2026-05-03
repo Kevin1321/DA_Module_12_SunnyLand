@@ -6,8 +6,8 @@ class Minion extends Enemy {
         this.CreateAnimations();
     }
 
-    OnTick(deltaTime) {
-        super.OnTick(deltaTime);
+    OnTick(frame, deltaTime) {
+        super.OnTick(frame, deltaTime);
         this.setAnimationFrame(this.idle.nextFrame());
 
         this.context.drawImage(this.img, this.positionX, this.positionY, this.sizeX, this.sizeY);

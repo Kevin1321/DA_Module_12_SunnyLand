@@ -1,8 +1,9 @@
 class World {
     context;
     lastTime;
-    requiredElapsed = 1000 / 8;
+    requiredElapsed = 1000 / 15;
     gameObjects = [];
+    frame = 0;
 
     constructor(canvas) {
         this.context = canvas.getContext('2d');
@@ -28,8 +29,11 @@ class World {
 
     OnTick(deltaTime) {
         this.gameObjects.forEach(gameObject => {
-            gameObject.OnTick(deltaTime);
+            gameObject.OnTick(this.frame, deltaTime);
         });
+
+        this.frame++;
+        if(this.frame == Infinity) this.frame = 0;
     }
 
     CreateGameObjects() {
