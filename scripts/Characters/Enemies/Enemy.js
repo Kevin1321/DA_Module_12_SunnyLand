@@ -1,9 +1,19 @@
 class Enemy extends Character {
-    constructor(positionX, positionY, sizeX, sizeY){
+    EnemyState = Object.freeze({
+        IDLE: "idle",
+        MOVE: "move",
+        ATTACK: "attack"
+    });
+
+    constructor(positionX, positionY, sizeX, sizeY) {
         super(positionX, positionY, sizeX, sizeY);
     }
 
-    OnTick(frame, deltaTime){
-        super.OnTick(frame, deltaTime);   
+    OnTick(frame, deltaTime) {
+        super.OnTick(frame, deltaTime);
+    }
+
+    Animate(frame) {
+        super.Animate(frame);
     }
 }

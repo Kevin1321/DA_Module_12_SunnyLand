@@ -8,21 +8,38 @@ class Minion extends Enemy {
 
     OnTick(frame, deltaTime) {
         super.OnTick(frame, deltaTime);
-        this.setAnimationFrame(this.idle.nextFrame());
 
+        this.Animate(frame);
+        
         this.context.drawImage(this.img, this.positionX, this.positionY, this.sizeX, this.sizeY);
+    }
+
+    Animate(frame){
+        super.Animate(frame);
+
+        this.setAnimationFrame(this.idle.nextFrame());
     }
 
     CreateAnimations() {
         this.idle = new Animation([
-            "assets/sprites/characters/Slimer/Slimer-Idle/slimer-idle1.png",
-            "assets/sprites/characters/Slimer/Slimer-Idle/slimer-idle2.png",
-            "assets/sprites/characters/Slimer/Slimer-Idle/slimer-idle3.png",
-            "assets/sprites/characters/Slimer/Slimer-Idle/slimer-idle4.png",
-            "assets/sprites/characters/Slimer/Slimer-Idle/slimer-idle5.png",
-            "assets/sprites/characters/Slimer/Slimer-Idle/slimer-idle6.png",
-            "assets/sprites/characters/Slimer/Slimer-Idle/slimer-idle7.png",
-            "assets/sprites/characters/Slimer/Slimer-Idle/slimer-idle8.png"
+            SpriteAssets.SLIMER.IDLE_1,
+            SpriteAssets.SLIMER.IDLE_2,
+            SpriteAssets.SLIMER.IDLE_3,
+            SpriteAssets.SLIMER.IDLE_4,
+            SpriteAssets.SLIMER.IDLE_5,
+            SpriteAssets.SLIMER.IDLE_6,
+            SpriteAssets.SLIMER.IDLE_7,
+            SpriteAssets.SLIMER.IDLE_8
+        ]);
+
+        this.move = new Animation([
+            SpriteAssets.SLIMER.MOVE_1,
+            SpriteAssets.SLIMER.MOVE_2,
+            SpriteAssets.SLIMER.MOVE_3,
+            SpriteAssets.SLIMER.MOVE_4,
+            SpriteAssets.SLIMER.MOVE_5,
+            SpriteAssets.SLIMER.MOVE_6,
+            SpriteAssets.SLIMER.MOVE_7
         ]);
     }
 }

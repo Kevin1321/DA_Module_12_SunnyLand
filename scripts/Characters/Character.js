@@ -1,13 +1,13 @@
-class Character extends GameObject{
-    constructor(positionX, positionY, sizeX, sizeY){
+class Character extends GameObject {
+    constructor(positionX, positionY, sizeX, sizeY) {
         super(positionX, positionY, sizeX, sizeY);
     }
 
-    setAnimationFrame(animationFrameSrc){
-        this.img.src = animationFrameSrc;
+    OnTick(frame, deltaTime) {
+        super.OnTick(frame, deltaTime);
     }
 
-    OnTick(frame, deltaTime){
-        super.OnTick(frame, deltaTime);
+    Animate(frame) {
+        if(frame % 2 != 0) return;
     }
 }
