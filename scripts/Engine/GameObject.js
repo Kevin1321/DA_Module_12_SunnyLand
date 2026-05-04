@@ -7,6 +7,10 @@ class GameObject {
         this.img = new Image(this.sizeY, this.sizeX);
     }
 
+    setAnimationFrame(animationFrameSrc) {
+        this.img.src = animationFrameSrc;
+    }
+
     OnTick(frame, deltaTime) {
     }
 }
