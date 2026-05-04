@@ -33,7 +33,7 @@ class World {
         });
 
         this.frame++;
-        if(this.frame == Infinity) this.frame = 0;
+        if (this.frame == Infinity) this.frame = 0;
     }
 
     CreateGameObjects() {
@@ -65,5 +65,17 @@ class World {
 
         this.gameObjects.push(this.player);
         this.gameObjects.push(this.minion);
+    }
+
+    CreateBackgrounds() {
+
+    }
+
+    CreateProps() {
+
+    }
+
+    CreatePickUps() {
+
     }
 }
