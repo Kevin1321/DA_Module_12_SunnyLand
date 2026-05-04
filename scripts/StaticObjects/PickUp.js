@@ -1,3 +1,0 @@
-class PickUp extends GameObject{
-    
-}
