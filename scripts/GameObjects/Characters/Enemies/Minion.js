@@ -1,8 +1,6 @@
 class Minion extends Enemy {
     constructor(context, positionX, positionY, sizeX, sizeY) {
-        super(positionX, positionY, sizeX, sizeY);
-        this.context = context;
-
+        super(context, positionX, positionY, sizeX, sizeY);
         this.CreateAnimations();
     }
 
@@ -17,7 +15,7 @@ class Minion extends Enemy {
     Animate(frame){
         super.Animate(frame);
 
-        this.setAnimationFrame(this.idle.nextFrame());
+        this.SetAnimationFrame(this.idle.nextFrame());
     }
 
     CreateAnimations() {

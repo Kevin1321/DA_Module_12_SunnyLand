@@ -1,8 +1,8 @@
-class Level extends GameObject {
+class Background extends GameObject {
     constructor(context, positionX, positionY, sizeX, sizeY, imgSrc) {
-        super(positionX, positionY, sizeX, sizeY);
+        super(context, positionX, positionY, sizeX, sizeY);
+        
         this.img.src = imgSrc;
-        this.context = context;
     }
 
     OnTick(frame, deltaTime) {

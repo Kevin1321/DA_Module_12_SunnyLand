@@ -1,7 +1,6 @@
 class Cherry extends PickUp {
     constructor(context, positionX, positionY, sizeX, sizeY) {
-        super(positionX, positionY, sizeX, sizeY);
-        this.context = context;
+        super(context, positionX, positionY, sizeX, sizeY);
 
         this.idle = new Animation([
             SpriteAssets.PICK_UPS.CHERRY_1,
@@ -16,7 +15,7 @@ class Cherry extends PickUp {
 
     OnTick(frame, deltaTime) {
         super.OnTick(frame, deltaTime);
-        this.setAnimationFrame(this.idle.nextFrame());
+        this.SetAnimationFrame(this.idle.nextFrame());
 
         this.context.drawImage(this.img, this.positionX, this.positionY, this.sizeX, this.sizeY);
     }

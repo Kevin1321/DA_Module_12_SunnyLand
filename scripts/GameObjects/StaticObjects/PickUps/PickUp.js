@@ -1,6 +1,6 @@
 class PickUp extends GameObject {
-    constructor(positionX, positionY, sizeX, sizeY) {
-        super(positionX, positionY, sizeX, sizeY);
+    constructor(context, positionX, positionY, sizeX, sizeY) {
+        super(context, positionX, positionY, sizeX, sizeY);
     }
 
     OnTick(frame, deltaTime) {
