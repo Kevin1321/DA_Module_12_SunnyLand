@@ -13,9 +13,21 @@ class Gem extends PickUp {
 
     OnTick(frame, deltaTime) {
         super.OnTick(frame, deltaTime);
-   
-        this.SetAnimationFrame(this.idle.nextFrame());
+
+        if (!this.isActive) return;
+
+        if (this.hasBeenPickedUp) {
+            this.SetAnimationFrame(this.pickedUp.nextFrame());
+        }
+        else {
+            this.SetAnimationFrame(this.idle.nextFrame());
+        }
 
         this.context.drawImage(this.img, this.positionX, this.positionY, this.sizeX, this.sizeY);
+    }
+    
+    OnCollision(collider) {
+        super.OnCollision(collider);
+        this.hasBeenPickedUp = true;
     }
 }
