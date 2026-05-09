@@ -1,6 +1,9 @@
 class Character extends GameObject {
     constructor(context, positionX, positionY, sizeX, sizeY) {
         super(context, positionX, positionY, sizeX, sizeY);
+        this.maxHealth = 0;
+        this.health = 0;
+        this.isDead = false;
     }
 
     OnTick(frame, deltaTime) {
@@ -8,6 +11,23 @@ class Character extends GameObject {
     }
 
     Animate(frame) {
-        if(frame % 2 != 0) return;
+    }
+
+    OnCollisionEnter(collider) {
+        super.OnCollisionEnter(collider);
+    }
+
+    OnCollision(collider) {
+        super.OnCollision(collider);
+    }
+
+    OnCollisionExit(collider) {
+        super.OnCollisionExit(collider);
+    }
+
+    TakeDamage(amount) {
+        this.health -= amount;
+        if (this.health < 0) this.health = 0;
+        this.isDead = this.health == 0;
     }
 }
