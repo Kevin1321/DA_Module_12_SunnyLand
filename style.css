@@ -13,8 +13,8 @@ body {
 
 header {
     height: 100px;
-    color: white;
-    background-color: black;
+    color: var(--highlight-color);
+    background-color: var(--secondary-color);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -33,8 +33,8 @@ main {
 
 footer {
     height: 100px;
-    color: white;
-    background-color: black;
+    color: var(--highlight-color);
+    background-color: var(--primary-color);
     display: flex;
     justify-content: center;
     align-items: center;
