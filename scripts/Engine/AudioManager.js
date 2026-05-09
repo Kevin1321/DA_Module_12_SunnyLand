@@ -3,7 +3,11 @@ class AudioManager {
         sound.volume = 0.1;
         sound.currentTime = 0;
         sound.loop = isLooping;
-        sound.play();
+
+        document.addEventListener("click", () => {
+            sound.play();
+        }, { once: true });
+
     }
 
     static StopAll() {
