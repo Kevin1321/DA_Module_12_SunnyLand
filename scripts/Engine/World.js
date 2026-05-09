@@ -1,23 +1,31 @@
 class World {
-    context;
-    lastTime;
-    requiredElapsed = 1000 / 15;
-    gameObjects = [];
-    collisionArray = [];
-    frame = 0;
-
-    camera = {
-        x: 0,
-        y: 0
-    };
+    static WORLD_BOUNDS = {
+        minX: 0,
+        maxX: 720,
+        minY: 0,
+        maxY: 480
+    }
 
     constructor(canvas) {
         this.canvas = canvas;
         this.context = canvas.getContext('2d');
+
+        this.lastTime;
+        this.requiredElapsed = 0.1;
+        this.gameObjects = [];
+        this.collisionTracker = [];
+        this.currentPlayerCollisions = [];
+        this.frame = 0;
+
+        this.camera = {
+            x: 0,
+            y: 0
+        };
+
         this.Tick = this.Tick.bind(this);
         this.Tick();
         this.CreateGameObjects();
-        //AudioManager.Play(AudioAssets.BACKGROUND_MUSIC, true);
+        AudioManager.Play(AudioAssets.BACKGROUND_MUSIC, true);
     }
 
     Tick(now) {
@@ -27,8 +35,7 @@ class World {
             this.lastTime = now;
         }
 
-        let deltaTime = now - this.lastTime;
-
+        let deltaTime = (now - this.lastTime) / 1000;
         if (deltaTime > this.requiredElapsed) {
             this.OnTick(deltaTime);
             this.lastTime = now;
@@ -51,9 +58,9 @@ class World {
 
         this.context.translate(-this.camera.x, 0);
 
-        this.gameObjects.forEach(gameObject => {
-            gameObject.OnTick(this.frame, deltaTime);
-        });
+        this.UpdateGameObjects(deltaTime);
+
+        this.UpdateUIObjects(deltaTime);
 
         this.CheckCollisions();
 
@@ -61,6 +68,16 @@ class World {
 
         this.frame++;
         if (this.frame == Infinity) this.frame = 0;
+    }
+
+    UpdateGameObjects(deltaTime) {
+        this.gameObjects.forEach(gameObject => {
+            gameObject.OnTick(this.frame, deltaTime);
+        });
+    }
+
+    UpdateUIObjects(deltaTime) {
+        this.playerHUD.OnTick(this.frame, deltaTime);
     }
 
     IsColliding(a, b) {
@@ -74,10 +91,30 @@ class World {
     }
 
     CheckCollisions() {
-        this.collisionArray.forEach(collider => {
-            if(this.IsColliding(this.player, collider)){
+        this.collisionTracker.forEach(collider => {
+            if (this.IsColliding(this.player, collider)) {
+                this.CheckCollisionEnter(collider);
                 this.player.OnCollision(collider);
                 collider.OnCollision(this.player);
+            }
+        });
+        this.CheckCollisionExit();
+    }
+
+    CheckCollisionEnter(collider) {
+        if (!this.currentPlayerCollisions.includes(collider)) {
+            this.currentPlayerCollisions.push(collider);
+            this.player.OnCollisionEnter(collider);
+        }
+    }
+
+    CheckCollisionExit() {
+        let temp = this.currentPlayerCollisions;
+
+        temp.forEach(collider => {
+            if (!this.IsColliding(this.player, collider)) {
+                this.player.OnCollisionExit(collider);
+                this.currentPlayerCollisions.splice(this.currentPlayerCollisions.indexOf(collider), 1);
             }
         });
     }
@@ -88,8 +125,10 @@ class World {
         this.CreateProps();
         this.CreatePickUps();
         this.CreateEnemies();
+        this.CreateProjectiles();
         this.CreatePlayer();
         //todo: draw grass seperatly
+        this.CreateUI();
     }
 
     CreateBackgrounds() {
@@ -117,7 +156,7 @@ class World {
             this.gem_test = new Gem(this.context, 164, 360, 32, 32)
         );
 
-        this.collisionArray.push(
+        this.collisionTracker.push(
             this.cherry_test,
             this.gem_test
         );
@@ -126,16 +165,37 @@ class World {
     CreateEnemies() {
         this.gameObjects.push(
             this.minion = new Minion(this.context, 200, 336, 64, 64),
-            this.boss = new Boss(this.context, 250, 272, 128, 128)
+            this.boss = new Boss(this.context, 400, 272, 128, 128)
         );
 
-        this.collisionArray.push(
+        this.collisionTracker.push(
             this.minion,
             this.boss
         );
     }
 
+    CreateProjectiles() {
+        this.projectilePool = [
+            new Projectile(this.context, -500, -500, 32, 32),
+            new Projectile(this.context, -500, -500, 32, 32),
+            new Projectile(this.context, -500, -500, 32, 32),
+            new Projectile(this.context, -500, -500, 32, 32),
+            new Projectile(this.context, -500, -500, 32, 32),
+            new Projectile(this.context, -500, -500, 32, 32),
+            new Projectile(this.context, -500, -500, 32, 32)
+        ]
+
+        this.projectilePool.forEach(projectile => {
+            this.gameObjects.push(projectile);
+            this.collisionTracker.push(projectile);
+        })
+    }
+
     CreatePlayer() {
-        this.gameObjects.push(this.player = new Player(this.context, 0, 336, 64, 64));
+        this.gameObjects.push(this.player = new Player(this.context, 0, 336, 64, 64, this.projectilePool));
+    }
+
+    CreateUI() {
+        this.playerHUD = new PlayerHUD(this.context, this.camera, this.player);
     }
 }
