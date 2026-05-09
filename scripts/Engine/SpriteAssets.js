@@ -1,12 +1,18 @@
 class SpriteAssets {
 
     static PLAYER = {
+        DEAD: "assets/sprites/characters/Foxy/Hurt2/hurt-2.png",
+
+        HURT_1: "assets/sprites/characters/Foxy/hurt/player-hurt-1.png",
+        HURT_2: "assets/sprites/characters/Foxy/hurt/player-hurt-2.png",
+
         IDLE_1: "assets/sprites/characters/Foxy/idle/player-idle-1.png",
         IDLE_2: "assets/sprites/characters/Foxy/idle/player-idle-2.png",
         IDLE_3: "assets/sprites/characters/Foxy/idle/player-idle-3.png",
         IDLE_4: "assets/sprites/characters/Foxy/idle/player-idle-4.png",
 
-        LONG_IDLE: "assets/sprites/characters/Foxy/Hurt2/hurt-2.png",
+        LONG_IDLE_1: "assets/sprites/characters/Foxy/crouch/player-crouch-1.png",
+        LONG_IDLE_2: "assets/sprites/characters/Foxy/crouch/player-crouch-2.png",
 
         JUMP_1: "assets/sprites/characters/Foxy/jump/player-jump-1.png",
         JUMP_2: "assets/sprites/characters/Foxy/jump/player-jump-2.png",
@@ -117,6 +123,13 @@ class SpriteAssets {
     }
 
     static UI = {
-        FOXY_PORTAIT: "assets/sprites/UI/foxy-portrait.png"
+        PLAYER_HUD: {
+            FOXY_PORTAIT: "assets/sprites/UI/foxy-portrait.png",
+            FRAME: "assets/sprites/UI/frame.png",
+            HEART_EMPTY: "assets/sprites/UI/heart-empty.png",
+            HEART_FULL: "assets/sprites/UI/heart-full.png",
+            HEART_HALF: "assets/sprites/UI/heart-half.png",
+            ITEM_SLOT: "assets/sprites/UI/item-slot.png"
+        }
     }
 }
