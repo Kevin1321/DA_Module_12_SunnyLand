@@ -16,7 +16,13 @@ class GameObject {
         this.DrawCollisionRect();
     }
 
+    OnCollisionEnter(collider) {
+    }
+
     OnCollision(collider) {
+    }
+
+    OnCollisionExit(collider) {
     }
 
     DrawCollisionRect() {
