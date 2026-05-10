@@ -4,7 +4,8 @@ class Player extends Character {
         LONG_IDLE: "longIdle",
         RUN: "run",
         JUMP: "jump",
-        DEAD: "dead"
+        DEAD: "dead",
+        VICTORY: "victory"
     });
 
     constructor(context, positionX, positionY, sizeX, sizeY, projectilePool) {
@@ -21,7 +22,7 @@ class Player extends Character {
         this.speed = 120;
         this.jumpSpeed = 40;
         this.gravity = 50;
-        this.shootCooldown = 1;
+        this.shootCooldown = .5;
         this.isShootOnCooldown = false;
         this.currentCooldownTime = 0;
         this.isMovingLeft = false;
@@ -29,6 +30,13 @@ class Player extends Character {
         this.gemsCollected = 0;
         this.cherriesCollected = 0;
         this.projectilePool = projectilePool;
+
+        this.collisionOffset = {
+            top: 20,
+            bottom: 20,
+            left: 10,
+            right: 20
+        }
     }
 
     OnCollisionEnter(collider) {
@@ -53,9 +61,10 @@ class Player extends Character {
     }
 
     OnTick(frame, deltaTime) {
+        super.OnTick(frame, deltaTime);
         this.moveAmount = 0;
         if (this.positionY >= Level.GROUND) this.isGrounded = true;
-        if (!this.isDead) {
+        if (!this.isDead && this.state != this.PlayerState.VICTORY) {
             this.MoveRight(deltaTime);
             this.MoveLeft(deltaTime);
             this.Jump(deltaTime);
@@ -65,8 +74,6 @@ class Player extends Character {
         this.SetPlayerState(deltaTime);
         this.Animate(frame);
         this.DrawImage();
-
-        super.OnTick(frame, deltaTime); //todo, set back to head of the method! this is only for rendering debug rect
     }
 
     MoveRight(deltaTime) {
@@ -126,11 +133,12 @@ class Player extends Character {
     }
 
     SetPlayerState(deltaTime) {
+        if (this.state == this.PlayerState.VICTORY) return;
         if (this.isGrounded) {
             if (InputManager.LEFT || InputManager.RIGHT) {
                 this.state = this.PlayerState.RUN;
             }
-            else {    
+            else {
                 this.idleTime += deltaTime;
                 if (this.idleTime < this.longIdleTime) {
                     this.state = this.PlayerState.IDLE;
@@ -145,7 +153,7 @@ class Player extends Character {
         }
         if (this.isDead) {
             this.state = this.PlayerState.DEAD;
-        }        
+        }
         if (this.state != this.PlayerState.IDLE && this.state != this.PlayerState.LONG_IDLE) this.idleTime = 0;
     }
 
@@ -163,6 +171,7 @@ class Player extends Character {
             }
         }
         if (this.state == this.PlayerState.DEAD) this.SetAnimationFrame(SpriteAssets.PLAYER.DEAD);
+        if (this.state == this.PlayerState.VICTORY) this.SetAnimationFrame(SpriteAssets.PLAYER.VICTORY);
     }
 
     DrawImage() {
@@ -179,6 +188,10 @@ class Player extends Character {
             this.positionX *= -1;
             this.context.restore();
         }
+    }
+
+    Victory() {
+        this.state = this.PlayerState.VICTORY;
     }
 
     CreateAnimations() {
