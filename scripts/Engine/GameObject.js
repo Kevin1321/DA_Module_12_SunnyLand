@@ -6,6 +6,12 @@ class GameObject {
         this.sizeX = sizeX;
         this.sizeY = sizeY;
         this.img = new Image(this.sizeY, this.sizeX);
+        this.collisionOffset = {
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0
+        }
     }
 
     SetAnimationFrame(animationFrameSrc) {
@@ -13,7 +19,6 @@ class GameObject {
     }
 
     OnTick(frame, deltaTime) {
-        this.DrawCollisionRect();
     }
 
     OnCollisionEnter(collider) {
@@ -29,7 +34,11 @@ class GameObject {
         this.context.beginPath();
         this.context.lineWidth = "2";
         this.context.strokeStyle = "green";
-        this.context.rect(this.positionX, this.positionY, this.sizeX, this.sizeY);
+        this.context.rect(
+            this.positionX + this.collisionOffset.left, 
+            this.positionY + this.collisionOffset.top, 
+            this.sizeX - this.collisionOffset.right, 
+            this.sizeY - this.collisionOffset.bottom);
         this.context.stroke();
     }
 }
