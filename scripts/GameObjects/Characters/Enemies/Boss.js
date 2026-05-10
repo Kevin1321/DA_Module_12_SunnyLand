@@ -8,7 +8,12 @@ class Boss extends Enemy {
         this.xDirection = -1;
         this.yDirection = -1;
         this.timeOut = 4000;
-        this.BeginFight();
+        this.collisionOffset = {
+            top: 30,
+            bottom: 30,
+            left: 20,
+            right: 40
+        }
     }
 
     OnTick(frame, deltaTime) {

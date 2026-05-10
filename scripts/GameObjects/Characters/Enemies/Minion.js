@@ -2,13 +2,19 @@ class Minion extends Enemy {
     constructor(context, positionX, positionY, sizeX, sizeY) {
         super(context, positionX, positionY, sizeX, sizeY);
         this.CreateAnimations();
-        
+
         this.state = this.EnemyState.IDLE;
         this.health = 1;
         this.speed = 30;
         this.isMovingRight = false;
         this.direction = -1;
-        this.timeOut = 4000;
+        this.timeOut = Util.GetRandomRange(3000, 6000);
+        this.collisionOffset = {
+            top: 20,
+            bottom: 20,
+            left: 15,
+            right: 15
+        }
         setTimeout(() => this.SwitchDirection(), this.timeOut);
     }
 
