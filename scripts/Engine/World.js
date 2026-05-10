@@ -1,7 +1,7 @@
 class World {
     static WORLD_BOUNDS = {
         minX: 0,
-        maxX: 720,
+        maxX: 2880,
         minY: 0,
         maxY: 480
     }
@@ -44,7 +44,9 @@ class World {
 
     UpdateCamera() {
         let xTranslation = this.player.positionX - this.canvas.width / 2 + this.player.sizeX / 2;
-        if (xTranslation < 0) xTranslation = 0;
+
+        if (xTranslation < World.WORLD_BOUNDS.minX) xTranslation = World.WORLD_BOUNDS.minX;
+        if (xTranslation > World.WORLD_BOUNDS.maxX - 720) xTranslation = World.WORLD_BOUNDS.maxX - 720;
         this.camera.x = xTranslation;
         //this.camera.y = this.player.positionY - this.canvas.height / 2 + this.player.sizeY / 2;
     }
@@ -68,6 +70,8 @@ class World {
 
         this.frame++;
         if (this.frame == Infinity) this.frame = 0;
+
+        this.StartBossFight();
     }
 
     UpdateGameObjects(deltaTime) {
@@ -81,12 +85,22 @@ class World {
     }
 
     IsColliding(a, b) {
-        //todo add offset to GO and use it here
         return (
-            a.positionX < b.positionX + b.sizeX &&
-            a.positionX + a.sizeX > b.positionX &&
-            a.positionY < b.positionY + b.sizeY &&
-            a.positionY + a.sizeY > b.positionY
+            // A left < B right
+            a.positionX + a.collisionOffset.left <
+            b.positionX + b.sizeX - b.collisionOffset.right &&
+
+            // A right > B left
+            a.positionX + a.sizeX - a.collisionOffset.right >
+            b.positionX + b.collisionOffset.left &&
+
+            // A top < B bottom
+            a.positionY + a.collisionOffset.top <
+            b.positionY + b.sizeY - b.collisionOffset.bottom &&
+
+            // A bottom > B top
+            a.positionY + a.sizeY - a.collisionOffset.bottom >
+            b.positionY + b.collisionOffset.top
         );
     }
 
@@ -105,6 +119,7 @@ class World {
         if (!this.currentPlayerCollisions.includes(collider)) {
             this.currentPlayerCollisions.push(collider);
             this.player.OnCollisionEnter(collider);
+            collider.OnCollisionEnter(this.player);
         }
     }
 
@@ -114,6 +129,7 @@ class World {
         temp.forEach(collider => {
             if (!this.IsColliding(this.player, collider)) {
                 this.player.OnCollisionExit(collider);
+                collider.OnCollisionExit(this.player);
                 this.currentPlayerCollisions.splice(this.currentPlayerCollisions.indexOf(collider), 1);
             }
         });
@@ -123,55 +139,78 @@ class World {
         this.CreateBackgrounds();
         this.CreateLevel();
         this.CreateProps();
+        this.CreateGoal();
         this.CreatePickUps();
         this.CreateEnemies();
         this.CreateProjectiles();
         this.CreatePlayer();
-        //todo: draw grass seperatly
+        this.CreateGrass();
         this.CreateUI();
     }
 
     CreateBackgrounds() {
-        this.gameObjects.push(
-            this.backgroundLayerOne = new Background(this.context, 0, 0, 720, 480, SpriteAssets.BACKGROUNDS.SUNNY_LAND_BASE),
-            this.middleOne = new Background(this.context, 0, 250, 176, 368, SpriteAssets.MIDDLEGROUNDS.SUNNY_LAND_BASE),
-            this.middleTwo = new Background(this.context, 176, 250, 176, 368, SpriteAssets.MIDDLEGROUNDS.SUNNY_LAND_BASE),
-            this.middleThree = new Background(this.context, 352, 250, 176, 368, SpriteAssets.MIDDLEGROUNDS.SUNNY_LAND_BASE),
-            this.middleFour = new Background(this.context, 528, 250, 176, 368, SpriteAssets.MIDDLEGROUNDS.SUNNY_LAND_BASE),
-            this.middleFive = new Background(this.context, 704, 250, 176, 368, SpriteAssets.MIDDLEGROUNDS.SUNNY_LAND_BASE)
-        );
+        for (let index = 0; index < 4; index++) {
+            this.gameObjects.push(new Background(this.context, 720 * index, 0, 721, 480, SpriteAssets.BACKGROUNDS.SUNNY_LAND_BASE));
+        }
+        for (let index = 0; index < 17; index++) {
+            this.gameObjects.push(new Background(this.context, 176 * index, 250, 177, 368, SpriteAssets.MIDDLEGROUNDS.SUNNY_LAND_BASE));
+        }
     }
 
     CreateLevel() {
-        this.gameObjects.push(this.level_1 = new Level(this.context, 0, 384, 720, 96, SpriteAssets.LEVEL.LEVEL_1));
+        this.gameObjects.push(this.level_1 = new Level(this.context, 0, 400, 2880, 80, SpriteAssets.LEVEL.LEVEL_1));
+    }
+    CreateGrass() {
+        this.gameObjects.push(this.level_1_grass = new Level(this.context, 0, 386, 2880, 16, SpriteAssets.LEVEL.LEVEL_1_GRASS));
     }
 
     CreateProps() {
-        this.gameObjects.push(this.woodenHouse = new Prop(this.context, 600, 302, 112, 98, SpriteAssets.PROPS.WOODEN_HOUSE));
+        this.CreateProp(SpriteAssets.PROPS.TREE, 15, 79, 100, 176, 200);
+        this.CreateProp(SpriteAssets.PROPS.ROCK_2, 7, 66, 80, 55, 70);
+        this.CreateProp(SpriteAssets.PROPS.ROCK, 12, 28, 40, 15, 30);
+        this.CreateProp(SpriteAssets.PROPS.SHROOMS, 30, 16, 20, 15, 20);
+    }
+
+    CreateProp(sprite, amount, minX, maxX, minY, maxY) {
+        for (let index = 0; index < amount; index++) {
+            let positionX = index * Util.GetRandomRange(200, 300) + Util.GetRandomRange(0, 500);
+            let sizeX = Util.GetRandomRange(minX, maxX);
+            let sizeY = Util.GetRandomRange(minY, maxY);
+            let positionY = World.WORLD_BOUNDS.maxY - sizeY - this.level_1.sizeY;
+            this.gameObjects.push(new Prop(this.context, positionX, positionY, sizeX, sizeY, sprite))
+        }
+    }
+
+    CreateGoal() {
+        this.gameObjects.push(this.woodenHouse = new Goal(this.context, 2760, 302, 112, 98, SpriteAssets.PROPS.WOODEN_HOUSE));
+        this.collisionTracker.push(this.woodenHouse);
     }
 
     CreatePickUps() {
-        this.gameObjects.push(
-            this.cherry_test = new Cherry(this.context, 100, 360, 32, 32),
-            this.gem_test = new Gem(this.context, 164, 360, 32, 32)
-        );
+        for (let index = 0; index < 10; index++) {
+            let cherry = new Cherry(this.context, index * 200 + Util.GetRandomRange(100, 400), 360, 32, 32);
+            this.gameObjects.push(cherry);
+            this.collisionTracker.push(cherry);
+        }
 
-        this.collisionTracker.push(
-            this.cherry_test,
-            this.gem_test
-        );
+        for (let index = 0; index < 10; index++) {
+            let gem = new Gem(this.context, index * 200 + Util.GetRandomRange(100, 400), 360, 32, 32);
+            this.gameObjects.push(gem);
+            this.collisionTracker.push(gem);
+        }
     }
 
     CreateEnemies() {
-        this.gameObjects.push(
-            this.minion = new Minion(this.context, 200, 336, 64, 64),
-            this.boss = new Boss(this.context, 400, 272, 128, 128)
-        );
+        for (let index = 0; index < 5; index++) {
+            let positionX = index * Util.GetRandomRange(200, 300) + Util.GetRandomRange(0, 500);
+            let minion = new Minion(this.context, positionX, 336, 64, 64);
 
-        this.collisionTracker.push(
-            this.minion,
-            this.boss
-        );
+            this.gameObjects.push(minion);
+            this.collisionTracker.push(minion);
+        }
+
+        this.gameObjects.push(this.boss = new Boss(this.context, 2560, 272, 128, 128));
+        this.collisionTracker.push(this.boss);
     }
 
     CreateProjectiles() {
@@ -197,5 +236,9 @@ class World {
 
     CreateUI() {
         this.playerHUD = new PlayerHUD(this.context, this.camera, this.player);
+    }
+
+    StartBossFight() {
+        if (this.player.positionX >= 2420) this.boss.BeginFight();
     }
 }
