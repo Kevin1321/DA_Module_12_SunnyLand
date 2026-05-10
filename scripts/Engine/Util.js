@@ -6,4 +6,7 @@ class Util {
     static GetRandomNormalized(){
         return (Math.random() * 2 - 1).toFixed(1);
     }
+    static GetRandomRange(min, max){
+        return Math.random() * (max - min) + min;
+    }
 }
