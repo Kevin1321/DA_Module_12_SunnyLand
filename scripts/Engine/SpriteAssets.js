@@ -70,7 +70,7 @@ class SpriteAssets {
 
     static LEVEL = {
         LEVEL_1: "assets/sprites/environments/Level/Level_1.png",
-        LEVEL_1_GRASS: ""
+        LEVEL_1_GRASS: "assets/sprites/environments/Level/Level_1_grass.png"
     }
 
     static PROPS = {
@@ -84,7 +84,7 @@ class SpriteAssets {
         ROCK_2: "assets/sprites/environments/Props/rock-2.png",
         SHROOMS: "assets/sprites/environments/Props/shrooms.png",
         SIGN: "assets/sprites/environments/Props/sign.png",
-        TREE: "assets/sprites/environments/Props/tree.png",
+        TREE: "assets/sprites/environments/Props/palm.png",
         WOODEN_HOUSE: "assets/sprites/environments/Props/wooden-house.png"
     }
 
