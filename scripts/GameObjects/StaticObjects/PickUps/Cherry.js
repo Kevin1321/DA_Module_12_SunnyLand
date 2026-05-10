@@ -28,7 +28,7 @@ class Cherry extends PickUp {
         this.context.drawImage(this.img, this.positionX, this.positionY, this.sizeX, this.sizeY);
     }
 
-    OnCollision(collider) {
+    OnCollisionEnter(collider) {
         super.OnCollision(collider);
         this.hasBeenPickedUp = true;
     }

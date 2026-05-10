@@ -19,7 +19,7 @@ class PickUp extends GameObject {
         super.OnTick(frame, deltaTime);
     }
 
-    OnCollision(collider) {
+    OnCollisionEnter(collider) {
         super.OnCollision(collider);
     }
 
