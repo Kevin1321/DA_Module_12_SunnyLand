@@ -12,13 +12,17 @@ class GameObject {
             left: 0,
             right: 0
         }
+
+        this.layer = CollisionLayers.DEFAULT;
+        this.collidableLayers = [];
+        this.currentCollisions = new Set();
     }
 
-    SetAnimationFrame(animationFrameSrc) {
-        this.img.src = animationFrameSrc;
+    SetAnimationFrame(img) {
+        this.img = img;
     }
 
-    OnTick(frame, deltaTime) {
+    OnTick(deltaTime) {
     }
 
     OnCollisionEnter(collider) {
@@ -35,9 +39,9 @@ class GameObject {
         this.context.lineWidth = "2";
         this.context.strokeStyle = "green";
         this.context.rect(
-            this.positionX + this.collisionOffset.left, 
-            this.positionY + this.collisionOffset.top, 
-            this.sizeX - this.collisionOffset.right, 
+            this.positionX + this.collisionOffset.left,
+            this.positionY + this.collisionOffset.top,
+            this.sizeX - this.collisionOffset.right,
             this.sizeY - this.collisionOffset.bottom);
         this.context.stroke();
     }

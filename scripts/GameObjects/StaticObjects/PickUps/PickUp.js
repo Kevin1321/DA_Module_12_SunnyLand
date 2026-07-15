@@ -2,6 +2,9 @@ class PickUp extends GameObject {
     constructor(context, positionX, positionY, sizeX, sizeY) {
         super(context, positionX, positionY, sizeX, sizeY);
 
+        this.layer = CollisionLayers.PICKUP;
+        this.collidableLayers = [CollisionLayers.PLAYER];
+
         this.isActive = true;
         this.hasBeenPickedUp = false;
 
@@ -15,8 +18,8 @@ class PickUp extends GameObject {
         this.pickedUp.addEventListener("EndOfAnimation", this.OnEndOfAnimation);
     }
 
-    OnTick(frame, deltaTime) {
-        super.OnTick(frame, deltaTime);
+    OnTick(deltaTime) {
+        super.OnTick(deltaTime);
     }
 
     OnCollisionEnter(collider) {

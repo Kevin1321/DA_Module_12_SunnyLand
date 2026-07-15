@@ -13,16 +13,16 @@ class Cherry extends PickUp {
         ]);
     }
 
-    OnTick(frame, deltaTime) {
-        super.OnTick(frame, deltaTime);
+    OnTick(deltaTime) {
+        super.OnTick(deltaTime);
         
         if (!this.isActive) return;
 
         if (this.hasBeenPickedUp) {
-            this.SetAnimationFrame(this.pickedUp.nextFrame());
+            this.SetAnimationFrame(this.pickedUp.nextFrame(deltaTime));
         }
         else {
-            this.SetAnimationFrame(this.idle.nextFrame());
+            this.SetAnimationFrame(this.idle.nextFrame(deltaTime));
         }
 
         this.context.drawImage(this.img, this.positionX, this.positionY, this.sizeX, this.sizeY);

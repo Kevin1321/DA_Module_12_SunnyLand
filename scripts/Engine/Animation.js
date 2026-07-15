@@ -1,20 +1,32 @@
-class Animation extends EventTarget{
+class Animation extends EventTarget {
 
-    constructor(pathArray) {
+    constructor(pathArray, fps = 10) {
         super();
-        this.paths = pathArray;
+        this.fps = fps;
+        this.timer = 0;
         this.currentAnimationFrame = 0;
-        this.endOfAnimationEvent = new Event("EndOfAnimation")
+        this.endOfAnimationEvent = new Event("EndOfAnimation");
+
+        this.frames = pathArray.map(path => {
+            const img = new Image();
+            img.src = path;
+            return img;
+        });
     }
 
-    nextFrame() {
-        let returnIndex = this.currentAnimationFrame;
-        this.currentAnimationFrame++;
-        if (this.currentAnimationFrame >= this.paths.length) {
-            this.dispatchEvent(this.endOfAnimationEvent);
-            this.currentAnimationFrame = 0;
+    nextFrame(deltaTime) {
+        this.timer += deltaTime;
+
+        if (this.timer >= 1 / this.fps) {
+            this.timer = 0;
+            this.currentAnimationFrame++;
+
+            if (this.currentAnimationFrame >= this.frames.length) {
+                this.dispatchEvent(this.endOfAnimationEvent);
+                this.currentAnimationFrame = 0;
+            }
         }
 
-        return this.paths[returnIndex];
+        return this.frames[this.currentAnimationFrame];
     }
 }

@@ -60,6 +60,7 @@ h1 {
     width: 100vw;
     height: 100vh;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     background-image: url("./assets/sprites/environments/Backgrounds/SunnyLandForest/middleground.png");

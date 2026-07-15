@@ -1,6 +1,10 @@
 class Projectile extends GameObject {
     constructor(context, positionX, positionY, sizeX, sizeY) {
         super(context, positionX, positionY, sizeX, sizeY);
+
+        this.layer = CollisionLayers.PROJECTILE;
+        this.collidableLayers = [CollisionLayers.ENEMY];
+
         this.img.src = SpriteAssets.PROJECTILS.STAR;
         this.lifetime = 3;
         this.projectileSpeed = 200;
@@ -9,8 +13,8 @@ class Projectile extends GameObject {
         this.direction = 1;
     }
 
-    OnTick(frame, deltaTime) {
-
+    OnTick(deltaTime) {
+        super.OnTick(deltaTime);
         if (this.isBeingShot) {
             this.positionX += this.projectileSpeed * this.direction * deltaTime;
             this.context.drawImage(this.img, this.positionX, this.positionY, this.sizeX, this.sizeY);
@@ -20,7 +24,6 @@ class Projectile extends GameObject {
                 this.ResetProjectile();
             }
         }
-        super.OnTick(deltaTime);
     }
 
     OnCollisionEnter(collider) {
@@ -28,7 +31,7 @@ class Projectile extends GameObject {
         if (collider instanceof Enemy) {
             console.log('enemy hit');
 
-            Enemy.TakeDamage(1);
+            collider.TakeDamage(1);
             this.ResetProjectile();
         }
     }

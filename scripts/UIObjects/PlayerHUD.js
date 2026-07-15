@@ -27,8 +27,8 @@ class PlayerHUD extends UIObject {
         this.CreateGem();
     }
 
-    OnTick(frame, deltaTime) {
-        super.OnTick(frame, deltaTime);
+    OnTick(deltaTime) {
+        super.OnTick(deltaTime);
 
         this.context.drawImage(this.frame, this.camera.x, this.camera.y, this.frame.width, this.frame.height);
         this.context.drawImage(this.foxyPortait, this.camera.x + this.foxyPortaitXOffset, this.camera.y + this.foxyPortaitYOffest, this.foxyPortait.width, this.foxyPortait.height);

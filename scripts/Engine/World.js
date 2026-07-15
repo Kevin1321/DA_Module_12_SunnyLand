@@ -13,8 +13,6 @@ class World {
         this.lastTime;
         this.requiredElapsed = 0.1;
         this.gameObjects = [];
-        this.collisionTracker = [];
-        this.currentPlayerCollisions = [];
         this.frame = 0;
 
         this.camera = {
@@ -23,8 +21,8 @@ class World {
         };
 
         this.Tick = this.Tick.bind(this);
-        this.Tick();
         this.CreateGameObjects();
+        this.Tick();
         AudioManager.Play(AudioAssets.BACKGROUND_MUSIC, true);
     }
 
@@ -33,13 +31,24 @@ class World {
 
         if (!this.lastTime) {
             this.lastTime = now;
+            return;
         }
 
         let deltaTime = (now - this.lastTime) / 1000;
-        if (deltaTime > this.requiredElapsed) {
-            this.OnTick(deltaTime);
-            this.lastTime = now;
+        this.lastTime = now;
+
+        // FPS Counter
+        this.frameCount = (this.frameCount || 0) + 1;
+        this.fpsAccum = (this.fpsAccum || 0) + deltaTime;
+
+        if (this.fpsAccum >= 1) {
+            this.fps = Math.round(this.frameCount / this.fpsAccum);
+            this.frameCount = 0;
+            this.fpsAccum = 0;
+            document.getElementById('fps').textContent = `FPS: ${this.fps}`;
         }
+
+        this.OnTick(deltaTime);
     }
 
     UpdateCamera() {
@@ -76,12 +85,12 @@ class World {
 
     UpdateGameObjects(deltaTime) {
         this.gameObjects.forEach(gameObject => {
-            gameObject.OnTick(this.frame, deltaTime);
+            gameObject.OnTick(deltaTime);
         });
     }
 
     UpdateUIObjects(deltaTime) {
-        this.playerHUD.OnTick(this.frame, deltaTime);
+        this.playerHUD.OnTick(deltaTime);
     }
 
     IsColliding(a, b) {
@@ -105,33 +114,64 @@ class World {
     }
 
     CheckCollisions() {
-        this.collisionTracker.forEach(collider => {
-            if (this.IsColliding(this.player, collider)) {
-                this.CheckCollisionEnter(collider);
-                this.player.OnCollision(collider);
-                collider.OnCollision(this.player);
-            }
-        });
-        this.CheckCollisionExit();
-    }
+        // Alle aktiven Kollisionen dieser Frame sammeln
+        const activeCollisions = new Map();
 
-    CheckCollisionEnter(collider) {
-        if (!this.currentPlayerCollisions.includes(collider)) {
-            this.currentPlayerCollisions.push(collider);
-            this.player.OnCollisionEnter(collider);
-            collider.OnCollisionEnter(this.player);
+        for (let i = 0; i < this.gameObjects.length; i++) {
+            const a = this.gameObjects[i];
+            if (a.collidableLayers.length === 0) continue;
+
+            for (let j = i + 1; j < this.gameObjects.length; j++) {
+                const b = this.gameObjects[j];
+
+                const aCanHitB = a.collidableLayers.includes(b.layer);
+                const bCanHitA = b.collidableLayers.includes(a.layer);
+
+                if (!aCanHitB && !bCanHitA) continue;
+                if (!this.IsColliding(a, b)) continue;
+
+                if (aCanHitB) this.RegisterCollision(activeCollisions, a, b);
+                if (bCanHitA) this.RegisterCollision(activeCollisions, b, a);
+            }
         }
+
+        // Enter, Stay, Exit auflösen
+        this.ResolveCollisions(activeCollisions);
     }
 
-    CheckCollisionExit() {
-        let temp = this.currentPlayerCollisions;
+    RegisterCollision(activeCollisions, a, b) {
+        if (!activeCollisions.has(a)) activeCollisions.set(a, new Set());
+        activeCollisions.get(a).add(b);
+    }
 
-        temp.forEach(collider => {
-            if (!this.IsColliding(this.player, collider)) {
-                this.player.OnCollisionExit(collider);
-                collider.OnCollisionExit(this.player);
-                this.currentPlayerCollisions.splice(this.currentPlayerCollisions.indexOf(collider), 1);
-            }
+    ResolveCollisions(activeCollisions) {
+        // Alle GameObjects durchgehen die collidable sind
+        this.gameObjects.forEach(obj => {
+            if (obj.collidableLayers.length === 0) return;
+
+            const currentHits = activeCollisions.get(obj) ?? new Set();
+
+            // OnCollision (Stay)
+            currentHits.forEach(other => {
+                obj.OnCollision(other);
+            });
+
+            // OnCollisionEnter
+            currentHits.forEach(other => {
+                if (!obj.currentCollisions.has(other)) {
+                    obj.OnCollisionEnter(other);
+                }
+            });
+
+            // OnCollisionExit
+            obj.currentCollisions.forEach(other => {
+                if (!currentHits.has(other)) {
+                    obj.OnCollisionExit(other);
+                }
+            });
+
+            // State updaten
+            obj.currentCollisions = currentHits;
         });
     }
 
@@ -183,20 +223,17 @@ class World {
 
     CreateGoal() {
         this.gameObjects.push(this.woodenHouse = new Goal(this.context, 2760, 302, 112, 98, SpriteAssets.PROPS.WOODEN_HOUSE));
-        this.collisionTracker.push(this.woodenHouse);
     }
 
     CreatePickUps() {
         for (let index = 0; index < 10; index++) {
             let cherry = new Cherry(this.context, index * 200 + Util.GetRandomRange(100, 400), 360, 32, 32);
             this.gameObjects.push(cherry);
-            this.collisionTracker.push(cherry);
         }
 
         for (let index = 0; index < 10; index++) {
             let gem = new Gem(this.context, index * 200 + Util.GetRandomRange(100, 400), 360, 32, 32);
             this.gameObjects.push(gem);
-            this.collisionTracker.push(gem);
         }
     }
 
@@ -206,11 +243,9 @@ class World {
             let minion = new Minion(this.context, positionX, 336, 64, 64);
 
             this.gameObjects.push(minion);
-            this.collisionTracker.push(minion);
         }
 
         this.gameObjects.push(this.boss = new Boss(this.context, 2560, 272, 128, 128));
-        this.collisionTracker.push(this.boss);
     }
 
     CreateProjectiles() {
@@ -226,7 +261,6 @@ class World {
 
         this.projectilePool.forEach(projectile => {
             this.gameObjects.push(projectile);
-            this.collisionTracker.push(projectile);
         })
     }
 

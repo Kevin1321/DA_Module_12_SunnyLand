@@ -18,10 +18,10 @@ class Minion extends Enemy {
         setTimeout(() => this.SwitchDirection(), this.timeOut);
     }
 
-    OnTick(frame, deltaTime) {
-        super.OnTick(frame, deltaTime);
+    OnTick(deltaTime) {
+        super.OnTick(deltaTime);
         if (this.state == this.EnemyState.MOVE) this.Move(deltaTime);
-        this.Animate(frame);
+        this.Animate(deltaTime);
         this.DrawImage();
     }
 
@@ -29,16 +29,16 @@ class Minion extends Enemy {
         this.positionX += this.speed * this.direction * deltaTime;
     }
 
-    Animate(frame) {
-        super.Animate(frame);
-        if (this.state == this.EnemyState.IDLE) this.SetAnimationFrame(this.idle.nextFrame());
-        if (this.state == this.EnemyState.MOVE) this.SetAnimationFrame(this.move.nextFrame());
+    Animate(deltaTime) {
+        super.Animate(deltaTime);
+        if (this.state == this.EnemyState.IDLE) this.SetAnimationFrame(this.idle.nextFrame(deltaTime));
+        if (this.state == this.EnemyState.MOVE) this.SetAnimationFrame(this.move.nextFrame(deltaTime));
     }
 
     DrawImage() {
         if (this.isMovingRight) {
             this.context.save();
-            this.context.translate(this.img.width, 0);
+            this.context.translate(this.sizeX, 0);
             this.context.scale(-1, 1);
             this.positionX *= -1;
         }
@@ -71,8 +71,6 @@ class Minion extends Enemy {
 
         setTimeout(() => this.SwitchDirection(), this.timeOut);
     }
-
-
 
     CreateAnimations() {
         this.idle = new Animation([

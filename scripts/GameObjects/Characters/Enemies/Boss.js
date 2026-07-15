@@ -4,7 +4,7 @@ class Boss extends Enemy {
         this.CreateAnimations();
         this.state = this.EnemyState.IDLE;
         this.health = 5;
-        this.speed = 40;
+        this.speed = 100;
         this.xDirection = -1;
         this.yDirection = -1;
         this.timeOut = 4000;
@@ -16,10 +16,10 @@ class Boss extends Enemy {
         }
     }
 
-    OnTick(frame, deltaTime) {
-        super.OnTick(frame, deltaTime);
+    OnTick(deltaTime) {
+        super.OnTick(deltaTime);
         if (this.state == this.EnemyState.MOVE) this.Move(deltaTime);
-        this.Animate(frame);
+        this.Animate(deltaTime);
         this.context.drawImage(this.img, this.positionX, this.positionY, this.sizeX, this.sizeY);
     }
 
@@ -30,10 +30,10 @@ class Boss extends Enemy {
         this.positionY = Util.Clamp(this.positionY, World.WORLD_BOUNDS.minY, World.WORLD_BOUNDS.maxY);
     }
 
-    Animate(frame) {
-        super.Animate(frame);
-        if (this.state == this.EnemyState.IDLE) this.SetAnimationFrame(this.idle.nextFrame());
-        if (this.state == this.EnemyState.MOVE) this.SetAnimationFrame(this.flying.nextFrame());
+    Animate(deltaTime) {
+        super.Animate(deltaTime);
+        if (this.state == this.EnemyState.IDLE) this.SetAnimationFrame(this.idle.nextFrame(deltaTime));
+        if (this.state == this.EnemyState.MOVE) this.SetAnimationFrame(this.flying.nextFrame(deltaTime));
     }
 
     BeginFight() {

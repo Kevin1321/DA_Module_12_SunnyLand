@@ -6,11 +6,12 @@ class Character extends GameObject {
         this.isDead = false;
     }
 
-    OnTick(frame, deltaTime) {
-        super.OnTick(frame, deltaTime);
+    OnTick(deltaTime) {
+        super.OnTick(deltaTime);
     }
 
-    Animate(frame) {
+    Animate(deltaTime) {
+
     }
 
     OnCollisionEnter(collider) {

@@ -12,16 +12,19 @@ class Player extends Character {
         super(context, positionX, positionY, sizeX, sizeY);
         this.CreateAnimations();
 
+        this.layer = CollisionLayers.PLAYER;
+        this.collidableLayers = [CollisionLayers.ENEMY, CollisionLayers.PICKUP, CollisionLayers.GOAL];
+
         this.maxHealth = 5;
         this.health = 5;
         this.state = this.PlayerState.IDLE;
         this.idleTime = 0;
-        this.longIdleTime = 10;
+        this.longIdleTime = 10000;
         this.velocityY = 0;
         this.isGrounded = true;
-        this.speed = 120;
-        this.jumpSpeed = 40;
-        this.gravity = 50;
+        this.speed = 170;
+        this.jumpSpeed = 13;
+        this.gravity = 30;
         this.shootCooldown = .5;
         this.isShootOnCooldown = false;
         this.currentCooldownTime = 0;
@@ -37,31 +40,37 @@ class Player extends Character {
             left: 10,
             right: 20
         }
+
+        this.jumpImg1 = new Image();
+        this.jumpImg1.src = SpriteAssets.PLAYER.JUMP_1;
+
+        this.jumpImg2 = new Image();
+        this.jumpImg2.src = SpriteAssets.PLAYER.JUMP_2;
+
+        this.playerDeadImg = new Image();
+        this.playerDeadImg.src = SpriteAssets.PLAYER.DEAD;
+
+        this.playerVictoryImg = new Image();
+        this.playerVictoryImg.src = SpriteAssets.PLAYER.VICTORY;
     }
 
     OnCollisionEnter(collider) {
         if (collider instanceof Cherry) {
-            //console.log('cherry enter');
             this.cherriesCollected += 1;
-            //console.log('Collected: ' + this.cherriesCollected);
         }
 
         if (collider instanceof Gem) {
-            //console.log('gem enter')
             this.gemsCollected += 1;
-            //console.log('Collected: ' + this.gemsCollected);
         }
 
         if (collider instanceof Enemy) {
-            //console.log('Enemy enter');
             if (collider instanceof Minion) this.TakeDamage(.5);
             if (collider instanceof Boss) this.TakeDamage(1);
-            //console.log('Current Health: ' + this.health);
         }
     }
 
-    OnTick(frame, deltaTime) {
-        super.OnTick(frame, deltaTime);
+    OnTick(deltaTime) {
+        super.OnTick(deltaTime);
         this.moveAmount = 0;
         if (this.positionY >= Level.GROUND) this.isGrounded = true;
         if (!this.isDead && this.state != this.PlayerState.VICTORY) {
@@ -72,7 +81,7 @@ class Player extends Character {
         }
         this.ApplyGravity(deltaTime);
         this.SetPlayerState(deltaTime);
-        this.Animate(frame);
+        this.Animate(deltaTime);
         this.DrawImage();
     }
 
@@ -134,6 +143,7 @@ class Player extends Character {
 
     SetPlayerState(deltaTime) {
         if (this.state == this.PlayerState.VICTORY) return;
+
         if (this.isGrounded) {
             if (InputManager.LEFT || InputManager.RIGHT) {
                 this.state = this.PlayerState.RUN;
@@ -157,27 +167,42 @@ class Player extends Character {
         if (this.state != this.PlayerState.IDLE && this.state != this.PlayerState.LONG_IDLE) this.idleTime = 0;
     }
 
-    Animate(frame) {
-        super.Animate(frame);
-        if (this.state == this.PlayerState.IDLE) this.SetAnimationFrame(this.idle.nextFrame());
-        if (this.state == this.PlayerState.LONG_IDLE) this.SetAnimationFrame(this.longIdle.nextFrame());
-        if (this.state == this.PlayerState.RUN) this.SetAnimationFrame(this.run.nextFrame());
-        if (this.state == this.PlayerState.JUMP) {
-            if (this.velocityY > 0) {
-                this.SetAnimationFrame(SpriteAssets.PLAYER.JUMP_1);
-            }
-            else {
-                this.SetAnimationFrame(SpriteAssets.PLAYER.JUMP_2);
-            }
+    Animate(deltaTime) {
+        super.Animate(deltaTime);
+        switch (this.state) {
+            case this.PlayerState.IDLE:
+                this.SetAnimationFrame(this.idle.nextFrame(deltaTime));
+                break;
+            case this.PlayerState.LONG_IDLE:
+                this.SetAnimationFrame(this.longIdle.nextFrame(deltaTime));
+                break;
+            case this.PlayerState.RUN:
+                this.SetAnimationFrame(this.run.nextFrame(deltaTime));
+                break;
+            case this.PlayerState.JUMP:
+                if (this.velocityY > 0) {
+                    this.SetAnimationFrame(this.jumpImg1);
+                }
+                else {
+                    this.SetAnimationFrame(this.jumpImg2);
+                }
+                break;
+            case this.PlayerState.DEAD:
+                this.SetAnimationFrame(this.playerDeadImg);
+                break;
+            case this.PlayerState.VICTORY:
+                this.SetAnimationFrame(this.playerVictoryImg);
+                break;
+            default:
+                this.SetAnimationFrame(this.idle.nextFrame(deltaTime));
+                break;
         }
-        if (this.state == this.PlayerState.DEAD) this.SetAnimationFrame(SpriteAssets.PLAYER.DEAD);
-        if (this.state == this.PlayerState.VICTORY) this.SetAnimationFrame(SpriteAssets.PLAYER.VICTORY);
     }
 
     DrawImage() {
         if (this.isMovingLeft) {
             this.context.save();
-            this.context.translate(this.img.width, 0);
+            this.context.translate(this.sizeX, 0);
             this.context.scale(-1, 1);
             this.positionX *= -1;
         }
