@@ -261,6 +261,8 @@ h1 {
     position: relative;
     max-height: 490px;
     overflow-y: auto;
+    scrollbar-color: var(--primary-color) transparent;
+    scrollbar-width: thin;
 }
 
 #modal-header {
@@ -323,6 +325,24 @@ h1 {
 
 #modal-text td:first-child {
     min-width: 80px;
+}
+
+#modal::-webkit-scrollbar {
+    width: 8px;
+}
+
+#modal::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#modal::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+}
+
+#modal::-webkit-scrollbar-thumb:hover {
+    opacity: 0.8;
+    background: var(--ui-color);
 }
 
 kbd {

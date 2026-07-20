@@ -16,24 +16,20 @@ const modalTexts = {
     <h3>Achtung</h3>
     <p>Minions verursachen <strong>0.5</strong> Schaden, der Boss verursacht <strong>1</strong> Schaden. Du hast <strong>5 Leben</strong> — pass auf dich auf!</p>
 `,
-    licences: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
+    licences: ` Game Art and Audio made by: <br>
+                <a href="https://linktr.ee/ansimuz">https://linktr.ee/ansimuz</a><br>
+                <br>
+                UI Elements made by:<br>
+                <a href="https://toffeecraft.itch.io/">https://toffeecraft.itch.io/</a><br> 
+    `,
     imprint: `
         <h2>Impressum</h2>
         <p>Verantwortlich für diese Website:</p>
-        <p>Max Mustermann<br>
-        Musterstraße 12<br>
-        12345 Musterstadt<br>
+        <p>Kevin Reich<br>
+        Basedowstraße 14<br>
+        39104 Magdeburg<br>
         Deutschland<br>
-        E-Mail: <a href="mailto:kontakt@beispiel.de">kontakt@beispiel.de</a></p>
-
-        <h3>Verwendete Ressourcen</h3>
-        <p>Dieses Mini-Game verwendet Inhalte und Ressourcen von Drittanbietern:</p>
-        <ul>
-            <li>[Name der Ressource] – [Lizenz]</li>
-            <li>[Name der Ressource] – [Lizenz]</li>
-            <li>[Name der Ressource] – [Lizenz]</li>
-        </ul>
-
+        E-Mail: <a href="">kevinreich1321@gmail.com</a></p>
         <h3>Hinweis</h3>
         <p>Dieses Projekt ist ein nicht-kommerzielles Hobbyprojekt und dient ausschließlich zu Unterhaltungszwecken.</p>
     `
