@@ -31,7 +31,15 @@ window.addEventListener("keydown", (event) => {
 function main() {
     AudioManager.Init();
     InputManager.Initialize();
+
     canvas = document.getElementById('game-canvas');
+
+    if (window.matchMedia("(pointer: coarse)").matches) {
+        document.addEventListener('fullscreenchange', () => {
+            const controls = document.getElementById('fullscreen-controls');
+            controls.style.display = document.fullscreenElement ? 'flex' : 'none';
+        });
+    }
 
     document.getElementById('start-btn').style.display = 'block';
     document.getElementById('start-btn').textContent = '▶ Start';
@@ -47,6 +55,15 @@ function startGame() {
     document.getElementById('game-banner').style.display = 'none';
     if (world) world.Destroy();
     world = new World(canvas);
+
+    if (window.matchMedia("(pointer: coarse)").matches) {
+        const container = document.getElementById('canvas-container');
+        container.requestFullscreen().then(() => {
+            screen.orientation.lock("landscape").catch(() => {
+                // Nicht alle Browser/Geräte unterstützen das — silent fail ist okay
+            });
+        });
+    }
 }
 
 /**
@@ -77,8 +94,9 @@ function showVictory() {
  * Wird vom Fullscreen-Button in der UI aufgerufen.
  */
 function toggleFullscreen() {
+    const container = document.getElementById('canvas-container');
     if (!document.fullscreenElement) {
-        canvas.requestFullscreen();
+        container.requestFullscreen();
     } else {
         document.exitFullscreen();
     }
