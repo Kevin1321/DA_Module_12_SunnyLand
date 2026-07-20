@@ -84,6 +84,10 @@ class AudioManager {
         document.getElementById('mute-btn').src = AudioManager.isMuted
             ? "assets/sprites/UI/audio-disabled.png"
             : "assets/sprites/UI/audio-enabled.png";
+        document.getElementById('fs-mute-btn').src = AudioManager.isMuted
+            ? "assets/sprites/UI/audio-disabled.png"
+            : "assets/sprites/UI/audio-enabled.png";
+
     }
 
     /**
@@ -94,6 +98,9 @@ class AudioManager {
     static Init() {
         document.getElementById('volume-slider').value = AudioManager.currentVolume;
         document.getElementById('mute-btn').src = AudioManager.isMuted
+            ? "assets/sprites/UI/audio-disabled.png"
+            : "assets/sprites/UI/audio-enabled.png";
+        document.getElementById('fs-mute-btn').src = AudioManager.isMuted
             ? "assets/sprites/UI/audio-disabled.png"
             : "assets/sprites/UI/audio-enabled.png";
     }
