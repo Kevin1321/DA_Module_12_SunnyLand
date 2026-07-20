@@ -9,6 +9,9 @@
 
 body {
     font-family: "FingerPaint";
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 header {
@@ -21,13 +24,11 @@ header {
 }
 
 main {
-    margin-left: auto;
-    margin-right: auto;
-    min-height: 100vh;
-
+    min-height: 0;
+    flex: 1;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: stretch;
     overflow: hidden;
 }
 
@@ -38,6 +39,16 @@ footer {
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 40px;
+}
+
+footer p {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+footer p:hover {
+    opacity: 0.7;
 }
 
 h1 {
@@ -46,8 +57,9 @@ h1 {
 }
 
 .background-layer-one {
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
+    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -57,8 +69,8 @@ h1 {
 }
 
 .background-layer-two {
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -68,7 +80,287 @@ h1 {
     background-position: bottom;
 }
 
-.game-canvas {
+#game-controls {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 18px 0;
+}
+
+#audio-controls {
+    position: absolute;
+    right: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#mute-btn {
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+}
+
+#volume-slider {
+    cursor: pointer;
+    accent-color: var(--ui-color);
+}
+
+#canvas-container {
+    position: relative;
+    width: 50%;
+}
+
+#canvas-container:fullscreen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: black;
+}
+
+#canvas-container:fullscreen #game-canvas {
+    width: auto;
+    height: 100%;
+}
+
+#fullscreen-audio,
+#fullscreen-controls {
+    display: none;
+    /* nur im Fullscreen sichtbar */
+}
+
+#canvas-container:fullscreen #fullscreen-audio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 20;
+}
+
+#canvas-container:fullscreen #fs-volume-slider {
+    writing-mode: vertical-lr;
+    direction: rtl;
+    height: 80px;
+    accent-color: var(--ui-color);
+    cursor: pointer;
+}
+
+#canvas-container:fullscreen #fs-mute-btn {
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+}
+
+#canvas-container:fullscreen #fullscreen-controls {
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    z-index: 20;
+}
+
+.fs-btn-group {
+    padding: 0px 200px;
+    display: flex;
+    gap: 30px;
+}
+
+.fs-btn {
+    background: rgba(0, 0, 0, 0.5);
+    color: var(--highlight-color);
+    border: 2px solid var(--highlight-color);
+    border-radius: 12px;
+    width: 64px;
+    height: 64px;
+    font-size: 24px;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+}
+
+.fs-btn:active {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+#game-canvas {
+    background-color: var(--secondary-color);
     border-radius: 20px;
+    width: 100%;
+}
+
+#game-overlay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+}
+
+#game-banner {
+    display: none;
+    background: rgba(0, 0, 0, 0.6);
+    color: var(--highlight-color);
+    font-family: "FingerPaint";
+    font-size: 34px;
+    padding: 20px 48px;
+    border-radius: 8px;
+    white-space: nowrap;
+}
+
+#start-btn {
+    display: none;
+    background: var(--primary-color);
+    color: var(--highlight-color);
+    border: none;
+    border-radius: 20px;
+    padding: 18px 40px;
+    font-family: "FingerPaint";
+    font-size: 30px;
+    cursor: pointer;
+}
+
+#start-btn:hover {
+    opacity: 0.8;
+}
+
+#modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+#modal-overlay.open {
+    display: flex;
+}
+
+#modal {
+    background: var(--secondary-color);
+    color: var(--highlight-color);
+    border-radius: 12px;
+    padding: 0;
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+    max-height: 490px;
+    overflow-y: auto;
+}
+
+#modal-header {
+    position: sticky;
+    top: 0;
+    display: flex;
+    justify-content: flex-end;
+    background: var(--secondary-color);
+    padding: 12px 16px 0 16px;
+}
+
+#modal-close {
+    background: none;
+    border: none;
+    color: var(--highlight-color);
+    font-size: 20px;
+    cursor: pointer;
+}
+
+#modal-close:hover {
+    opacity: 0.7;
+}
+
+#modal-text {
+    padding: 0 40px 40px 40px;
+}
+
+#modal-text h2 {
+    margin-bottom: 12px;
+}
+
+#modal-text h3 {
+    margin-top: 16px;
+    margin-bottom: 8px;
+}
+
+#modal-text p {
+    margin-bottom: 8px;
+    line-height: 1.6;
+}
+
+#modal-text ul {
+    padding-left: 20px;
+    line-height: 1.8;
+}
+
+#modal-text a {
+    color: var(--highlight-color);
+}
+
+#modal-text table {
+    border-collapse: collapse;
+    margin-bottom: 8px;
+}
+
+#modal-text td {
+    padding: 4px 12px 4px 0;
+    line-height: 1.8;
+}
+
+#modal-text td:first-child {
+    min-width: 80px;
+}
+
+kbd {
+    background: rgba(0, 0, 0, 0.3);
+    color: var(--highlight-color);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-family: monospace;
+    font-size: 14px;
+}
+
+@media only screen and (max-width: 720px) {
+
+    #game-controls,
+    #canvas-container {
+        width: 90%;
+    }
+}
+
+@media only screen and (max-height: 480px) {
+    header {
+        height: 30px;
+    }
+
+    footer {
+        height: 30px;
+    }
+
+    #modal {
+        max-height: 250px;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    #game-controls,
+    #canvas-container {
+        width: 50%;
+    }
 }

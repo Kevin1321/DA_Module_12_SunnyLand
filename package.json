@@ -1,0 +1,22 @@
+{
+  "name": "da_module_12_sunnyland",
+  "version": "1.0.0",
+  "description": "A platformer game inspired by classics like Mario and Metroid using pixel art assets created by ansimuz",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs": "npx jsdoc -c jsdoc.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kevin1321/DA_Module_12_SunnyLand.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Kevin1321/DA_Module_12_SunnyLand/issues"
+  },
+  "homepage": "https://github.com/Kevin1321/DA_Module_12_SunnyLand#readme"
+}

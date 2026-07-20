@@ -1,4 +1,19 @@
+/**
+ * @fileoverview Verwaltet die Spielwelt, alle GameObjects, die Kamera, Kollisionen und den Spielzustand.
+ * @module World
+ */
+
+/**
+ * Repräsentiert die gesamte Spielwelt.
+ * Verantwortlich für den Game Loop, die Kamera, Kollisionserkennung und die Verwaltung aller GameObjects.
+ */
 class World {
+
+    /**
+     * Die Grenzen der Spielwelt in Pixeln.
+     * @static
+     * @type {{ minX: number, maxX: number, minY: number, maxY: number }}
+     */
     static WORLD_BOUNDS = {
         minX: 0,
         maxX: 2880,
@@ -6,6 +21,10 @@ class World {
         maxY: 480
     }
 
+    /**
+     * Erstellt eine neue Instanz der Spielwelt.
+     * @param {HTMLCanvasElement} canvas - Das Canvas-Element auf dem die Welt gerendert wird.
+     */
     constructor(canvas) {
         this.canvas = canvas;
         this.context = canvas.getContext('2d');
@@ -26,8 +45,13 @@ class World {
         AudioManager.Play(AudioAssets.BACKGROUND_MUSIC, true);
     }
 
+    /**
+     * Der Haupt-Game-Loop. Wird einmal pro Frame vom Browser aufgerufen.
+     * Berechnet deltaTime und delegiert an {@link World#OnTick}.
+     * @param {DOMHighResTimeStamp} now - Zeitstempel des aktuellen Frames in Millisekunden.
+     */
     Tick(now) {
-        requestAnimationFrame(this.Tick);
+        this.rafId = requestAnimationFrame(this.Tick);
 
         if (!this.lastTime) {
             this.lastTime = now;
@@ -37,7 +61,6 @@ class World {
         let deltaTime = (now - this.lastTime) / 1000;
         this.lastTime = now;
 
-        // FPS Counter
         this.frameCount = (this.frameCount || 0) + 1;
         this.fpsAccum = (this.fpsAccum || 0) + deltaTime;
 
@@ -45,21 +68,28 @@ class World {
             this.fps = Math.round(this.frameCount / this.fpsAccum);
             this.frameCount = 0;
             this.fpsAccum = 0;
-            document.getElementById('fps').textContent = `FPS: ${this.fps}`;
         }
 
         this.OnTick(deltaTime);
     }
 
+    /**
+     * Aktualisiert die Kameraposition anhand der Spielerposition.
+     * Begrenzt die Kamera auf die Weltgrenzen.
+     */
     UpdateCamera() {
         let xTranslation = this.player.positionX - this.canvas.width / 2 + this.player.sizeX / 2;
 
         if (xTranslation < World.WORLD_BOUNDS.minX) xTranslation = World.WORLD_BOUNDS.minX;
         if (xTranslation > World.WORLD_BOUNDS.maxX - 720) xTranslation = World.WORLD_BOUNDS.maxX - 720;
         this.camera.x = xTranslation;
-        //this.camera.y = this.player.positionY - this.canvas.height / 2 + this.player.sizeY / 2;
     }
 
+    /**
+     * Wird jeden Frame aufgerufen. Koordiniert alle Welt-Updates:
+     * Kamera, Rendering, GameObjects, UI, Kollisionen und Spielzustand.
+     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     */
     OnTick(deltaTime) {
         this.UpdateCamera();
 
@@ -81,40 +111,55 @@ class World {
         if (this.frame == Infinity) this.frame = 0;
 
         this.StartBossFight();
+
+        this.CheckGameState();
     }
 
+    /**
+     * Ruft {@link GameObject#OnTick} für alle GameObjects auf.
+     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     */
     UpdateGameObjects(deltaTime) {
         this.gameObjects.forEach(gameObject => {
             gameObject.OnTick(deltaTime);
         });
     }
 
+    /**
+     * Ruft {@link PlayerHUD#OnTick} für alle UI-Objekte auf.
+     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     */
     UpdateUIObjects(deltaTime) {
         this.playerHUD.OnTick(deltaTime);
     }
 
+    /**
+     * Prüft ob zwei GameObjects anhand ihrer Bounding Boxes und CollisionOffsets kollidieren.
+     * @param {GameObject} a - Erstes GameObject.
+     * @param {GameObject} b - Zweites GameObject.
+     * @returns {boolean} `true` wenn die beiden Objekte kollidieren.
+     */
     IsColliding(a, b) {
         return (
-            // A left < B right
             a.positionX + a.collisionOffset.left <
             b.positionX + b.sizeX - b.collisionOffset.right &&
 
-            // A right > B left
             a.positionX + a.sizeX - a.collisionOffset.right >
             b.positionX + b.collisionOffset.left &&
 
-            // A top < B bottom
             a.positionY + a.collisionOffset.top <
             b.positionY + b.sizeY - b.collisionOffset.bottom &&
 
-            // A bottom > B top
             a.positionY + a.sizeY - a.collisionOffset.bottom >
             b.positionY + b.collisionOffset.top
         );
     }
 
+    /**
+     * Sammelt alle aktiven Kollisionen des aktuellen Frames
+     * und übergibt sie an {@link World#ResolveCollisions}.
+     */
     CheckCollisions() {
-        // Alle aktiven Kollisionen dieser Frame sammeln
         const activeCollisions = new Map();
 
         for (let i = 0; i < this.gameObjects.length; i++) {
@@ -135,46 +180,53 @@ class World {
             }
         }
 
-        // Enter, Stay, Exit auflösen
         this.ResolveCollisions(activeCollisions);
     }
 
+    /**
+     * Registriert eine Kollision zwischen zwei Objekten in der activeCollisions Map.
+     * @param {Map<GameObject, Set<GameObject>>} activeCollisions - Die aktuelle Kollisions-Map.
+     * @param {GameObject} a - Das kolliderende Objekt.
+     * @param {GameObject} b - Das Zielobjekt der Kollision.
+     */
     RegisterCollision(activeCollisions, a, b) {
         if (!activeCollisions.has(a)) activeCollisions.set(a, new Set());
         activeCollisions.get(a).add(b);
     }
 
+    /**
+     * Löst Kollisionsereignisse auf: OnCollision (Stay), OnCollisionEnter und OnCollisionExit.
+     * @param {Map<GameObject, Set<GameObject>>} activeCollisions - Alle aktiven Kollisionen des aktuellen Frames.
+     */
     ResolveCollisions(activeCollisions) {
-        // Alle GameObjects durchgehen die collidable sind
         this.gameObjects.forEach(obj => {
             if (obj.collidableLayers.length === 0) return;
 
             const currentHits = activeCollisions.get(obj) ?? new Set();
 
-            // OnCollision (Stay)
             currentHits.forEach(other => {
                 obj.OnCollision(other);
             });
 
-            // OnCollisionEnter
             currentHits.forEach(other => {
                 if (!obj.currentCollisions.has(other)) {
                     obj.OnCollisionEnter(other);
                 }
             });
 
-            // OnCollisionExit
             obj.currentCollisions.forEach(other => {
                 if (!currentHits.has(other)) {
                     obj.OnCollisionExit(other);
                 }
             });
 
-            // State updaten
             obj.currentCollisions = currentHits;
         });
     }
 
+    /**
+     * Initialisiert alle GameObjects der Welt in der korrekten Render-Reihenfolge.
+     */
     CreateGameObjects() {
         this.CreateBackgrounds();
         this.CreateLevel();
@@ -188,6 +240,9 @@ class World {
         this.CreateUI();
     }
 
+    /**
+     * Erstellt Hintergrund- und Mittelgrund-Kacheln für die gesamte Weltbreite.
+     */
     CreateBackgrounds() {
         for (let index = 0; index < 4; index++) {
             this.gameObjects.push(new Background(this.context, 720 * index, 0, 721, 480, SpriteAssets.BACKGROUNDS.SUNNY_LAND_BASE));
@@ -197,13 +252,23 @@ class World {
         }
     }
 
+    /**
+     * Erstellt den Hauptboden des Levels.
+     */
     CreateLevel() {
         this.gameObjects.push(this.level_1 = new Level(this.context, 0, 400, 2880, 80, SpriteAssets.LEVEL.LEVEL_1));
     }
+
+    /**
+     * Erstellt die Grasschicht über dem Hauptboden.
+     */
     CreateGrass() {
         this.gameObjects.push(this.level_1_grass = new Level(this.context, 0, 386, 2880, 16, SpriteAssets.LEVEL.LEVEL_1_GRASS));
     }
 
+    /**
+     * Erstellt alle dekorativen Props (Bäume, Steine, Pilze) mit zufälliger Positionierung.
+     */
     CreateProps() {
         this.CreateProp(SpriteAssets.PROPS.TREE, 15, 79, 100, 176, 200);
         this.CreateProp(SpriteAssets.PROPS.ROCK_2, 7, 66, 80, 55, 70);
@@ -211,6 +276,15 @@ class World {
         this.CreateProp(SpriteAssets.PROPS.SHROOMS, 30, 16, 20, 15, 20);
     }
 
+    /**
+     * Erstellt eine bestimmte Anzahl an Props eines Typs mit zufälliger Größe und Position.
+     * @param {string} sprite - Der Sprite-Key aus {@link SpriteAssets}.
+     * @param {number} amount - Anzahl der zu erstellenden Props.
+     * @param {number} minX - Minimale Breite des Props in Pixeln.
+     * @param {number} maxX - Maximale Breite des Props in Pixeln.
+     * @param {number} minY - Minimale Höhe des Props in Pixeln.
+     * @param {number} maxY - Maximale Höhe des Props in Pixeln.
+     */
     CreateProp(sprite, amount, minX, maxX, minY, maxY) {
         for (let index = 0; index < amount; index++) {
             let positionX = index * Util.GetRandomRange(200, 300) + Util.GetRandomRange(0, 500);
@@ -221,10 +295,16 @@ class World {
         }
     }
 
+    /**
+     * Erstellt das Zielobjekt (Holzhaus) am Ende des Levels.
+     */
     CreateGoal() {
         this.gameObjects.push(this.woodenHouse = new Goal(this.context, 2760, 302, 112, 98, SpriteAssets.PROPS.WOODEN_HOUSE));
     }
 
+    /**
+     * Erstellt alle einsammelbaren Objekte (Kirschen und Edelsteine) mit zufälliger Positionierung.
+     */
     CreatePickUps() {
         for (let index = 0; index < 10; index++) {
             let cherry = new Cherry(this.context, index * 200 + Util.GetRandomRange(100, 400), 360, 32, 32);
@@ -237,17 +317,23 @@ class World {
         }
     }
 
+    /**
+     * Erstellt alle Gegner: 5 Minions mit zufälliger Position und einen Boss am Levelende.
+     */
     CreateEnemies() {
         for (let index = 0; index < 5; index++) {
             let positionX = index * Util.GetRandomRange(200, 300) + Util.GetRandomRange(0, 500);
             let minion = new Minion(this.context, positionX, 336, 64, 64);
-
             this.gameObjects.push(minion);
         }
 
         this.gameObjects.push(this.boss = new Boss(this.context, 2560, 272, 128, 128));
     }
 
+    /**
+     * Erstellt einen Pool aus 7 Projektilen die vom Spieler wiederverwendet werden.
+     * Inaktive Projektile werden außerhalb des sichtbaren Bereichs geparkt.
+     */
     CreateProjectiles() {
         this.projectilePool = [
             new Projectile(this.context, -500, -500, 32, 32),
@@ -264,15 +350,52 @@ class World {
         })
     }
 
+    /**
+     * Erstellt den Spieler und übergibt ihm den Projektil-Pool.
+     */
     CreatePlayer() {
         this.gameObjects.push(this.player = new Player(this.context, 0, 336, 64, 64, this.projectilePool));
     }
 
+    /**
+     * Erstellt das HUD (Heads-Up-Display) für den Spieler.
+     */
     CreateUI() {
         this.playerHUD = new PlayerHUD(this.context, this.camera, this.player);
     }
 
+    /**
+     * Startet den Bossfight sobald der Spieler nah genug am Boss ist.
+     * Wird nach dem ersten Start nicht erneut ausgelöst.
+     */
     StartBossFight() {
+        if (this.boss.fightStarted) return;
         if (this.player.positionX >= 2420) this.boss.BeginFight();
+    }
+
+    /**
+     * Prüft jeden Frame ob das Spiel gewonnen oder verloren wurde
+     * und löst die entsprechende UI-Funktion aus.
+     */
+    CheckGameState() {
+        if (this.gameEnded) return;
+
+        if (this.player.state === this.player.PlayerState.DEAD) {
+            this.gameEnded = true;
+            showGameOver();
+        }
+        if (this.player.state === this.player.PlayerState.VICTORY) {
+            this.gameEnded = true;
+            showVictory();
+        }
+    }
+
+    /**
+     * Beendet den Game Loop und stoppt alle Audiowiedergaben.
+     * Sollte aufgerufen werden wenn die World-Instanz nicht mehr benötigt wird.
+     */
+    Destroy() {
+        cancelAnimationFrame(this.rafId);
+        AudioManager.StopAll();
     }
 }

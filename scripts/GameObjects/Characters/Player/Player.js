@@ -1,13 +1,45 @@
+/**
+ * @fileoverview Implementiert den vom Spieler kontrollierten Charakter (Foxy).
+ * @module Player
+ */
+
+/**
+ * Der vom Spieler kontrollierte Charakter.
+ * Erweitert {@link Character} um Bewegung, Springen, Schießen, Kollisionsreaktionen
+ * und Zustandsverwaltung. Liest Eingaben vom {@link InputManager}.
+ * @extends Character
+ */
 class Player extends Character {
+
+    /**
+     * Enum der möglichen Zustände des Spielers.
+     * @readonly
+     * @enum {string}
+     */
     PlayerState = Object.freeze({
+        /** Spieler steht still. */
         IDLE: "idle",
+        /** Spieler steht längere Zeit still. */
         LONG_IDLE: "longIdle",
+        /** Spieler bewegt sich. */
         RUN: "run",
+        /** Spieler ist in der Luft. */
         JUMP: "jump",
+        /** Spieler ist tot. */
         DEAD: "dead",
+        /** Spieler hat gewonnen. */
         VICTORY: "victory"
     });
 
+    /**
+     * Erstellt einen neuen Spieler.
+     * @param {CanvasRenderingContext2D} context - Der Canvas-Rendering-Kontext.
+     * @param {number} positionX - X-Startposition in Pixeln.
+     * @param {number} positionY - Y-Startposition in Pixeln.
+     * @param {number} sizeX - Breite in Pixeln.
+     * @param {number} sizeY - Höhe in Pixeln.
+     * @param {Projectile[]} projectilePool - Pool von wiederverwendbaren Projektilen.
+     */
     constructor(context, positionX, positionY, sizeX, sizeY, projectilePool) {
         super(context, positionX, positionY, sizeX, sizeY);
         this.CreateAnimations();
@@ -18,20 +50,33 @@ class Player extends Character {
         this.maxHealth = 5;
         this.health = 5;
         this.state = this.PlayerState.IDLE;
+
+        /** @type {number} Akkumulierte Zeit in Sekunden die der Spieler still steht. */
         this.idleTime = 0;
+
+        /** @type {number} Zeit in Millisekunden bis der Long-Idle-Zustand einsetzt. */
         this.longIdleTime = 10000;
+
         this.velocityY = 0;
         this.isGrounded = true;
         this.speed = 170;
         this.jumpSpeed = 13;
         this.gravity = 30;
+
+        /** @type {number} Abklingzeit zwischen zwei Schüssen in Sekunden. */
         this.shootCooldown = .5;
         this.isShootOnCooldown = false;
         this.currentCooldownTime = 0;
         this.isMovingLeft = false;
         this.moveAmount = 0;
+
+        /** @type {number} Anzahl der eingesammelten Edelsteine. */
         this.gemsCollected = 0;
+
+        /** @type {number} Anzahl der eingesammelten Kirschen. */
         this.cherriesCollected = 0;
+
+        /** @type {Projectile[]} Pool von wiederverwendbaren Projektilen. */
         this.projectilePool = projectilePool;
 
         this.collisionOffset = {
@@ -54,14 +99,16 @@ class Player extends Character {
         this.playerVictoryImg.src = SpriteAssets.PLAYER.VICTORY;
     }
 
+    /**
+     * Reagiert auf den Beginn einer Kollision.
+     * Sammelt Kirschen und Edelsteine ein und verursacht Schaden durch Gegner.
+     * @param {GameObject} collider - Das Objekt mit dem die Kollision begonnen hat.
+     */
     OnCollisionEnter(collider) {
-        if (collider instanceof Cherry) {
-            this.cherriesCollected += 1;
-        }
+        super.OnCollisionEnter(collider);
 
-        if (collider instanceof Gem) {
-            this.gemsCollected += 1;
-        }
+        if (collider instanceof Cherry) this.cherriesCollected += 1;
+        if (collider instanceof Gem) this.gemsCollected += 1;
 
         if (collider instanceof Enemy) {
             if (collider instanceof Minion) this.TakeDamage(.5);
@@ -69,11 +116,16 @@ class Player extends Character {
         }
     }
 
+    /**
+     * Wird jeden Frame aufgerufen.
+     * Verarbeitet Eingaben, Physik, Zustand, Animation und Rendering.
+     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     */
     OnTick(deltaTime) {
         super.OnTick(deltaTime);
         this.moveAmount = 0;
         if (this.positionY >= Level.GROUND) this.isGrounded = true;
-        if (!this.isDead && this.state != this.PlayerState.VICTORY) {
+        if (this.state != this.PlayerState.DEAD && this.state != this.PlayerState.VICTORY) {
             this.MoveRight(deltaTime);
             this.MoveLeft(deltaTime);
             this.Jump(deltaTime);
@@ -85,6 +137,10 @@ class Player extends Character {
         this.DrawImage();
     }
 
+    /**
+     * Bewegt den Spieler nach rechts wenn {@link InputManager.RIGHT} aktiv ist.
+     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     */
     MoveRight(deltaTime) {
         if (InputManager.RIGHT) {
             this.moveAmount = deltaTime * this.speed;
@@ -93,6 +149,11 @@ class Player extends Character {
         }
     }
 
+    /**
+     * Bewegt den Spieler nach links wenn {@link InputManager.LEFT} aktiv ist.
+     * Verhindert dass der Spieler den linken Weltrand verlässt.
+     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     */
     MoveLeft(deltaTime) {
         if (InputManager.LEFT) {
             this.moveAmount = deltaTime * this.speed;
@@ -102,13 +163,23 @@ class Player extends Character {
         }
     }
 
+    /**
+     * Lässt den Spieler springen wenn er am Boden ist und {@link InputManager.JUMP} aktiv ist.
+     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     */
     Jump(deltaTime) {
         if (this.isGrounded && InputManager.JUMP) {
             this.velocityY = this.jumpSpeed;
             this.isGrounded = false;
+            AudioManager.Play(AudioAssets.JUMP, false);
         }
     }
 
+    /**
+     * Wendet Schwerkraft auf den Spieler an solange er nicht am Boden ist.
+     * Begrenzt die Position auf den Boden des Levels.
+     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     */
     ApplyGravity(deltaTime) {
         if (!this.isGrounded) {
             this.velocityY -= deltaTime * this.gravity;
@@ -117,6 +188,12 @@ class Player extends Character {
         }
     }
 
+    /**
+     * Feuert ein Projektil aus dem {@link Player#projectilePool} wenn {@link InputManager.SHOOT}
+     * aktiv ist und kein Cooldown läuft.
+     * Verwaltet den Schuss-Cooldown.
+     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     */
     Shoot(deltaTime) {
         if (InputManager.SHOOT) {
             if (!this.isShootOnCooldown) {
@@ -124,8 +201,7 @@ class Player extends Character {
                     if (!projectile.isBeingShot) {
                         projectile.Shoot((this.positionX + (this.isMovingLeft ? -15 : 25)), this.positionY + 25, this.isMovingLeft ? -1 : 1);
                         return true;
-                    }
-                    else {
+                    } else {
                         return false;
                     }
                 });
@@ -141,32 +217,37 @@ class Player extends Character {
         }
     }
 
+    /**
+     * Bestimmt den aktuellen {@link Player#PlayerState} basierend auf Eingaben,
+     * Bodenkontakt und Idle-Zeit.
+     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     */
     SetPlayerState(deltaTime) {
         if (this.state == this.PlayerState.VICTORY) return;
 
         if (this.isGrounded) {
             if (InputManager.LEFT || InputManager.RIGHT) {
                 this.state = this.PlayerState.RUN;
-            }
-            else {
+            } else {
                 this.idleTime += deltaTime;
                 if (this.idleTime < this.longIdleTime) {
                     this.state = this.PlayerState.IDLE;
-                }
-                else {
+                } else {
                     this.state = this.PlayerState.LONG_IDLE;
                 }
             }
-        }
-        else {
+        } else {
             this.state = this.PlayerState.JUMP;
         }
-        if (this.isDead) {
-            this.state = this.PlayerState.DEAD;
-        }
+        if (this.isDead) this.state = this.PlayerState.DEAD;
         if (this.state != this.PlayerState.IDLE && this.state != this.PlayerState.LONG_IDLE) this.idleTime = 0;
     }
 
+    /**
+     * Setzt den passenden Animations-Frame basierend auf dem aktuellen Zustand.
+     * Beim Springen wird zwischen Aufwärts- und Abwärtsbewegung unterschieden.
+     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     */
     Animate(deltaTime) {
         super.Animate(deltaTime);
         switch (this.state) {
@@ -180,12 +261,7 @@ class Player extends Character {
                 this.SetAnimationFrame(this.run.nextFrame(deltaTime));
                 break;
             case this.PlayerState.JUMP:
-                if (this.velocityY > 0) {
-                    this.SetAnimationFrame(this.jumpImg1);
-                }
-                else {
-                    this.SetAnimationFrame(this.jumpImg2);
-                }
+                this.SetAnimationFrame(this.velocityY > 0 ? this.jumpImg1 : this.jumpImg2);
                 break;
             case this.PlayerState.DEAD:
                 this.SetAnimationFrame(this.playerDeadImg);
@@ -199,6 +275,10 @@ class Player extends Character {
         }
     }
 
+    /**
+     * Zeichnet den Spieler auf den Canvas.
+     * Spiegelt das Sprite horizontal wenn der Spieler sich nach links bewegt.
+     */
     DrawImage() {
         if (this.isMovingLeft) {
             this.context.save();
@@ -215,10 +295,17 @@ class Player extends Character {
         }
     }
 
+    /**
+     * Versetzt den Spieler in den Victory-Zustand.
+     * Wird von {@link Goal} aufgerufen wenn der Spieler das Ziel erreicht.
+     */
     Victory() {
         this.state = this.PlayerState.VICTORY;
     }
 
+    /**
+     * Initialisiert alle {@link Animation} Instanzen für Hurt, Idle, Long-Idle und Run.
+     */
     CreateAnimations() {
         this.hurt = new Animation([
             SpriteAssets.PLAYER.HURT_1,

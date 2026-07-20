@@ -39,6 +39,7 @@
     <script src="scripts/UIObjects/PlayerHUD.js"></script>
 
     <script src="scripts/Engine/World.js"></script>
+    <script src="scripts/Modal.js"></script>
     <script src="scripts/Main.js"></script>
 </head>
 
@@ -50,18 +51,66 @@
     <main>
         <div class="background-layer-one">
             <div class="background-layer-two">
-                <div id="fps"></div>
-                <canvas id="game-canvas" class="game-canvas" width="720" height="480"></canvas>
+
+                <div id="game-controls">
+                    <div id="audio-controls">
+                        <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.1"
+                            oninput="AudioManager.SetVolume(parseFloat(this.value))">
+                        <img id="mute-btn" src="assets/sprites/UI/audio-enabled.png"
+                            onclick="AudioManager.ToggleMute()">
+                        <button onclick="toggleFullscreen()">⛶</button>
+                    </div>
+                </div>
+
+                <div id="canvas-container">
+                    <canvas id="game-canvas" width="720" height="480"></canvas>
+                    <div id="game-overlay">
+                        <div id="game-banner"></div>
+                        <button id="start-btn" onclick="startGame()">▶ Start</button>
+                    </div>
+
+                    <!-- Fullscreen UI -->
+                    <div id="fullscreen-audio">
+                        <input type="range" id="fs-volume-slider" min="0" max="1" step="0.01" value="0.1"
+                            oninput="AudioManager.SetVolume(parseFloat(this.value))">
+                        <img id="fs-mute-btn" src="assets/sprites/UI/audio-enabled.png"
+                            onclick="AudioManager.ToggleMute()">
+                    </div>
+
+                    <div id="fullscreen-controls">
+                        <div class="fs-btn-group">
+                            <button class="fs-btn" id="btn-left" onpointerdown="InputManager.LEFT = true"
+                                onpointerup="InputManager.LEFT = false">◀</button>
+                            <button class="fs-btn" id="btn-right" onpointerdown="InputManager.RIGHT = true"
+                                onpointerup="InputManager.RIGHT = false">▶</button>
+                        </div>
+                        <div class="fs-btn-group">
+                            <button class="fs-btn" id="btn-jump" onpointerdown="InputManager.JUMP = true"
+                                onpointerup="InputManager.JUMP = false">▲</button>
+                            <button class="fs-btn" id="btn-shoot" onpointerdown="InputManager.SHOOT = true"
+                                onpointerup="InputManager.SHOOT = false">⭐</button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
-
     </main>
 
     <footer>
-        <p>Licence links etc.</p>
+        <p onclick="openModal('howToPlay')">How to play</p>
+        <p onclick="openModal('licences')">Licences</p>
+        <p onclick="openModal('imprint')">Imprint</p>
     </footer>
 
-    </canvas>
+    <div id="modal-overlay" onclick="closeModal()">
+        <div id="modal" onclick="event.stopPropagation()">
+            <div id="modal-header">
+                <button id="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div id="modal-text"></div>
+        </div>
+    </div>
 
 </body>
 
