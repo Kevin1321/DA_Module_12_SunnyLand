@@ -54,8 +54,8 @@ class Player extends Character {
         /** @type {number} Akkumulierte Zeit in Sekunden die der Spieler still steht. */
         this.idleTime = 0;
 
-        /** @type {number} Zeit in Millisekunden bis der Long-Idle-Zustand einsetzt. */
-        this.longIdleTime = 10000;
+        /** @type {number} Zeit in Sekunden bis der Long-Idle-Zustand einsetzt. */
+        this.longIdleTime = 5;
 
         this.velocityY = 0;
         this.isGrounded = true;
