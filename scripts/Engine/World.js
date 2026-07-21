@@ -370,7 +370,7 @@ class World {
      */
     StartBossFight() {
         if (this.boss.fightStarted) return;
-        if (this.player.positionX >= 2420) this.boss.BeginFight();
+        if (this.player.positionX >= 2320) this.boss.BeginFight();
     }
 
     /**

@@ -81,7 +81,7 @@ class Boss extends Enemy {
         this.positionX += this.speed * this.xDirection * deltaTime;
         this.positionX = Util.Clamp(this.positionX, World.WORLD_BOUNDS.minX, World.WORLD_BOUNDS.maxX - this.sizeX);
         this.positionY += this.speed * this.yDirection * deltaTime;
-        this.positionY = Util.Clamp(this.positionY, World.WORLD_BOUNDS.minY, World.WORLD_BOUNDS.maxY);
+        this.positionY = Util.Clamp(this.positionY, World.WORLD_BOUNDS.minY, Level.GROUND - this.sizeY + 50);
     }
 
     /**
