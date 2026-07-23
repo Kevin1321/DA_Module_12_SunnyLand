@@ -72,16 +72,35 @@ class Boss extends Enemy {
         this.context.drawImage(this.img, this.positionX, this.positionY, this.sizeX, this.sizeY);
     }
 
+
+
     /**
-     * Bewegt den Boss in die aktuelle X- und Y-Richtung.
-     * Begrenzt die Position auf die Weltgrenzen via {@link Util.Clamp}.
+     * Bewegt den Boss auf den Spieler zu, mit einer Sinuskurve in Y-Richtung.
+     * Begrenzt die Position auf die Weltgrenzen.
      * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
      */
     Move(deltaTime) {
-        this.positionX += this.speed * this.xDirection * deltaTime;
+        // X: auf den Spieler zu (Mitte Boss → Mitte Spieler)
+        const targetX = this.player.positionX + this.player.sizeX / 2 - this.sizeX / 2;
+        const dx = targetX - this.positionX;
+        const distX = Math.abs(dx);
+
+        if (distX > 2) {
+            this.positionX += Math.sign(dx) * Math.min(this.speed * deltaTime, distX);
+        }
         this.positionX = Util.Clamp(this.positionX, World.WORLD_BOUNDS.minX, World.WORLD_BOUNDS.maxX - this.sizeX);
-        this.positionY += this.speed * this.yDirection * deltaTime;
-        this.positionY = Util.Clamp(this.positionY, World.WORLD_BOUNDS.minY, Level.GROUND - this.sizeY + 50);
+
+        // Y: Sinuskurve — schwingt auf und ab während er sich annähert
+        this.sineTime += deltaTime;
+        const AMPLITUDE = 40;  // Höhe der Auf-/Abbewegung in Pixeln
+        const FREQUENCY = 1.2; // Schwingungen pro Sekunde
+        const baseY =  Level.GROUND - this.sizeY * 0.5; // etwas oberhalb des Spielers
+        this.positionY = baseY + Math.sin(this.sineTime * FREQUENCY * Math.PI * 2) * AMPLITUDE;
+        this.positionY = Util.Clamp(
+            this.positionY,
+            World.WORLD_BOUNDS.minY,
+            Level.GROUND - this.sizeY + 50
+        );
     }
 
     /**
@@ -96,24 +115,14 @@ class Boss extends Enemy {
     }
 
     /**
-     * Startet den Bossfight — wird von {@link World#StartBossFight} aufgerufen
-     * sobald der Spieler nah genug ist.
-     * Setzt den Zustand auf MOVE und beginnt mit dem periodischen Richtungswechsel.
+     * Startet den Bossfight.
+     * @param {Player} player - Referenz auf den Spieler für die Verfolgungslogik.
      */
-    BeginFight() {
+    BeginFight(player) {
         this.fightStarted = true;
+        this.player = player;
         this.state = this.EnemyState.MOVE;
-        this.SwitchDirection();
-    }
-
-    /**
-     * Wählt eine neue zufällige Bewegungsrichtung für X und Y
-     * und startet einen Timeout für den nächsten Richtungswechsel.
-     */
-    SwitchDirection() {
-        this.xDirection = Util.GetRandomNormalized();
-        this.yDirection = Util.GetRandomNormalized();
-        this.timeoutId = setTimeout(() => this.SwitchDirection(), this.timeOut);
+        this.sineTime = 0;
     }
 
     /**
@@ -122,7 +131,6 @@ class Boss extends Enemy {
      * und spielt den Todeseffekt ab.
      */
     EnemyDead() {
-        clearTimeout(this.timeoutId);
         this.state = this.EnemyState.DEAD;
         AudioManager.Play(AudioAssets.ENEMY_DEATH);
     }
