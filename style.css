@@ -371,6 +371,31 @@ kbd {
     font-size: 14px;
 }
 
+#touch-toggle-btn {
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: var(--highlight-color);
+    background-color: var(--primary-color);
+    border-radius: 8px;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#touch-toggle-btn:hover {
+    opacity: 0.8;
+}
+
+#fs-touch-toggle-btn {
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+}
+
 @media only screen and (max-width: 720px) {
 
     #game-controls,

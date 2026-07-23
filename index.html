@@ -59,6 +59,7 @@
                         <img id="mute-btn" src="assets/sprites/UI/audio-enabled.png"
                             onclick="AudioManager.ToggleMute()">
                         <button id="fullscreen-btn" onclick="toggleFullscreen()">⛶</button>
+                        <button id="touch-toggle-btn" onclick="toggleTouchControls()">✋</button>
                     </div>
                 </div>
 
@@ -75,6 +76,7 @@
                             oninput="AudioManager.SetVolume(parseFloat(this.value))">
                         <img id="fs-mute-btn" src="assets/sprites/UI/audio-enabled.png"
                             onclick="AudioManager.ToggleMute()">
+                        <button id="touch-toggle-btn" onclick="toggleTouchControls()">✋</button>
                     </div>
 
                     <div id="fullscreen-controls">

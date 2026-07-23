@@ -36,11 +36,15 @@ function main() {
 
     if (window.matchMedia("(pointer: coarse)").matches) {
         document.addEventListener('fullscreenchange', () => {
-            const controls = document.getElementById('fullscreen-controls');
-            controls.style.display = document.fullscreenElement ? 'flex' : 'none';
+            if (!document.fullscreenElement) {
+                document.getElementById('fullscreen-controls').style.display = 'none';
+            }
         });
     }
+    setStartButton();
+}
 
+function setStartButton() {
     document.getElementById('start-btn').style.display = 'block';
     document.getElementById('start-btn').textContent = '▶ Start';
 }
@@ -60,8 +64,8 @@ function startGame() {
         const container = document.getElementById('canvas-container');
         container.requestFullscreen().then(() => {
             screen.orientation.lock("landscape").catch(() => {
-                // Nicht alle Browser/Geräte unterstützen das — silent fail ist okay
             });
+            document.getElementById('fullscreen-controls').style.display = 'flex';
         });
     }
 }
@@ -100,4 +104,14 @@ function toggleFullscreen() {
     } else {
         document.exitFullscreen();
     }
+}
+
+/**
+ * Schaltet die Touch-Steuerung ein und aus.
+ * Wird vom Touch-Toggle-Button in der normalen UI und im Fullscreen aufgerufen.
+ */
+function toggleTouchControls() {
+    const controls = document.getElementById('fullscreen-controls');
+    const isVisible = controls.style.display === 'flex';
+    controls.style.display = isVisible ? 'none' : 'flex';
 }
