@@ -1,23 +1,23 @@
 /**
- * @fileoverview Implementiert den Slimer-Minion als einfachen patrouillierenden Gegner.
+ * @fileoverview Implements the Slimer Minion as a simple patrolling enemy.
  * @module Minion
  */
 
 /**
- * Einfacher Gegner der periodisch zwischen links und rechts patrouilliert.
- * Erweitert {@link Enemy} um Bewegungs- und Animationslogik.
- * Verursacht 0.5 Schaden beim Kontakt mit dem Spieler.
+ * Simple enemy that periodically patrols between left and right.
+ * Extends {@link Enemy} with movement and animation logic.
+ * Deals 0.5 damage when colliding with the player.
  * @extends Enemy
  */
 class Minion extends Enemy {
 
     /**
-     * Erstellt einen neuen Minion.
-     * @param {CanvasRenderingContext2D} context - Der Canvas-Rendering-Kontext.
-     * @param {number} positionX - X-Startposition in Pixeln.
-     * @param {number} positionY - Y-Startposition in Pixeln.
-     * @param {number} sizeX - Breite in Pixeln.
-     * @param {number} sizeY - Höhe in Pixeln.
+     * Creates a new Minion.
+     * @param {CanvasRenderingContext2D} context - The canvas rendering context.
+     * @param {number} positionX - Starting X position in pixels.
+     * @param {number} positionY - Starting Y position in pixels.
+     * @param {number} sizeX - Width in pixels.
+     * @param {number} sizeY - Height in pixels.
      */
     constructor(context, positionX, positionY, sizeX, sizeY) {
         super(context, positionX, positionY, sizeX, sizeY);
@@ -30,7 +30,7 @@ class Minion extends Enemy {
         this.direction = -1;
 
         /**
-         * Zufälliges Intervall in Millisekunden zwischen Richtungswechsel und Idle-Pausen.
+         * Random interval in milliseconds between direction changes and idle pauses.
          * @type {number}
          */
         this.timeOut = Util.GetRandomRange(3000, 6000);
@@ -43,16 +43,16 @@ class Minion extends Enemy {
         }
 
         /**
-         * ID des aktuell laufenden Timeouts — wird für {@link Minion#EnemyDead} benötigt.
+         * ID of the currently running timeout — required for {@link Minion#EnemyDead}.
          * @type {number}
          */
         this.timeoutId = setTimeout(() => this.SwitchDirection(), this.timeOut);
     }
 
     /**
-     * Wird jeden Frame aufgerufen.
-     * Prüft ob der Minion gestorben ist, bewegt ihn und rendert ihn.
-     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     * Called every frame.
+     * Checks if the Minion is dead, moves it and renders it.
+     * @param {number} deltaTime - Time in seconds since the last frame.
      */
     OnTick(deltaTime) {
         super.OnTick(deltaTime);
@@ -63,16 +63,16 @@ class Minion extends Enemy {
     }
 
     /**
-     * Bewegt den Minion in die aktuelle Richtung.
-     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     * Moves the Minion in its current direction.
+     * @param {number} deltaTime - Time in seconds since the last frame.
      */
     Move(deltaTime) {
         this.positionX += this.speed * this.direction * deltaTime;
     }
 
     /**
-     * Setzt den passenden Animations-Frame basierend auf dem aktuellen Zustand.
-     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     * Sets the correct animation frame based on the current state.
+     * @param {number} deltaTime - Time in seconds since the last frame.
      */
     Animate(deltaTime) {
         super.Animate(deltaTime);
@@ -82,8 +82,8 @@ class Minion extends Enemy {
     }
 
     /**
-     * Zeichnet den Minion auf den Canvas.
-     * Spiegelt das Sprite horizontal wenn der Minion sich nach rechts bewegt.
+     * Draws the Minion onto the canvas.
+     * Flips the sprite horizontally when the Minion moves to the right.
      */
     DrawImage() {
         if (this.isMovingRight) {
@@ -102,7 +102,7 @@ class Minion extends Enemy {
     }
 
     /**
-     * Wechselt die Bewegungsrichtung des Minions und startet einen neuen Timeout für {@link Minion#Idle}.
+     * Changes the Minion's movement direction and starts a new timeout for {@link Minion#Idle}.
      */
     SwitchDirection() {
         this.state = this.EnemyState.MOVE;
@@ -119,7 +119,7 @@ class Minion extends Enemy {
     }
 
     /**
-     * Versetzt den Minion in den Idle-Zustand und startet einen Timeout für {@link Minion#SwitchDirection}.
+     * Sets the Minion into the idle state and starts a timeout for {@link Minion#SwitchDirection}.
      */
     Idle() {
         this.state = this.EnemyState.IDLE;
@@ -127,8 +127,8 @@ class Minion extends Enemy {
     }
 
     /**
-     * Wird aufgerufen wenn der Minion stirbt.
-     * Bricht den laufenden Timeout ab, setzt den Zustand auf DEAD und spielt den Todeseffekt ab.
+     * Called when the Minion dies.
+     * Cancels the running timeout, sets the state to DEAD and plays the death effect.
      */
     EnemyDead() {
         clearTimeout(this.timeoutId);
@@ -137,8 +137,8 @@ class Minion extends Enemy {
     }
 
     /**
-     * Callback der am Ende der Todesanimation ausgelöst wird.
-     * Deaktiviert den Minion und verschiebt ihn aus dem sichtbaren Bereich.
+     * Callback triggered when the death animation ends.
+     * Deactivates the Minion and moves it outside the visible area.
      * @type {Function}
      */
     OnEndOfAnimation = () => {
@@ -148,8 +148,8 @@ class Minion extends Enemy {
     }
 
     /**
-     * Initialisiert alle {@link Animation} Instanzen für Idle, Bewegung und Tod.
-     * Registriert den {@link Minion#OnEndOfAnimation} Callback auf der Todesanimation.
+     * Initializes all {@link Animation} instances for idle, movement and death.
+     * Registers the {@link Minion#OnEndOfAnimation} callback on the death animation.
      */
     CreateAnimations() {
         this.idle = new Animation([

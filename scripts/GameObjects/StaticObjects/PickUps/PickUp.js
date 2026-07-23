@@ -1,23 +1,23 @@
 /**
- * @fileoverview Basisklasse für alle einsammelbaren Objekte im Spiel.
+ * @fileoverview Base class for all collectible objects in the game.
  * @module PickUp
  */
 
 /**
- * Basisklasse für alle einsammelbaren Objekte.
- * Erweitert {@link GameObject} um Pickup-Logik und eine Feedback-Animation beim Einsammeln.
- * Wird von {@link Cherry} und {@link Gem} weiter spezialisiert.
+ * Base class for all collectible objects.
+ * Extends {@link GameObject} with pickup logic and a feedback animation when collected.
+ * Further specialized by {@link Cherry} and {@link Gem}.
  * @extends GameObject
  */
 class PickUp extends GameObject {
 
     /**
-     * Erstellt ein neues PickUp.
-     * @param {CanvasRenderingContext2D} context - Der Canvas-Rendering-Kontext.
-     * @param {number} positionX - X-Position in Pixeln.
-     * @param {number} positionY - Y-Position in Pixeln.
-     * @param {number} sizeX - Breite in Pixeln.
-     * @param {number} sizeY - Höhe in Pixeln.
+     * Creates a new PickUp.
+     * @param {CanvasRenderingContext2D} context - The canvas rendering context.
+     * @param {number} positionX - X position in pixels.
+     * @param {number} positionY - Y position in pixels.
+     * @param {number} sizeX - Width in pixels.
+     * @param {number} sizeY - Height in pixels.
      */
     constructor(context, positionX, positionY, sizeX, sizeY) {
         super(context, positionX, positionY, sizeX, sizeY);
@@ -25,15 +25,15 @@ class PickUp extends GameObject {
         this.layer = CollisionLayers.PICKUP;
         this.collidableLayers = [CollisionLayers.PLAYER];
 
-        /** @type {boolean} Gibt an ob das PickUp noch aktiv und einsammelbar ist. */
+        /** @type {boolean} Indicates whether the PickUp is still active and collectible. */
         this.isActive = true;
 
-        /** @type {boolean} Gibt an ob das PickUp bereits eingesammelt wurde. */
+        /** @type {boolean} Indicates whether the PickUp has already been collected. */
         this.hasBeenPickedUp = false;
 
         /**
-         * Feedback-Animation die beim Einsammeln abgespielt wird.
-         * Löst {@link PickUp#OnEndOfAnimation} am Ende aus.
+         * Feedback animation that is played when the PickUp is collected.
+         * Triggers {@link PickUp#OnEndOfAnimation} when finished.
          * @type {Animation}
          */
         this.pickedUp = new Animation([
@@ -47,26 +47,26 @@ class PickUp extends GameObject {
     }
 
     /**
-     * Wird jeden Frame aufgerufen. Delegiert an {@link GameObject#OnTick}.
-     * Muss in Unterklassen überschrieben werden um Animationen und Rendering zu implementieren.
-     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     * Called every frame. Delegates to {@link GameObject#OnTick}.
+     * Must be overridden by subclasses to implement animations and rendering.
+     * @param {number} deltaTime - Time in seconds since the last frame.
      */
     OnTick(deltaTime) {
         super.OnTick(deltaTime);
     }
 
     /**
-     * Wird einmalig aufgerufen wenn der Spieler das PickUp berührt.
-     * Muss in Unterklassen überschrieben werden um die Einsammel-Logik zu implementieren.
-     * @param {GameObject} collider - Das Objekt das das PickUp berührt hat.
+     * Called once when the player touches the PickUp.
+     * Must be overridden by subclasses to implement the collection logic.
+     * @param {GameObject} collider - The object that touched the PickUp.
      */
     OnCollisionEnter(collider) {
         super.OnCollisionEnter(collider);
     }
 
     /**
-     * Callback der am Ende der Feedback-Animation ausgelöst wird.
-     * Deaktiviert das PickUp und verschiebt es aus dem sichtbaren Bereich.
+     * Callback triggered when the feedback animation ends.
+     * Deactivates the PickUp and moves it outside the visible area.
      * @type {Function}
      */
     OnEndOfAnimation = () => {

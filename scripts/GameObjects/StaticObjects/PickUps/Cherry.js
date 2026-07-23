@@ -1,29 +1,29 @@
 /**
- * @fileoverview Implementiert die Kirsche als einsammelbares Objekt.
+ * @fileoverview Implements the cherry as a collectible object.
  * @module Cherry
  */
 
 /**
- * Eine einsammelbare Kirsche.
- * Erweitert {@link PickUp} um eine Idle-Animation und Einsammel-Logik.
- * Beim Einsammeln wird der {@link Player#cherriesCollected} Zähler erhöht.
+ * A collectible cherry.
+ * Extends {@link PickUp} with an idle animation and collection logic.
+ * When collected, the {@link Player#cherriesCollected} counter is increased.
  * @extends PickUp
  */
 class Cherry extends PickUp {
 
     /**
-     * Erstellt eine neue Kirsche.
-     * @param {CanvasRenderingContext2D} context - Der Canvas-Rendering-Kontext.
-     * @param {number} positionX - X-Position in Pixeln.
-     * @param {number} positionY - Y-Position in Pixeln.
-     * @param {number} sizeX - Breite in Pixeln.
-     * @param {number} sizeY - Höhe in Pixeln.
+     * Creates a new cherry.
+     * @param {CanvasRenderingContext2D} context - The canvas rendering context.
+     * @param {number} positionX - X position in pixels.
+     * @param {number} positionY - Y position in pixels.
+     * @param {number} sizeX - Width in pixels.
+     * @param {number} sizeY - Height in pixels.
      */
     constructor(context, positionX, positionY, sizeX, sizeY) {
         super(context, positionX, positionY, sizeX, sizeY);
 
         /**
-         * Idle-Animation der Kirsche.
+         * Idle animation of the cherry.
          * @type {Animation}
          */
         this.idle = new Animation([
@@ -38,10 +38,10 @@ class Cherry extends PickUp {
     }
 
     /**
-     * Wird jeden Frame aufgerufen.
-     * Spielt die Idle- oder Pickup-Feedback-Animation ab und rendert die Kirsche.
-     * Tut nichts wenn die Kirsche nicht mehr aktiv ist.
-     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     * Called every frame.
+     * Plays either the idle animation or the pickup feedback animation and renders the cherry.
+     * Does nothing if the cherry is no longer active.
+     * @param {number} deltaTime - Time in seconds since the last frame.
      */
     OnTick(deltaTime) {
         super.OnTick(deltaTime);
@@ -58,10 +58,10 @@ class Cherry extends PickUp {
     }
 
     /**
-     * Wird aufgerufen wenn der Spieler die Kirsche berührt.
-     * Markiert die Kirsche als eingesammelt und spielt den Item-Sound ab.
-     * Der {@link Player#cherriesCollected} Zähler wird in {@link Player#OnCollisionEnter} erhöht.
-     * @param {GameObject} collider - Das Objekt das die Kirsche berührt hat.
+     * Called when the player touches the cherry.
+     * Marks the cherry as collected and plays the item sound.
+     * The {@link Player#cherriesCollected} counter is increased in {@link Player#OnCollisionEnter}.
+     * @param {GameObject} collider - The object that touched the cherry.
      */
     OnCollisionEnter(collider) {
         super.OnCollisionEnter(collider);

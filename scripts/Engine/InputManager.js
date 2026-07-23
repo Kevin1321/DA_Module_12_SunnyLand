@@ -1,81 +1,81 @@
 /**
- * @fileoverview Verwaltet alle Tastatureingaben des Spiels als statische Flags.
+ * @fileoverview Manages all keyboard inputs of the game as static flags.
  * @module InputManager
  */
 
 /**
- * Statische Klasse zur zentralen Verwaltung von Tastatureingaben.
- * Registriert keydown/keyup Event-Listener und speichert den aktuellen
- * Zustand jeder Eingabe als boolean Flag.
- * Wird von {@link Player} jeden Frame ausgelesen.
+ * Static class for centralized keyboard input management.
+ * Registers keydown/keyup event listeners and stores the current
+ * state of each input as a boolean flag.
+ * Read by {@link Player} every frame.
  */
 class InputManager {
 
     /**
-     * Gibt an ob der InputManager bereits initialisiert wurde.
-     * Verhindert doppelte Event-Listener-Registrierung.
+     * Indicates whether the InputManager has already been initialized.
+     * Prevents duplicate event listener registration.
      * @static
      * @type {boolean}
      */
     static isInitialized = false;
 
     /**
-     * Gibt an ob die Aufwärts-Taste (W) gedrückt ist.
+     * Indicates whether the up key (W) is pressed.
      * @static
      * @type {boolean}
      */
     static UP = false;
 
     /**
-     * Gibt an ob die Abwärts-Taste (S) gedrückt ist.
+     * Indicates whether the down key (S) is pressed.
      * @static
      * @type {boolean}
      */
     static DOWN = false;
 
     /**
-     * Gibt an ob die Links-Taste (A) gedrückt ist.
+     * Indicates whether the left key (A) is pressed.
      * @static
      * @type {boolean}
      */
     static LEFT = false;
 
     /**
-     * Gibt an ob die Rechts-Taste (D) gedrückt ist.
+     * Indicates whether the right key (D) is pressed.
      * @static
      * @type {boolean}
      */
     static RIGHT = false;
 
     /**
-     * Gibt an ob die Sprungtaste (Space) gedrückt ist.
+     * Indicates whether the jump key (Space) is pressed.
      * @static
      * @type {boolean}
      */
     static JUMP = false;
 
     /**
-     * Gibt an ob die Schießtaste (Q) gedrückt ist.
+     * Indicates whether the shoot key (Q) is pressed.
      * @static
      * @type {boolean}
      */
     static SHOOT = false;
 
     /**
-     * Initialisiert den InputManager und registriert die Event-Listener.
-     * Kann mehrfach aufgerufen werden — registriert die Listener nur einmal.
+     * Initializes the InputManager and registers the event listeners.
+     * Can be called multiple times — listeners are only registered once.
      * @static
      */
     static Initialize() {
         if (this.isInitialized) return;
         this.RegisterKeyDown();
-        this.RegsiterKeyUp();
+        this.RegisterKeyUp();
         this.isInitialized = true;
     }
 
     /**
-     * Registriert den keydown Event-Listener und setzt die entsprechenden Flags auf `true`.
-     * Ignoriert gehaltene Tasten (event.repeat).
+     * Registers the keydown event listener and sets the corresponding flags to `true`.
+     * Ignores held keys (event.repeat).
      * @static
      */
     static RegisterKeyDown() {
@@ -99,10 +99,10 @@ class InputManager {
     }
 
     /**
-     * Registriert den keyup Event-Listener und setzt die entsprechenden Flags auf `false`.
+     * Registers the keyup event listener and sets the corresponding flags to `false`.
      * @static
      */
-    static RegsiterKeyUp() {
+    static RegisterKeyUp() {
         window.addEventListener("keyup", (event) => {
             switch (event.code) {
                 case "KeyW": InputManager.UP = false;

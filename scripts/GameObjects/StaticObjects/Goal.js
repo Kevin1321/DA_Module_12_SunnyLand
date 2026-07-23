@@ -1,24 +1,24 @@
 /**
- * @fileoverview Implementiert das Zielobjekt am Ende des Levels.
+ * @fileoverview Implements the goal object at the end of the level.
  * @module Goal
  */
 
 /**
- * Das Zielobjekt (Holzhaus) am Ende des Levels.
- * Erweitert {@link GameObject} um Kollisionslogik die den Sieg des Spielers auslöst.
- * Wird von {@link World#CreateGoal} erstellt und von {@link World#StartBossFight} indirekt koordiniert.
+ * The goal object (wooden house) at the end of the level.
+ * Extends {@link GameObject} with collision logic that triggers the player's victory.
+ * Created by {@link World#CreateGoal} and indirectly coordinated by {@link World#StartBossFight}.
  * @extends GameObject
  */
 class Goal extends GameObject {
 
     /**
-     * Erstellt ein neues Zielobjekt.
-     * @param {CanvasRenderingContext2D} context - Der Canvas-Rendering-Kontext.
-     * @param {number} positionX - X-Position in Pixeln.
-     * @param {number} positionY - Y-Position in Pixeln.
-     * @param {number} sizeX - Breite in Pixeln.
-     * @param {number} sizeY - Höhe in Pixeln.
-     * @param {string} imgSrc - Pfad zum Sprite aus {@link SpriteAssets}.
+     * Creates a new goal object.
+     * @param {CanvasRenderingContext2D} context - The canvas rendering context.
+     * @param {number} positionX - X position in pixels.
+     * @param {number} positionY - Y position in pixels.
+     * @param {number} sizeX - Width in pixels.
+     * @param {number} sizeY - Height in pixels.
+     * @param {string} imgSrc - Path to the sprite from {@link SpriteAssets}.
      */
     constructor(context, positionX, positionY, sizeX, sizeY, imgSrc) {
         super(context, positionX, positionY, sizeX, sizeY);
@@ -30,8 +30,8 @@ class Goal extends GameObject {
     }
 
     /**
-     * Wird jeden Frame aufgerufen und rendert das Zielobjekt auf den Canvas.
-     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     * Called every frame and renders the goal object onto the canvas.
+     * @param {number} deltaTime - Time in seconds since the last frame.
      */
     OnTick(deltaTime) {
         super.OnTick(deltaTime);
@@ -39,9 +39,9 @@ class Goal extends GameObject {
     }
 
     /**
-     * Wird aufgerufen wenn der Spieler das Zielobjekt berührt.
-     * Versetzt den Spieler in den Victory-Zustand via {@link Player#Victory}.
-     * @param {GameObject} collider - Das Objekt das das Ziel berührt hat.
+     * Called when the player touches the goal object.
+     * Sets the player into the Victory state via {@link Player#Victory}.
+     * @param {GameObject} collider - The object that touched the goal.
      */
     OnCollisionEnter(collider) {
         super.OnCollision(collider);

@@ -1,24 +1,24 @@
 /**
- * @fileoverview Implementiert die dekorative Grasschicht über dem Levelboden.
+ * @fileoverview Implements the decorative grass layer above the level ground.
  * @module Grass
  */
 
 /**
- * Eine statische Grasschicht die dekorativ über dem Hauptboden gerendert wird.
- * Erweitert {@link GameObject} um einfaches Rendering ohne Kollisionslogik.
- * Wird von {@link World#CreateGrass} als durchgehende Kachel über die gesamte Weltbreite erstellt.
+ * A static grass layer that is rendered decoratively above the main ground.
+ * Extends {@link GameObject} with simple rendering without collision logic.
+ * Created by {@link World#CreateGrass} as a continuous tile across the entire world width.
  * @extends GameObject
  */
 class Grass extends GameObject {
 
     /**
-     * Erstellt eine neue Grass-Kachel.
-     * @param {CanvasRenderingContext2D} context - Der Canvas-Rendering-Kontext.
-     * @param {number} positionX - X-Position in Pixeln.
-     * @param {number} positionY - Y-Position in Pixeln.
-     * @param {number} sizeX - Breite in Pixeln.
-     * @param {number} sizeY - Höhe in Pixeln.
-     * @param {string} imgSrc - Pfad zum Gras-Sprite aus {@link SpriteAssets.LEVEL}.
+     * Creates a new grass tile.
+     * @param {CanvasRenderingContext2D} context - The canvas rendering context.
+     * @param {number} positionX - X position in pixels.
+     * @param {number} positionY - Y position in pixels.
+     * @param {number} sizeX - Width in pixels.
+     * @param {number} sizeY - Height in pixels.
+     * @param {string} imgSrc - Path to the grass sprite from {@link SpriteAssets.LEVEL}.
      */
     constructor(context, positionX, positionY, sizeX, sizeY, imgSrc) {
         super(context, positionX, positionY, sizeX, sizeY);
@@ -26,8 +26,8 @@ class Grass extends GameObject {
     }
 
     /**
-     * Wird jeden Frame aufgerufen und rendert die Grass-Kachel auf den Canvas.
-     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     * Called every frame and renders the grass tile onto the canvas.
+     * @param {number} deltaTime - Time in seconds since the last frame.
      */
     OnTick(deltaTime) {
         super.OnTick(deltaTime);

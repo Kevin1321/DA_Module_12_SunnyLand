@@ -1,19 +1,19 @@
 /**
- * @fileoverview Verwaltet frame-basierte Sprite-Animationen und dispatcht Events am Animationsende.
+ * @fileoverview Manages frame-based sprite animations and dispatches events when an animation ends.
  * @module Animation
  */
 
 /**
- * Repräsentiert eine frame-basierte Sprite-Animation.
- * Erbt von {@link EventTarget} um Events wie "EndOfAnimation" dispatchen zu können.
+ * Represents a frame-based sprite animation.
+ * Extends {@link EventTarget} to dispatch events such as "EndOfAnimation".
  * @extends EventTarget
  */
 class Animation extends EventTarget {
 
     /**
-     * Erstellt eine neue Animation aus einem Array von Bildpfaden.
-     * @param {string[]} pathArray - Array von Pfaden zu den Animations-Frames.
-     * @param {number} [fps=10] - Frames pro Sekunde der Animation.
+     * Creates a new animation from an array of image paths.
+     * @param {string[]} pathArray - Array of paths to the animation frames.
+     * @param {number} [fps=10] - Frames per second of the animation.
      */
     constructor(pathArray, fps = 10) {
         super();
@@ -29,10 +29,10 @@ class Animation extends EventTarget {
     }
 
     /**
-     * Berechnet anhand der vergangenen Zeit den aktuellen Animations-Frame.
-     * Dispatcht ein "EndOfAnimation" Event wenn der letzte Frame erreicht wurde.
-     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
-     * @returns {HTMLImageElement} Das aktuelle Frame-Bild.
+     * Calculates the current animation frame based on the elapsed time.
+     * Dispatches an "EndOfAnimation" event when the last frame is reached.
+     * @param {number} deltaTime - Time in seconds since the previous frame.
+     * @returns {HTMLImageElement} The current animation frame image.
      */
     nextFrame(deltaTime) {
         this.timer += deltaTime;

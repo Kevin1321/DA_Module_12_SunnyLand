@@ -1,23 +1,23 @@
 /**
- * @fileoverview Einstiegspunkt des Spiels. Verwaltet den globalen Spielzustand
- * und steuert die UI für Start, Game Over und Victory.
+ * @fileoverview Entry point of the game. Manages the global game state
+ * and controls the UI for start, game over and victory screens.
  * @module Main
  */
 
 /**
- * Referenz auf das Canvas-Element auf dem das Spiel gerendert wird.
+ * Reference to the canvas element on which the game is rendered.
  * @type {HTMLCanvasElement}
  */
 let canvas;
 
 /**
- * Aktuelle Instanz der Spielwelt.
- * Wird bei jedem Neustart durch eine neue {@link World} Instanz ersetzt.
+ * Current instance of the game world.
+ * Replaced by a new {@link World} instance on every restart.
  * @type {World}
  */
 let world;
 
-// Verhindert dass die Leertaste die Seite scrollt
+// Prevents the space key from scrolling the page
 window.addEventListener("keydown", (event) => {
     if (event.code === "Space") {
         event.preventDefault();
@@ -25,8 +25,8 @@ window.addEventListener("keydown", (event) => {
 });
 
 /**
- * Einstiegspunkt des Spiels — wird durch `onload` im Body-Tag aufgerufen.
- * Initialisiert den {@link AudioManager} und {@link InputManager} und zeigt den Start-Button.
+ * Entry point of the game — called through `onload` in the body tag.
+ * Initializes the {@link AudioManager} and {@link InputManager} and displays the start button.
  */
 function main() {
     AudioManager.Init();
@@ -50,9 +50,9 @@ function setStartButton() {
 }
 
 /**
- * Startet oder startet das Spiel neu.
- * Zerstört die bestehende {@link World} Instanz falls vorhanden und erstellt eine neue.
- * Wird vom Start/Restart-Button aufgerufen.
+ * Starts or restarts the game.
+ * Destroys the existing {@link World} instance if one exists and creates a new one.
+ * Called by the start/restart button.
  */
 function startGame() {
     document.getElementById('start-btn').style.display = 'none';
@@ -71,8 +71,8 @@ function startGame() {
 }
 
 /**
- * Zeigt den Game-Over-Bildschirm an.
- * Wird von {@link World#CheckGameState} aufgerufen wenn der Spieler stirbt.
+ * Displays the game over screen.
+ * Called by {@link World#CheckGameState} when the player dies.
  */
 function showGameOver() {
     document.getElementById('game-banner').textContent = '💀 Game Over';
@@ -82,8 +82,8 @@ function showGameOver() {
 }
 
 /**
- * Zeigt den Victory-Bildschirm an.
- * Wird von {@link World#CheckGameState} aufgerufen wenn der Spieler gewinnt.
+ * Displays the victory screen.
+ * Called by {@link World#CheckGameState} when the player wins.
  */
 function showVictory() {
     document.getElementById('game-banner').textContent = '🏆 Victory!';
@@ -93,9 +93,9 @@ function showVictory() {
 }
 
 /**
- * Schaltet den Vollbildmodus für den Canvas-Container um.
- * Verwendet die native Fullscreen API des Browsers.
- * Wird vom Fullscreen-Button in der UI aufgerufen.
+ * Toggles fullscreen mode for the canvas container.
+ * Uses the browser's native Fullscreen API.
+ * Called by the fullscreen button in the UI.
  */
 function toggleFullscreen() {
     const container = document.getElementById('canvas-container');
@@ -107,8 +107,8 @@ function toggleFullscreen() {
 }
 
 /**
- * Schaltet die Touch-Steuerung ein und aus.
- * Wird vom Touch-Toggle-Button in der normalen UI und im Fullscreen aufgerufen.
+ * Toggles touch controls on and off.
+ * Called by the touch toggle button in the normal UI and fullscreen mode.
  */
 function toggleTouchControls() {
     const controls = document.getElementById('fullscreen-controls');

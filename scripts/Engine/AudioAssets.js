@@ -1,52 +1,53 @@
 /**
- * @fileoverview Enthält alle Audio-Assets des Spiels als statische Eigenschaften.
+ * @fileoverview Contains all game audio assets as static properties.
  * @module AudioAssets
  */
 
 /**
- * Zentrale Sammlung aller Audio-Assets.
- * Alle Sounds werden beim Laden der Klasse direkt als {@link HTMLAudioElement} initialisiert.
+ * Central collection of all audio assets.
+ * All sounds are initialized as {@link HTMLAudioElement} instances when the class is loaded.
  */
 class AudioAssets {
 
     /**
-     * Hintergrundmusik des Spiels.
+     * Background music of the game.
      * @static
      * @type {HTMLAudioElement}
      */
     static BACKGROUND_MUSIC = new Audio("assets/audio/the_valley.ogg");
 
     /**
-     * Sound-Effekt für den Sprung des Spielers.
+     * Sound effect played when the player jumps.
      * @static
      * @type {HTMLAudioElement}
      */
     static JUMP = new Audio("assets/audio/effects/jump.ogg");
 
     /**
-     * Sound-Effekt beim Einsammeln eines Items.
+     * Sound effect played when the player collects an item.
      * @static
      * @type {HTMLAudioElement}
      */
     static ITEM = new Audio("assets/audio/effects/item.ogg");
 
     /**
-     * Sound-Effekt wenn der Spieler Schaden nimmt.
+     * Sound effect played when the player takes damage.
      * @static
      * @type {HTMLAudioElement}
      */
     static HURT = new Audio("assets/audio/effects/hurt.ogg");
 
     /**
-     * Sound-Effekt beim Tod eines Gegners.
+     * Sound effect played when an enemy dies.
      * @static
      * @type {HTMLAudioElement}
      */
     static ENEMY_DEATH = new Audio("assets/audio/effects/enemy-death.ogg");
 
     /**
-     * Array aller Sound-Assets — wird vom {@link AudioManager} für globale Operationen
-     * wie Stummschalten oder Lautstärkeregelung verwendet.
+     * Array containing all audio assets.
+     * Used by the {@link AudioManager} for global operations such as muting
+     * or adjusting the volume.
      * @static
      * @type {HTMLAudioElement[]}
      */

@@ -1,25 +1,25 @@
 /**
- * @fileoverview Implementiert dekorative Props in der Spielwelt.
+ * @fileoverview Implements decorative props in the game world.
  * @module Prop
  */
 
 /**
- * Ein dekoratives Prop ohne Kollisionslogik.
- * Erweitert {@link GameObject} um einfaches Rendering von Umgebungsobjekten
- * wie Bäumen, Steinen und Pilzen.
- * Wird von {@link World#CreateProp} mit zufälliger Position und Größe erstellt.
+ * A decorative prop without collision logic.
+ * Extends {@link GameObject} with simple rendering of environmental objects
+ * such as trees, rocks and mushrooms.
+ * Created by {@link World#CreateProp} with random position and size.
  * @extends GameObject
  */
 class Prop extends GameObject {
 
     /**
-     * Erstellt ein neues Prop.
-     * @param {CanvasRenderingContext2D} context - Der Canvas-Rendering-Kontext.
-     * @param {number} positionX - X-Position in Pixeln.
-     * @param {number} positionY - Y-Position in Pixeln.
-     * @param {number} sizeX - Breite in Pixeln.
-     * @param {number} sizeY - Höhe in Pixeln.
-     * @param {string} imgSrc - Pfad zum Prop-Sprite aus {@link SpriteAssets.PROPS}.
+     * Creates a new prop.
+     * @param {CanvasRenderingContext2D} context - The canvas rendering context.
+     * @param {number} positionX - X position in pixels.
+     * @param {number} positionY - Y position in pixels.
+     * @param {number} sizeX - Width in pixels.
+     * @param {number} sizeY - Height in pixels.
+     * @param {string} imgSrc - Path to the prop sprite from {@link SpriteAssets.PROPS}.
      */
     constructor(context, positionX, positionY, sizeX, sizeY, imgSrc) {
         super(context, positionX, positionY, sizeX, sizeY);
@@ -27,8 +27,8 @@ class Prop extends GameObject {
     }
 
     /**
-     * Wird jeden Frame aufgerufen und rendert das Prop auf den Canvas.
-     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     * Called every frame and renders the prop onto the canvas.
+     * @param {number} deltaTime - Time in seconds since the last frame.
      */
     OnTick(deltaTime) {
         super.OnTick(deltaTime);

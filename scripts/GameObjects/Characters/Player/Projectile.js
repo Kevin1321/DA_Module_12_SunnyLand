@@ -1,23 +1,23 @@
 /**
- * @fileoverview Implementiert Projektile die der Spieler abfeuern kann.
+ * @fileoverview Implements projectiles that can be fired by the player.
  * @module Projectile
  */
 
 /**
- * Ein Projektil das vom Spieler abgefeuert wird und Gegnern Schaden zufügt.
- * Wird als Pool in {@link World} verwaltet und per {@link Projectile#Shoot} aktiviert.
- * Inaktive Projektile werden außerhalb des sichtbaren Bereichs geparkt.
+ * A projectile fired by the player that deals damage to enemies.
+ * Managed as a pool in {@link World} and activated via {@link Projectile#Shoot}.
+ * Inactive projectiles are parked outside the visible area.
  * @extends GameObject
  */
 class Projectile extends GameObject {
 
     /**
-     * Erstellt ein neues Projektil.
-     * @param {CanvasRenderingContext2D} context - Der Canvas-Rendering-Kontext.
-     * @param {number} positionX - X-Startposition in Pixeln.
-     * @param {number} positionY - Y-Startposition in Pixeln.
-     * @param {number} sizeX - Breite in Pixeln.
-     * @param {number} sizeY - Höhe in Pixeln.
+     * Creates a new projectile.
+     * @param {CanvasRenderingContext2D} context - The canvas rendering context.
+     * @param {number} positionX - Starting X position in pixels.
+     * @param {number} positionY - Starting Y position in pixels.
+     * @param {number} sizeX - Width in pixels.
+     * @param {number} sizeY - Height in pixels.
      */
     constructor(context, positionX, positionY, sizeX, sizeY) {
         super(context, positionX, positionY, sizeX, sizeY);
@@ -27,27 +27,27 @@ class Projectile extends GameObject {
 
         this.img.src = SpriteAssets.PROJECTILS.STAR;
 
-        /** @type {number} Maximale Lebensdauer des Projektils in Sekunden. */
+        /** @type {number} Maximum lifetime of the projectile in seconds. */
         this.lifetime = 3;
 
-        /** @type {number} Bewegungsgeschwindigkeit in Pixeln pro Sekunde. */
+        /** @type {number} Movement speed in pixels per second. */
         this.projectileSpeed = 200;
 
-        /** @type {number} Akkumulierte Zeit seit dem Abfeuern in Sekunden. */
+        /** @type {number} Accumulated time since the projectile was fired in seconds. */
         this.currentTimeAlife = 0;
 
-        /** @type {boolean} Gibt an ob das Projektil gerade aktiv fliegt. */
+        /** @type {boolean} Indicates whether the projectile is currently active and flying. */
         this.isBeingShot = false;
 
-        /** @type {number} Bewegungsrichtung: 1 = rechts, -1 = links. */
+        /** @type {number} Movement direction: 1 = right, -1 = left. */
         this.direction = 1;
     }
 
     /**
-     * Wird jeden Frame aufgerufen.
-     * Bewegt das Projektil und prüft ob die Lebensdauer abgelaufen ist.
-     * Rendert das Projektil nur wenn es aktiv ist.
-     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     * Called every frame.
+     * Moves the projectile and checks whether its lifetime has expired.
+     * Renders the projectile only while it is active.
+     * @param {number} deltaTime - Time in seconds since the last frame.
      */
     OnTick(deltaTime) {
         super.OnTick(deltaTime);
@@ -63,9 +63,9 @@ class Projectile extends GameObject {
     }
 
     /**
-     * Wird aufgerufen wenn das Projektil einen Gegner trifft.
-     * Fügt dem Gegner 1 Schadenspunkt zu und setzt das Projektil zurück.
-     * @param {GameObject} collider - Das getroffene Objekt.
+     * Called when the projectile hits an enemy.
+     * Deals 1 damage to the enemy and resets the projectile.
+     * @param {GameObject} collider - The object that was hit.
      */
     OnCollisionEnter(collider) {
         super.OnCollisionEnter(collider);
@@ -76,11 +76,11 @@ class Projectile extends GameObject {
     }
 
     /**
-     * Aktiviert das Projektil und setzt seine Startposition und Richtung.
-     * Wird vom {@link Player} aufgerufen.
-     * @param {number} startPositionX - X-Startposition in Pixeln.
-     * @param {number} startPositionY - Y-Startposition in Pixeln.
-     * @param {number} direction - Flugrichtung: 1 = rechts, -1 = links.
+     * Activates the projectile and sets its starting position and direction.
+     * Called by the {@link Player}.
+     * @param {number} startPositionX - Starting X position in pixels.
+     * @param {number} startPositionY - Starting Y position in pixels.
+     * @param {number} direction - Flight direction: 1 = right, -1 = left.
      */
     Shoot(startPositionX, startPositionY, direction) {
         this.isBeingShot = true;
@@ -90,8 +90,8 @@ class Projectile extends GameObject {
     }
 
     /**
-     * Setzt das Projektil zurück und parkt es außerhalb des sichtbaren Bereichs.
-     * Wird aufgerufen wenn die Lebensdauer abläuft oder ein Gegner getroffen wird.
+     * Resets the projectile and parks it outside the visible area.
+     * Called when the lifetime expires or an enemy is hit.
      */
     ResetProjectile() {
         this.currentTimeAlife = 0;

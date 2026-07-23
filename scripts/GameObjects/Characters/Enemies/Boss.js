@@ -1,23 +1,23 @@
 /**
- * @fileoverview Implementiert den Vulture-Boss als fliegenden Endgegner.
+ * @fileoverview Implements the Vulture boss as a flying final enemy.
  * @module Boss
  */
 
 /**
- * Der Endgegner des Spiels — ein fliegender Vulture der sich zufällig durch die Welt bewegt.
- * Erweitert {@link Enemy} um Flugbewegung in X- und Y-Richtung sowie einen verzögerten Kampfstart.
- * Verursacht 1 Schaden beim Kontakt mit dem Spieler und hat 5 Lebenspunkte.
+ * The final boss of the game — a flying Vulture that moves randomly through the world.
+ * Extends {@link Enemy} with flying movement on the X and Y axes as well as a delayed fight start.
+ * Deals 1 damage when colliding with the player and has 5 health points.
  * @extends Enemy
  */
 class Boss extends Enemy {
 
     /**
-     * Erstellt einen neuen Boss.
-     * @param {CanvasRenderingContext2D} context - Der Canvas-Rendering-Kontext.
-     * @param {number} positionX - X-Startposition in Pixeln.
-     * @param {number} positionY - Y-Startposition in Pixeln.
-     * @param {number} sizeX - Breite in Pixeln.
-     * @param {number} sizeY - Höhe in Pixeln.
+     * Creates a new Boss.
+     * @param {CanvasRenderingContext2D} context - The canvas rendering context.
+     * @param {number} positionX - Starting X position in pixels.
+     * @param {number} positionY - Starting Y position in pixels.
+     * @param {number} sizeX - Width in pixels.
+     * @param {number} sizeY - Height in pixels.
      */
     constructor(context, positionX, positionY, sizeX, sizeY) {
         super(context, positionX, positionY, sizeX, sizeY);
@@ -27,19 +27,19 @@ class Boss extends Enemy {
         this.speed = 50;
 
         /**
-         * Aktuelle Bewegungsrichtung auf der X-Achse (-1, 0 oder 1).
+         * Current movement direction on the X axis (-1, 0 or 1).
          * @type {number}
          */
         this.xDirection = -1;
 
         /**
-         * Aktuelle Bewegungsrichtung auf der Y-Achse (-1, 0 oder 1).
+         * Current movement direction on the Y axis (-1, 0 or 1).
          * @type {number}
          */
         this.yDirection = -1;
 
         /**
-         * Intervall in Millisekunden zwischen Richtungswechseln.
+         * Interval in milliseconds between direction changes.
          * @type {number}
          */
         this.timeOut = 2000;
@@ -52,17 +52,17 @@ class Boss extends Enemy {
         }
 
         /**
-         * Gibt an ob der Kampf bereits gestartet wurde.
-         * Verhindert einen erneuten Start durch {@link World#StartBossFight}.
+         * Indicates whether the fight has already started.
+         * Prevents another start by {@link World#StartBossFight}.
          * @type {boolean}
          */
         this.fightStarted = false;
     }
 
     /**
-     * Wird jeden Frame aufgerufen.
-     * Prüft ob der Boss gestorben ist, bewegt ihn und rendert ihn.
-     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     * Called every frame.
+     * Checks if the boss is dead, moves it and renders it.
+     * @param {number} deltaTime - Time in seconds since the last frame.
      */
     OnTick(deltaTime) {
         super.OnTick(deltaTime);
@@ -72,15 +72,13 @@ class Boss extends Enemy {
         this.context.drawImage(this.img, this.positionX, this.positionY, this.sizeX, this.sizeY);
     }
 
-
-
     /**
-     * Bewegt den Boss auf den Spieler zu, mit einer Sinuskurve in Y-Richtung.
-     * Begrenzt die Position auf die Weltgrenzen.
-     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     * Moves the boss towards the player with a sine wave movement on the Y axis.
+     * Limits the position to the world boundaries.
+     * @param {number} deltaTime - Time in seconds since the last frame.
      */
     Move(deltaTime) {
-        // X: auf den Spieler zu (Mitte Boss → Mitte Spieler)
+        // X: towards the player (center boss → center player)
         const targetX = this.player.positionX + this.player.sizeX / 2 - this.sizeX / 2;
         const dx = targetX - this.positionX;
         const distX = Math.abs(dx);
@@ -90,11 +88,11 @@ class Boss extends Enemy {
         }
         this.positionX = Util.Clamp(this.positionX, World.WORLD_BOUNDS.minX, World.WORLD_BOUNDS.maxX - this.sizeX);
 
-        // Y: Sinuskurve — schwingt auf und ab während er sich annähert
+        // Y: sine wave — moves up and down while approaching
         this.sineTime += deltaTime;
-        const AMPLITUDE = 40;  // Höhe der Auf-/Abbewegung in Pixeln
-        const FREQUENCY = 1.2; // Schwingungen pro Sekunde
-        const baseY =  Level.GROUND - this.sizeY * 0.5; // etwas oberhalb des Spielers
+        const AMPLITUDE = 40;  // Height of the vertical movement in pixels
+        const FREQUENCY = 1.2; // Oscillations per second
+        const baseY = Level.GROUND - this.sizeY * 0.5; // slightly above the player
         this.positionY = baseY + Math.sin(this.sineTime * FREQUENCY * Math.PI * 2) * AMPLITUDE;
         this.positionY = Util.Clamp(
             this.positionY,
@@ -104,8 +102,8 @@ class Boss extends Enemy {
     }
 
     /**
-     * Setzt den passenden Animations-Frame basierend auf dem aktuellen Zustand.
-     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     * Sets the correct animation frame based on the current state.
+     * @param {number} deltaTime - Time in seconds since the last frame.
      */
     Animate(deltaTime) {
         super.Animate(deltaTime);
@@ -115,8 +113,8 @@ class Boss extends Enemy {
     }
 
     /**
-     * Startet den Bossfight.
-     * @param {Player} player - Referenz auf den Spieler für die Verfolgungslogik.
+     * Starts the boss fight.
+     * @param {Player} player - Reference to the player for the tracking logic.
      */
     BeginFight(player) {
         this.fightStarted = true;
@@ -126,9 +124,9 @@ class Boss extends Enemy {
     }
 
     /**
-     * Wird aufgerufen wenn der Boss stirbt.
-     * Bricht den laufenden Richtungs-Timeout ab, setzt den Zustand auf DEAD
-     * und spielt den Todeseffekt ab.
+     * Called when the boss dies.
+     * Cancels the running direction timeout, sets the state to DEAD
+     * and plays the death effect.
      */
     EnemyDead() {
         this.state = this.EnemyState.DEAD;
@@ -136,8 +134,8 @@ class Boss extends Enemy {
     }
 
     /**
-     * Callback der am Ende der Todesanimation ausgelöst wird.
-     * Deaktiviert den Boss und verschiebt ihn aus dem sichtbaren Bereich.
+     * Callback triggered when the death animation ends.
+     * Deactivates the boss and moves it outside the visible area.
      * @type {Function}
      */
     OnEndOfAnimation = () => {
@@ -147,8 +145,8 @@ class Boss extends Enemy {
     }
 
     /**
-     * Initialisiert alle {@link Animation} Instanzen für Idle, Flug und Tod.
-     * Registriert den {@link Boss#OnEndOfAnimation} Callback auf der Todesanimation.
+     * Initializes all {@link Animation} instances for idle, flying and death.
+     * Registers the {@link Boss#OnEndOfAnimation} callback on the death animation.
      */
     CreateAnimations() {
         this.idle = new Animation([

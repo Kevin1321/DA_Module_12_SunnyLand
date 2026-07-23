@@ -1,36 +1,36 @@
 /**
- * @fileoverview Verwaltet die Audiowiedergabe, Lautstärke und Stummschaltung des Spiels.
- * Persistiert Einstellungen im localStorage.
+ * @fileoverview Manages the game's audio playback, volume, and mute state.
+ * Persists user settings in localStorage.
  * @module AudioManager
  */
 
 /**
- * Statische Klasse zur zentralen Steuerung aller Audio-Funktionen.
- * Liest und speichert Benutzereinstellungen automatisch im {@link localStorage}.
+ * Static class for centralized audio management.
+ * Automatically loads and stores user settings in {@link localStorage}.
  */
 class AudioManager {
 
     /**
-     * Gibt an ob der Ton aktuell stummgeschaltet ist.
-     * Wird aus dem localStorage geladen.
+     * Indicates whether audio is currently muted.
+     * Loaded from localStorage.
      * @static
      * @type {boolean}
      */
     static isMuted = localStorage.getItem('isMuted') === 'true';
 
     /**
-     * Die aktuelle Lautstärke (0.0 – 1.0).
-     * Wird aus dem localStorage geladen, Standard ist 0.1.
+     * The current audio volume (0.0–1.0).
+     * Loaded from localStorage. Defaults to 0.1.
      * @static
      * @type {number}
      */
     static currentVolume = parseFloat(localStorage.getItem('volume')) || 0.1;
 
     /**
-     * Spielt einen Sound ab. Setzt die Wiedergabe immer von vorne.
+     * Plays a sound, always restarting playback from the beginning.
      * @static
-     * @param {HTMLAudioElement} sound - Der abzuspielende Sound aus {@link AudioAssets}.
-     * @param {boolean} [isLooping=false] - Ob der Sound in einer Schleife abgespielt werden soll.
+     * @param {HTMLAudioElement} sound - The sound from {@link AudioAssets} to play.
+     * @param {boolean} [isLooping=false] - Whether the sound should loop.
      */
     static Play(sound, isLooping) {
         sound.volume = AudioManager.isMuted ? 0 : AudioManager.currentVolume;
@@ -40,7 +40,7 @@ class AudioManager {
     }
 
     /**
-     * Pausiert alle Sounds aus {@link AudioAssets.ALL_SOUNDS}.
+     * Pauses all sounds in {@link AudioAssets.ALL_SOUNDS}.
      * @static
      */
     static StopAll() {
@@ -48,19 +48,19 @@ class AudioManager {
     }
 
     /**
-     * Pausiert einen einzelnen Sound.
+     * Pauses a single sound.
      * @static
-     * @param {HTMLAudioElement} sound - Der zu pausierenede Sound.
+     * @param {HTMLAudioElement} sound - The sound to pause.
      */
     static Stop(sound) {
         sound.pause();
     }
 
     /**
-     * Setzt die Lautstärke aller Sounds und speichert den Wert im localStorage.
-     * Bei aktivierter Stummschaltung bleibt die Lautstärke bei 0.
+     * Sets the volume for all sounds and stores the value in localStorage.
+     * If audio is muted, the volume remains at 0.
      * @static
-     * @param {number} value - Neue Lautstärke (0.0 – 1.0).
+     * @param {number} value - The new volume (0.0–1.0).
      */
     static SetVolume(value) {
         AudioManager.currentVolume = value;
@@ -71,8 +71,8 @@ class AudioManager {
     }
 
     /**
-     * Schaltet die Stummschaltung um und aktualisiert das Mute-Button-Icon.
-     * Speichert den neuen Zustand im localStorage.
+     * Toggles the mute state and updates the mute button icons.
+     * Stores the new state in localStorage.
      * @static
      */
     static ToggleMute() {
@@ -91,8 +91,8 @@ class AudioManager {
     }
 
     /**
-     * Initialisiert die Audio-UI (Lautstärkeregler und Mute-Button) 
-     * anhand der gespeicherten Einstellungen aus dem localStorage.
+     * Initializes the audio UI (volume slider and mute button)
+     * using the settings stored in localStorage.
      * @static
      */
     static Init() {

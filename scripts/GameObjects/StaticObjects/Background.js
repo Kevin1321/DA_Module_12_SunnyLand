@@ -1,24 +1,24 @@
 /**
- * @fileoverview Implementiert statische Hintergrund- und Mittelgrund-Kacheln.
+ * @fileoverview Implements static background and middleground tiles.
  * @module Background
  */
 
 /**
- * Eine statische Hintergrund- oder Mittelgrund-Kachel.
- * Erweitert {@link GameObject} um einfaches Rendering eines Sprites ohne Kollisionslogik.
- * Wird von {@link World#CreateBackgrounds} in Kacheln über die gesamte Weltbreite verteilt.
+ * A static background or middleground tile.
+ * Extends {@link GameObject} to provide simple sprite rendering without collision logic.
+ * Created by {@link World#CreateBackgrounds} and distributed in tiles across the entire world width.
  * @extends GameObject
  */
 class Background extends GameObject {
 
     /**
-     * Erstellt eine neue Hintergrund-Kachel.
-     * @param {CanvasRenderingContext2D} context - Der Canvas-Rendering-Kontext.
-     * @param {number} positionX - X-Position in Pixeln.
-     * @param {number} positionY - Y-Position in Pixeln.
-     * @param {number} sizeX - Breite in Pixeln.
-     * @param {number} sizeY - Höhe in Pixeln.
-     * @param {string} imgSrc - Pfad zum Hintergrund-Sprite aus {@link SpriteAssets}.
+     * Creates a new background tile.
+     * @param {CanvasRenderingContext2D} context - The canvas rendering context.
+     * @param {number} positionX - X position in pixels.
+     * @param {number} positionY - Y position in pixels.
+     * @param {number} sizeX - Width in pixels.
+     * @param {number} sizeY - Height in pixels.
+     * @param {string} imgSrc - Path to the background sprite from {@link SpriteAssets}.
      */
     constructor(context, positionX, positionY, sizeX, sizeY, imgSrc) {
         super(context, positionX, positionY, sizeX, sizeY);
@@ -26,8 +26,8 @@ class Background extends GameObject {
     }
 
     /**
-     * Wird jeden Frame aufgerufen und rendert die Hintergrund-Kachel auf den Canvas.
-     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     * Called every frame and renders the background tile onto the canvas.
+     * @param {number} deltaTime - Time in seconds since the last frame.
      */
     OnTick(deltaTime) {
         super.OnTick(deltaTime);

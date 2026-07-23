@@ -1,29 +1,29 @@
 /**
- * @fileoverview Implementiert den Edelstein als einsammelbares Objekt.
+ * @fileoverview Implements the gem as a collectible object.
  * @module Gem
  */
 
 /**
- * Ein einsammelbarer Edelstein.
- * Erweitert {@link PickUp} um eine Idle-Animation und Einsammel-Logik.
- * Beim Einsammeln wird der {@link Player#gemsCollected} Zähler erhöht.
+ * A collectible gem.
+ * Extends {@link PickUp} with an idle animation and collection logic.
+ * When collected, the {@link Player#gemsCollected} counter is increased.
  * @extends PickUp
  */
 class Gem extends PickUp {
 
     /**
-     * Erstellt einen neuen Edelstein.
-     * @param {CanvasRenderingContext2D} context - Der Canvas-Rendering-Kontext.
-     * @param {number} positionX - X-Position in Pixeln.
-     * @param {number} positionY - Y-Position in Pixeln.
-     * @param {number} sizeX - Breite in Pixeln.
-     * @param {number} sizeY - Höhe in Pixeln.
+     * Creates a new gem.
+     * @param {CanvasRenderingContext2D} context - The canvas rendering context.
+     * @param {number} positionX - X position in pixels.
+     * @param {number} positionY - Y position in pixels.
+     * @param {number} sizeX - Width in pixels.
+     * @param {number} sizeY - Height in pixels.
      */
     constructor(context, positionX, positionY, sizeX, sizeY) {
         super(context, positionX, positionY, sizeX, sizeY);
 
         /**
-         * Idle-Animation des Edelsteins.
+         * Idle animation of the gem.
          * @type {Animation}
          */
         this.idle = new Animation([
@@ -36,10 +36,10 @@ class Gem extends PickUp {
     }
 
     /**
-     * Wird jeden Frame aufgerufen.
-     * Spielt die Idle- oder Pickup-Feedback-Animation ab und rendert den Edelstein.
-     * Tut nichts wenn der Edelstein nicht mehr aktiv ist.
-     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     * Called every frame.
+     * Plays either the idle animation or the pickup feedback animation and renders the gem.
+     * Does nothing if the gem is no longer active.
+     * @param {number} deltaTime - Time in seconds since the last frame.
      */
     OnTick(deltaTime) {
         super.OnTick(deltaTime);
@@ -56,10 +56,10 @@ class Gem extends PickUp {
     }
 
     /**
-     * Wird aufgerufen wenn der Spieler den Edelstein berührt.
-     * Markiert den Edelstein als eingesammelt und spielt den Item-Sound ab.
-     * Der {@link Player#gemsCollected} Zähler wird in {@link Player#OnCollisionEnter} erhöht.
-     * @param {GameObject} collider - Das Objekt das den Edelstein berührt hat.
+     * Called when the player touches the gem.
+     * Marks the gem as collected and plays the item sound.
+     * The {@link Player#gemsCollected} counter is increased in {@link Player#OnCollisionEnter}.
+     * @param {GameObject} collider - The object that touched the gem.
      */
     OnCollisionEnter(collider) {
         super.OnCollisionEnter(collider);

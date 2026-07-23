@@ -1,27 +1,26 @@
 /**
- * @fileoverview Definiert alle Kollisions-Layer des Spiels als unveränderliches Objekt.
+ * @fileoverview Defines all collision layers used in the game as an immutable object.
  * @module CollisionLayers
  */
 
 /**
- * Enum-artiges Objekt das alle verfügbaren Kollisions-Layer enthält.
- * Wird von {@link GameObject} verwendet um zu definieren mit welchen Layern
- * ein Objekt kollidieren kann.
- * Eingefroren mit {@link Object.freeze} um versehentliche Änderungen zu verhindern.
+ * Enum-like object containing all available collision layers.
+ * Used by {@link GameObject} to define which collision layer an object belongs to.
+ * Frozen with {@link Object.freeze} to prevent accidental modifications.
  * @readonly
  * @enum {string}
  */
 const CollisionLayers = Object.freeze({
-    /** Standard-Layer für generische Objekte. */
+    /** Default layer for generic objects. */
     DEFAULT: "default",
-    /** Layer für den Spieler. */
+    /** Layer for the player. */
     PLAYER: "player",
-    /** Layer für Gegner (Minions, Boss). */
+    /** Layer for enemies (minions and bosses). */
     ENEMY: "enemy",
-    /** Layer für einsammelbare Objekte (Kirschen, Edelsteine). */
+    /** Layer for collectible objects (cherries and gems). */
     PICKUP: "pickup",
-    /** Layer für Projektile des Spielers. */
+    /** Layer for player projectiles. */
     PROJECTILE: "projectile",
-    /** Layer für das Zielobjekt am Levelende. */
+    /** Layer for the level's goal object. */
     GOAL: "goal"
 });

@@ -1,20 +1,20 @@
 /**
- * @fileoverview Basisklasse für alle UI-Objekte die auf dem Canvas gerendert werden.
+ * @fileoverview Base class for all UI objects rendered on the canvas.
  * @module UIObject
  */
 
 /**
- * Basisklasse für alle UI-Objekte.
- * Im Gegensatz zu {@link GameObject} sind UIObjects kameragebunden —
- * sie werden immer relativ zur aktuellen Kameraposition gerendert
- * und bleiben damit fest auf dem Bildschirm sichtbar.
+ * Base class for all UI objects.
+ * Unlike {@link GameObject}, UIObjects are camera-bound —
+ * they are always rendered relative to the current camera position
+ * and therefore remain fixed on the screen.
  */
 class UIObject {
 
     /**
-     * Erstellt ein neues UIObject.
-     * @param {CanvasRenderingContext2D} context - Der Canvas-Rendering-Kontext.
-     * @param {{ x: number, y: number }} camera - Die aktuelle Kameraposition der Welt.
+     * Creates a new UIObject.
+     * @param {CanvasRenderingContext2D} context - The canvas rendering context.
+     * @param {{ x: number, y: number }} camera - The current camera position of the world.
      */
     constructor(context, camera) {
         this.context = context;
@@ -22,9 +22,9 @@ class UIObject {
     }
 
     /**
-     * Wird jeden Frame von {@link World#UpdateUIObjects} aufgerufen.
-     * Kann in Unterklassen überschrieben werden um UI-Logik und Rendering zu implementieren.
-     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     * Called every frame by {@link World#UpdateUIObjects}.
+     * Can be overridden by subclasses to implement UI logic and rendering.
+     * @param {number} deltaTime - Time in seconds since the previous frame.
      */
     OnTick(deltaTime) {
     }

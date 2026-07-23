@@ -1,21 +1,21 @@
 /**
- * @fileoverview Sammlung allgemeiner Hilfsfunktionen.
+ * @fileoverview Collection of general utility functions.
  * @module Util
  */
 
 /**
- * Statische Hilfsklasse mit allgemeinen Utility-Methoden
- * die im gesamten Spiel verwendet werden.
+ * Static helper class containing general utility methods
+ * used throughout the game.
  */
 class Util {
 
     /**
-     * Begrenzt einen Wert auf einen bestimmten Bereich.
+     * Clamps a value to a specific range.
      * @static
-     * @param {number} value - Der zu begrenzende Wert.
-     * @param {number} min - Der minimale erlaubte Wert.
-     * @param {number} max - Der maximale erlaubte Wert.
-     * @returns {number} Der begrenzte Wert innerhalb von [min, max].
+     * @param {number} value - The value to clamp.
+     * @param {number} min - The minimum allowed value.
+     * @param {number} max - The maximum allowed value.
+     * @returns {number} The clamped value within [min, max].
      * @example
      * Util.Clamp(15, 0, 10); // returns 10
      * Util.Clamp(-5, 0, 10); // returns 0
@@ -26,23 +26,23 @@ class Util {
     }
 
     /**
-     * Gibt eine zufällige normalisierte Zahl zwischen -1.0 und 1.0 zurück.
+     * Returns a random normalized number between -1.0 and 1.0.
      * @static
-     * @returns {number} Zufälliger Wert im Bereich [-1.0, 1.0] mit einer Dezimalstelle.
+     * @returns {number} Random value in the range [-1.0, 1.0] with one decimal place.
      */
     static GetRandomNormalized() {
         return (Math.random() * 2 - 1).toFixed(1);
     }
 
     /**
-     * Gibt eine zufällige Zahl innerhalb eines bestimmten Bereichs zurück.
+     * Returns a random number within a specified range.
      * @static
-     * @param {number} min - Untere Grenze des Bereichs (inklusive).
-     * @param {number} max - Obere Grenze des Bereichs (exklusive).
-     * @returns {number} Zufälliger Wert im Bereich [min, max).
+     * @param {number} min - Lower bound of the range (inclusive).
+     * @param {number} max - Upper bound of the range (exclusive).
+     * @returns {number} Random value in the range [min, max).
      * @example
-     * Util.GetRandomRange(0, 100); // z.B. 42.7
-     * Util.GetRandomRange(200, 300); // z.B. 263.4
+     * Util.GetRandomRange(0, 100); // e.g. 42.7
+     * Util.GetRandomRange(200, 300); // e.g. 263.4
      */
     static GetRandomRange(min, max) {
         return Math.random() * (max - min) + min;

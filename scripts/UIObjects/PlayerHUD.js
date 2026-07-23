@@ -1,34 +1,34 @@
 /**
- * @fileoverview Implementiert das Heads-Up-Display (HUD) des Spielers.
+ * @fileoverview Implements the player's Heads-Up Display (HUD).
  * @module PlayerHUD
  */
 
 /**
- * Das Heads-Up-Display des Spielers.
- * Erweitert {@link UIObject} und rendert Lebensanzeige, Portrait, Item-Slots
- * sowie Zähler für eingesammelte Kirschen und Edelsteine.
- * Wird von {@link World#CreateUI} erstellt und jeden Frame via {@link World#UpdateUIObjects} aktualisiert.
+ * The player's Heads-Up Display.
+ * Extends {@link UIObject} and renders the health bar, portrait, item slots,
+ * as well as counters for collected cherries and gems.
+ * Created by {@link World#CreateUI} and updated every frame via {@link World#UpdateUIObjects}.
  * @extends UIObject
  */
 class PlayerHUD extends UIObject {
 
     /**
-     * Erstellt ein neues PlayerHUD.
-     * @param {CanvasRenderingContext2D} context - Der Canvas-Rendering-Kontext.
-     * @param {{ x: number, y: number }} camera - Die aktuelle Kameraposition der Welt.
-     * @param {Player} player - Der Spieler dessen Daten angezeigt werden.
+     * Creates a new PlayerHUD.
+     * @param {CanvasRenderingContext2D} context - The canvas rendering context.
+     * @param {{ x: number, y: number }} camera - The current camera position of the world.
+     * @param {Player} player - The player whose data is displayed.
      */
     constructor(context, camera, player) {
         super(context, camera);
         this.player = player;
 
-        /** @type {number} Horizontaler Abstand zwischen den Herzen in Pixeln. */
+        /** @type {number} Horizontal spacing between hearts in pixels. */
         this.heartXOffset = 20;
 
-        /** @type {number} Horizontaler Versatz des Foxy-Portraits in Pixeln. */
+        /** @type {number} Horizontal offset of the Foxy portrait in pixels. */
         this.foxyPortaitXOffset = 28;
 
-        /** @type {number} Vertikaler Versatz des Foxy-Portraits in Pixeln. */
+        /** @type {number} Vertical offset of the Foxy portrait in pixels. */
         this.foxyPortaitYOffest = 24;
 
         this.fingerPaint = new FontFace(
@@ -53,9 +53,9 @@ class PlayerHUD extends UIObject {
     }
 
     /**
-     * Wird jeden Frame aufgerufen.
-     * Rendert alle HUD-Elemente kamerarelativ auf den Canvas.
-     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     * Called every frame.
+     * Renders all HUD elements relative to the camera position onto the canvas.
+     * @param {number} deltaTime - Time in seconds since the last frame.
      */
     OnTick(deltaTime) {
         super.OnTick(deltaTime);
@@ -69,7 +69,7 @@ class PlayerHUD extends UIObject {
     }
 
     /**
-     * Lädt und initialisiert das HUD-Rahmen-Sprite.
+     * Loads and initializes the HUD frame sprite.
      */
     CreateFrame() {
         this.frame = new Image(96, 96);
@@ -77,7 +77,7 @@ class PlayerHUD extends UIObject {
     }
 
     /**
-     * Lädt und initialisiert das Foxy-Portrait-Sprite.
+     * Loads and initializes the Foxy portrait sprite.
      */
     CreateFoxyPortrait() {
         this.foxyPortait = new Image(48, 48);
@@ -85,7 +85,7 @@ class PlayerHUD extends UIObject {
     }
 
     /**
-     * Lädt und initialisiert das leere Herz-Sprite.
+     * Loads and initializes the empty heart sprite.
      */
     CreateEmptyHeart() {
         this.emptyHeart = new Image(64, 64);
@@ -93,7 +93,7 @@ class PlayerHUD extends UIObject {
     }
 
     /**
-     * Lädt und initialisiert das volle Herz-Sprite.
+     * Loads and initializes the full heart sprite.
      */
     CreateFullHeart() {
         this.fullHeart = new Image(64, 64);
@@ -101,8 +101,8 @@ class PlayerHUD extends UIObject {
     }
 
     /**
-     * Lädt und initialisiert das halbe Herz-Sprite.
-     * Wird angezeigt wenn der Spieler einen halben Lebenspunkt hat.
+     * Loads and initializes the half heart sprite.
+     * Displayed when the player has half a health point.
      */
     CreateHalfHeart() {
         this.halfHeart = new Image(64, 64);
@@ -110,7 +110,7 @@ class PlayerHUD extends UIObject {
     }
 
     /**
-     * Lädt und initialisiert das Item-Slot-Sprite.
+     * Loads and initializes the item slot sprite.
      */
     CreateItemSlot() {
         this.itemSlot = new Image(48, 48);
@@ -118,7 +118,7 @@ class PlayerHUD extends UIObject {
     }
 
     /**
-     * Lädt und initialisiert das Kirschen-Sprite für den Item-Slot.
+     * Loads and initializes the cherry sprite for the item slot.
      */
     CreateCherry() {
         this.cherry = new Image(24, 24);
@@ -126,7 +126,7 @@ class PlayerHUD extends UIObject {
     }
 
     /**
-     * Lädt und initialisiert das Edelstein-Sprite für den Item-Slot.
+     * Loads and initializes the gem sprite for the item slot.
      */
     CreateGem() {
         this.gem = new Image(24, 24);
@@ -134,8 +134,8 @@ class PlayerHUD extends UIObject {
     }
 
     /**
-     * Zeichnet leere Herzen für alle maximalen Lebenspunkte des Spielers.
-     * Dient als Hintergrund für die vollen Herzen.
+     * Draws empty hearts for all of the player's maximum health points.
+     * Serves as the background for the full hearts.
      */
     DrawEmptyHearts() {
         for (let index = 0; index < this.player.maxHealth; index++) {
@@ -150,8 +150,8 @@ class PlayerHUD extends UIObject {
     }
 
     /**
-     * Zeichnet volle und halbe Herzen basierend auf der aktuellen Gesundheit des Spielers.
-     * Bei einem halben Lebenspunkt wird das halbe Herz-Sprite verwendet.
+     * Draws full and half hearts based on the player's current health.
+     * Uses the half heart sprite when the player has half a health point.
      */
     DrawFullHearts() {
         for (let index = 0; index < this.player.health; index++) {
@@ -164,8 +164,8 @@ class PlayerHUD extends UIObject {
     }
 
     /**
-     * Zeichnet zwei Item-Slots unterhalb der Herzleiste.
-     * Einen für Kirschen und einen für Edelsteine.
+     * Draws two item slots below the health bar.
+     * One for cherries and one for gems.
      */
     DrawItemSlots() {
         this.context.drawImage(this.itemSlot, this.camera.x + this.frame.width, this.camera.y + this.emptyHeart.height, this.itemSlot.width, this.itemSlot.height);
@@ -173,8 +173,8 @@ class PlayerHUD extends UIObject {
     }
 
     /**
-     * Zeichnet das Kirschen-Icon und den Zähler im ersten Item-Slot.
-     * Wird nicht gerendert wenn noch keine Kirschen eingesammelt wurden.
+     * Draws the cherry icon and counter in the first item slot.
+     * Not rendered if no cherries have been collected yet.
      */
     DrawCherry() {
         if (this.player.cherriesCollected <= 0) return;
@@ -185,8 +185,8 @@ class PlayerHUD extends UIObject {
     }
 
     /**
-     * Zeichnet das Edelstein-Icon und den Zähler im zweiten Item-Slot.
-     * Wird nicht gerendert wenn noch keine Edelsteine eingesammelt wurden.
+     * Draws the gem icon and counter in the second item slot.
+     * Not rendered if no gems have been collected yet.
      */
     DrawGem() {
         if (this.player.gemsCollected <= 0) return;

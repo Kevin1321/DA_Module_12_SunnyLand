@@ -1,39 +1,39 @@
 /**
- * @fileoverview Basisklasse für alle Gegner im Spiel.
+ * @fileoverview Base class for all enemies in the game.
  * @module Enemy
  */
 
 /**
- * Basisklasse für alle Gegner.
- * Erweitert {@link Character} um gegner-spezifische Zustände und Kollisions-Layer.
- * Wird von {@link Minion} und {@link Boss} weiter spezialisiert.
+ * Base class for all enemies.
+ * Extends {@link Character} with enemy-specific states and collision layers.
+ * Further specialized by {@link Minion} and {@link Boss}.
  * @extends Character
  */
 class Enemy extends Character {
 
     /**
-     * Enum der möglichen Zustände eines Gegners.
+     * Enum of possible enemy states.
      * @readonly
      * @enum {string}
      */
     EnemyState = Object.freeze({
-        /** Gegner steht still. */
+        /** Enemy is standing still. */
         IDLE: "idle",
-        /** Gegner bewegt sich. */
+        /** Enemy is moving. */
         MOVE: "move",
-        /** Gegner greift an. */
+        /** Enemy is attacking. */
         ATTACK: "attack",
-        /** Gegner ist tot. */
+        /** Enemy is dead. */
         DEAD: "dead"
     });
 
     /**
-     * Erstellt einen neuen Gegner.
-     * @param {CanvasRenderingContext2D} context - Der Canvas-Rendering-Kontext.
-     * @param {number} positionX - X-Position in Pixeln.
-     * @param {number} positionY - Y-Position in Pixeln.
-     * @param {number} sizeX - Breite in Pixeln.
-     * @param {number} sizeY - Höhe in Pixeln.
+     * Creates a new enemy.
+     * @param {CanvasRenderingContext2D} context - The canvas rendering context.
+     * @param {number} positionX - X position in pixels.
+     * @param {number} positionY - Y position in pixels.
+     * @param {number} sizeX - Width in pixels.
+     * @param {number} sizeY - Height in pixels.
      */
     constructor(context, positionX, positionY, sizeX, sizeY) {
         super(context, positionX, positionY, sizeX, sizeY);
@@ -44,27 +44,27 @@ class Enemy extends Character {
     }
 
     /**
-     * Wird jeden Frame aufgerufen. Delegiert an {@link Character#OnTick}.
-     * Kann in Unterklassen überschrieben werden.
-     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     * Called every frame. Delegates to {@link Character#OnTick}.
+     * Can be overridden by subclasses.
+     * @param {number} deltaTime - Time in seconds since the last frame.
      */
     OnTick(deltaTime) {
         super.OnTick(deltaTime);
     }
 
     /**
-     * Steuert die Animationslogik des Gegners. Delegiert an {@link Character#Animate}.
-     * Muss in Unterklassen implementiert werden.
-     * @param {number} deltaTime - Zeit in Sekunden seit dem letzten Frame.
+     * Controls the enemy's animation logic. Delegates to {@link Character#Animate}.
+     * Must be implemented by subclasses.
+     * @param {number} deltaTime - Time in seconds since the last frame.
      */
     Animate(deltaTime) {
         super.Animate(deltaTime);
     }
 
     /**
-     * Wird aufgerufen wenn der Gegner stirbt.
-     * Spielt den Todeseffekt ab sofern der Gegner noch aktiv ist.
-     * Kann in Unterklassen überschrieben werden um weitere Logik hinzuzufügen.
+     * Called when the enemy dies.
+     * Plays the death effect if the enemy is still active.
+     * Can be overridden by subclasses to add additional logic.
      */
     EnemyDead() {
         if (this.isActive) AudioManager.Play(AudioAssets.ENEMY_DEATH, false);

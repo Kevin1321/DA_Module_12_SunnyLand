@@ -1,19 +1,19 @@
 /**
- * @fileoverview Enthält alle Sprite-Asset-Pfade des Spiels als statische Eigenschaften.
+ * @fileoverview Contains all sprite asset paths of the game as static properties.
  * @module SpriteAssets
  */
 
 /**
- * Zentrale Sammlung aller Sprite-Asset-Pfade, gruppiert nach Kategorie.
- * Alle Pfade sind relative Strings die direkt als `src` für {@link HTMLImageElement} verwendet werden.
+ * Central collection of all sprite asset paths, grouped by category.
+ * All paths are relative strings that can be directly used as `src` values for {@link HTMLImageElement}.
  */
 class SpriteAssets {
 
     /**
-     * Sprites für den Spieler (Foxy).
-     * @static
-     * @type {{ DEAD: string, HURT_1: string, HURT_2: string, IDLE_1: string, IDLE_2: string, IDLE_3: string, IDLE_4: string, LONG_IDLE_1: string, LONG_IDLE_2: string, JUMP_1: string, JUMP_2: string, RUN_1: string, RUN_2: string, RUN_3: string, RUN_4: string, RUN_5: string, RUN_6: string, VICTORY: string }}
-     */
+      * Sprites for the player character (Foxy).
+      * @static
+      * @type {{ DEAD: string, HURT_1: string, HURT_2: string, IDLE_1: string, IDLE_2: string, IDLE_3: string, IDLE_4: string, LONG_IDLE_1: string, LONG_IDLE_2: string, JUMP_1: string, JUMP_2: string, RUN_1: string, RUN_2: string, RUN_3: string, RUN_4: string, RUN_5: string, RUN_6: string, VICTORY: string }}
+      */
     static PLAYER = {
         DEAD: "assets/sprites/characters/Foxy/Hurt2/hurt-2.png",
         HURT_1: "assets/sprites/characters/Foxy/hurt/player-hurt-1.png",
@@ -36,10 +36,10 @@ class SpriteAssets {
     }
 
     /**
-     * Sprites für den Slimer-Gegner (Minion).
-     * @static
-     * @type {{ IDLE_1: string, IDLE_2: string, IDLE_3: string, IDLE_4: string, IDLE_5: string, IDLE_6: string, IDLE_7: string, IDLE_8: string, MOVE_1: string, MOVE_2: string, MOVE_3: string, MOVE_4: string, MOVE_5: string, MOVE_6: string, MOVE_7: string }}
-     */
+   * Sprites for the Slimer enemy (minion).
+   * @static
+   * @type {{ IDLE_1: string, IDLE_2: string, IDLE_3: string, IDLE_4: string, IDLE_5: string, IDLE_6: string, IDLE_7: string, IDLE_8: string, MOVE_1: string, MOVE_2: string, MOVE_3: string, MOVE_4: string, MOVE_5: string, MOVE_6: string, MOVE_7: string }}
+   */
     static SLIMER = {
         IDLE_1: "assets/sprites/characters/Slimer/Slimer-Idle/slimer-idle1.png",
         IDLE_2: "assets/sprites/characters/Slimer/Slimer-Idle/slimer-idle2.png",
@@ -59,7 +59,7 @@ class SpriteAssets {
     }
 
     /**
-     * Sprites für den Vulture-Boss.
+     * Sprites for the Vulture boss.
      * @static
      * @type {{ IDLE_1: string, IDLE_2: string, IDLE_3: string, IDLE_4: string, FLYING_1: string, FLYING_2: string, FLYING_3: string, FLYING_4: string }}
      */
@@ -75,27 +75,27 @@ class SpriteAssets {
     }
 
     /**
-     * Hintergrund-Sprites für die verschiedenen Welten.
-     * @static
-     * @type {{ SUNNY_LAND_BASE: string, SUNNY_LAND_FOREST: string }}
-     */
+   * Background sprites for the different game worlds.
+   * @static
+   * @type {{ SUNNY_LAND_BASE: string, SUNNY_LAND_FOREST: string }}
+   */
     static BACKGROUNDS = {
         SUNNY_LAND_BASE: "assets/sprites/environments/Backgrounds/SunnyLandBase/back.png",
         SUNNY_LAND_FOREST: "assets/sprites/environments/Backgrounds/SunnyLandForest/background.png"
     }
 
     /**
-     * Mittelgrund-Sprites für Parallax-Effekte.
-     * @static
-     * @type {{ SUNNY_LAND_BASE: string, SUNNY_LAND_FOREST: string }}
-     */
+      * Middleground sprites used for parallax effects.
+      * @static
+      * @type {{ SUNNY_LAND_BASE: string, SUNNY_LAND_FOREST: string }}
+      */
     static MIDDLEGROUNDS = {
         SUNNY_LAND_BASE: "assets/sprites/environments/Backgrounds/SunnyLandBase/middle.png",
         SUNNY_LAND_FOREST: "assets/sprites/environments/Backgrounds/SunnyLandForest/middleground.png"
     }
 
     /**
-     * Sprites für die Level-Tiles (Boden und Gras).
+     * Sprites for level tiles (ground and grass).
      * @static
      * @type {{ LEVEL_1: string, LEVEL_1_GRASS: string }}
      */
@@ -105,7 +105,7 @@ class SpriteAssets {
     }
 
     /**
-     * Sprites für dekorative und interaktive Props in der Spielwelt.
+     * Sprites for decorative and interactive props in the game world.
      * @static
      * @type {{ BIG_CRATE: string, BLOCK_BIG: string, BLOCK: string, BUSH: string, CRATE: string, ROCK: string, ROCK_1: string, ROCK_2: string, SHROOMS: string, SIGN: string, TREE: string, WOODEN_HOUSE: string }}
      */
@@ -125,19 +125,19 @@ class SpriteAssets {
     }
 
     /**
-     * Sprites für Projektile des Spielers.
-     * @static
-     * @type {{ STAR: string }}
-     */
+      * Sprites for player projectiles.
+      * @static
+      * @type {{ STAR: string }}
+      */
     static PROJECTILS = {
         STAR: "assets/sprites/Projectiles/star.png"
     }
 
     /**
-     * Sprites für einsammelbare Objekte (Kirschen und Edelsteine).
-     * @static
-     * @type {{ CHERRY_1: string, CHERRY_2: string, CHERRY_3: string, CHERRY_4: string, CHERRY_5: string, CHERRY_6: string, CHERRY_7: string, GEM_1: string, GEM_2: string, GEM_3: string, GEM_4: string, GEM_5: string }}
-     */
+    * Sprites for collectible objects (cherries and gems).
+    * @static
+    * @type {{ CHERRY_1: string, CHERRY_2: string, CHERRY_3: string, CHERRY_4: string, CHERRY_5: string, CHERRY_6: string, CHERRY_7: string, GEM_1: string, GEM_2: string, GEM_3: string, GEM_4: string, GEM_5: string }}
+    */
     static PICK_UPS = {
         CHERRY_1: "assets/sprites/PickUps/cherry/cherry-1.png",
         CHERRY_2: "assets/sprites/PickUps/cherry/cherry-2.png",
@@ -154,10 +154,10 @@ class SpriteAssets {
     }
 
     /**
-     * Sprites für visuelle Effekte (Todesanimation, Item-Feedback).
-     * @static
-     * @type {{ ENEMY_DEATH_1: string, ENEMY_DEATH_2: string, ENEMY_DEATH_3: string, ENEMY_DEATH_4: string, ENEMY_DEATH_5: string, ENEMY_DEATH_6: string, ITEM_FEEDBACK_1: string, ITEM_FEEDBACK_2: string, ITEM_FEEDBACK_3: string, ITEM_FEEDBACK_4: string }}
-     */
+    * Sprites for visual effects (death animation and item feedback).
+    * @static
+    * @type {{ ENEMY_DEATH_1: string, ENEMY_DEATH_2: string, ENEMY_DEATH_3: string, ENEMY_DEATH_4: string, ENEMY_DEATH_5: string, ENEMY_DEATH_6: string, ITEM_FEEDBACK_1: string, ITEM_FEEDBACK_2: string, ITEM_FEEDBACK_3: string, ITEM_FEEDBACK_4: string }}
+    */
     static VFX = {
         ENEMY_DEATH_1: "assets/sprites/VFX/enemy-death/enemy-death-1.png",
         ENEMY_DEATH_2: "assets/sprites/VFX/enemy-death/enemy-death-2.png",
@@ -172,7 +172,7 @@ class SpriteAssets {
     }
 
     /**
-     * Sprites für UI-Elemente des Spiels.
+     * Sprites for game UI elements.
      * @static
      * @type {{ PLAYER_HUD: { FOXY_PORTAIT: string, FRAME: string, HEART_EMPTY: string, HEART_FULL: string, HEART_HALF: string, ITEM_SLOT: string } }}
      */
