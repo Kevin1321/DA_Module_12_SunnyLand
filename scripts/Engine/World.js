@@ -322,6 +322,7 @@ class World {
     CreateEnemies() {
         for (let index = 0; index < 5; index++) {
             let positionX = index * Util.GetRandomRange(200, 300) + Util.GetRandomRange(0, 500);
+            if(positionX < 60) positionX = 60;
             let minion = new Minion(this.context, positionX, 336, 64, 64);
             this.gameObjects.push(minion);
         }
