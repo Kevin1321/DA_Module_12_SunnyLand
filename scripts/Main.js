@@ -60,14 +60,7 @@ function startGame() {
     if (world) world.Destroy();
     world = new World(canvas);
 
-    if (window.matchMedia("(pointer: coarse)").matches) {
-        const container = document.getElementById('canvas-container');
-        container.requestFullscreen().then(() => {
-            screen.orientation.lock("landscape").catch(() => {
-            });
-            document.getElementById('fullscreen-controls').style.display = 'flex';
-        });
-    }
+    setMobileScreenOrientationLandscape();
 }
 
 /**
@@ -101,6 +94,7 @@ function toggleFullscreen() {
     const container = document.getElementById('canvas-container');
     if (!document.fullscreenElement) {
         container.requestFullscreen();
+        setMobileScreenOrientationLandscape();
     } else {
         document.exitFullscreen();
     }
@@ -114,4 +108,15 @@ function toggleTouchControls() {
     const controls = document.getElementById('fullscreen-controls');
     const isVisible = controls.style.display === 'flex';
     controls.style.display = isVisible ? 'none' : 'flex';
+}
+
+function setMobileScreenOrientationLandscape() {
+    if (window.matchMedia("(pointer: coarse)").matches) {
+        const container = document.getElementById('canvas-container');
+        container.requestFullscreen().then(() => {
+            screen.orientation.lock("landscape").catch(() => {
+            });
+            document.getElementById('fullscreen-controls').style.display = 'flex';
+        });
+    }
 }
