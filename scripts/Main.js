@@ -93,7 +93,6 @@ function showVictory() {
 function toggleFullscreen() {
     const container = document.getElementById('canvas-container');
     if (!document.fullscreenElement) {
-        container.requestFullscreen();
         setMobileScreenOrientationLandscape();
     } else {
         document.exitFullscreen();
