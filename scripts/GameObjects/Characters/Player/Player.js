@@ -31,6 +31,9 @@ class Player extends Character {
         /** Player is currently jumping or falling. */
         JUMP: "jump",
 
+        /** Player is currently damaged. */
+        HURT: "hurt",
+
         /** Player is dead. */
         DEAD: "dead",
 
@@ -177,6 +180,68 @@ class Player extends Character {
         this.projectilePool = projectilePool;
 
         /**
+         * Duration of the hurt state in seconds.
+         * @type {number}
+         */
+        this.hurtDuration = 0.6;
+
+        /**
+         * Elapsed time in the current hurt state.
+         * @type {number}
+         */
+        this.currentHurtTime = 0;
+
+        /**
+         * Horizontal speed applied as knockback when the player is hurt.
+         * @type {number}
+         */
+        this.knockbackSpeed = 125;
+
+        /**
+         * Direction of the knockback (-1 for left, 1 for right).
+         * @type {number}
+         */
+        this.knockbackDir = 1;
+
+        /**
+         * Indicates whether the player is currently invincible.
+         * Invincibility is granted after taking damage to prevent immediate follow-up hits.
+         * @type {boolean}
+         */
+        this.isInvincible = false;
+
+        /**
+         * Total duration of the invincibility window in seconds.
+         * @type {number}
+         */
+        this.invincibleDuration = 1.2;
+
+        /**
+         * Elapsed time since invincibility started.
+         * @type {number}
+         */
+        this.currentInvincibleTime = 0;
+
+        /**
+         * Time between visibility toggles during the invincibility blink effect.
+         * @type {number}
+         */
+        this.blinkInterval = 0.1;
+
+        /**
+         * Accumulated time since the last blink toggle.
+         * @type {number}
+         */
+        this.blinkTimer = 0;
+
+        /**
+         * Whether the player sprite is currently visible.
+         * Toggled during the invincibility blink effect.
+         * @type {boolean}
+         */
+        this.isVisible = true;
+
+        /**
          * Collision offset for more accurate hit detection.
          * @type {{top:number,bottom:number,left:number,right:number}}
          */
@@ -217,21 +282,10 @@ class Player extends Character {
     OnCollisionEnter(collider) {
         super.OnCollisionEnter(collider);
 
-        if (collider instanceof Cherry) {
-            this.cherriesCollected += 1;
-        }
-
-        if (collider instanceof Gem) {
-            this.gemsCollected += 1;
-        }
-
-        if (collider instanceof Minion) {
-            this.TakeDamage(0.5);
-        }
-
-        if (collider instanceof Boss) {
-            this.TakeDamage(1);
-        }
+        if (collider instanceof Cherry) this.cherriesCollected += 1;
+        if (collider instanceof Gem) this.gemsCollected += 1;
+        if (collider instanceof Minion) this.TakeDamage(0.5, collider);
+        if (collider instanceof Boss) this.TakeDamage(1, collider);
     }
 
     /**
@@ -253,9 +307,10 @@ class Player extends Character {
         }
 
         /**
-         * Ignore player controls after death or victory.
+         * Ignore player controls after hurt, death or victory.
          */
         if (
+            this.state !== this.PlayerState.HURT &&
             this.state !== this.PlayerState.DEAD &&
             this.state !== this.PlayerState.VICTORY
         ) {
@@ -265,6 +320,7 @@ class Player extends Character {
             this.Shoot(deltaTime);
         }
 
+        this.UpdateHurt(deltaTime);
         this.ApplyGravity(deltaTime);
         this.SetPlayerState(deltaTime);
         this.Animate(deltaTime);
@@ -376,18 +432,76 @@ class Player extends Character {
     }
 
     /**
+     * Applies damage to the player and triggers the hurt state.
+     * Ignored while the player is invincible.
+     * Calculates knockback direction based on the source position,
+     * starts the invincibility window and plays the hurt sound.
+     * @param {number} amount - Amount of health to subtract.
+     * @param {GameObject} source - The object that caused the damage, used to determine knockback direction.
+     */
+    TakeDamage(amount, source) {
+        if (this.isInvincible) return;
+
+        super.TakeDamage(amount, source);
+
+        if (source) {
+            this.knockbackDir = this.positionX > source.positionX ? 1 : -1;
+        }
+
+        this.state = this.PlayerState.HURT;
+        this.currentHurtTime = 0;
+
+        this.isInvincible = true;
+        this.currentInvincibleTime = 0;
+
+        AudioManager.Play(AudioAssets.HURT, false);
+    }
+
+    /**
+     * Updates the hurt and invincibility state each frame.
+     * While hurt, applies horizontal knockback and transitions back
+     * to idle once {@link Player#hurtDuration} has elapsed.
+     * While invincible, toggles sprite visibility at {@link Player#blinkInterval}
+     * and ends invincibility after {@link Player#invincibleDuration}.
+     * @param {number} deltaTime - Time since the last frame in seconds.
+     */
+    UpdateHurt(deltaTime) {
+        if (this.state === this.PlayerState.HURT) {
+            this.currentHurtTime += deltaTime;
+
+            this.positionX += this.knockbackDir * this.knockbackSpeed * deltaTime;
+
+            if (this.currentHurtTime >= this.hurtDuration) {
+                this.state = this.PlayerState.IDLE;
+            }
+        }
+
+        if (this.isInvincible) {
+            this.currentInvincibleTime += deltaTime;
+
+            this.blinkTimer += deltaTime;
+            if (this.blinkTimer >= this.blinkInterval) {
+                this.blinkTimer = 0;
+                this.isVisible = !this.isVisible;
+            }
+
+            if (this.currentInvincibleTime >= this.invincibleDuration) {
+                this.isInvincible = false;
+                this.isVisible = true;
+            }
+        }
+    }
+
+    /**
      * Updates the current player state.
      * The state depends on movement input,
      * grounded status and idle duration.
      * @param {number} deltaTime - Time since the last frame in seconds.
      */
     SetPlayerState(deltaTime) {
-        /**
-         * Victory state overrides all other states.
-         */
-        if (this.state == this.PlayerState.VICTORY) {
-            return;
-        }
+        if (this.state == this.PlayerState.VICTORY) return;
+
+        if (this.state === this.PlayerState.HURT) return;
 
         if (this.isGrounded) {
             if (InputManager.LEFT || InputManager.RIGHT) {
@@ -408,9 +522,6 @@ class Player extends Character {
             this.state = this.PlayerState.DEAD;
         }
 
-        /**
-         * Reset idle timer when player performs an action.
-         */
         if (
             this.state !== this.PlayerState.IDLE &&
             this.state !== this.PlayerState.LONG_IDLE
@@ -447,15 +558,15 @@ class Player extends Character {
                 break;
 
             case this.PlayerState.JUMP:
-                /**
-                 * Uses different sprites depending on whether
-                 * the player is moving upwards or downwards.
-                 */
                 this.SetAnimationFrame(
                     this.velocityY > 0
                         ? this.jumpImg1
                         : this.jumpImg2
                 );
+                break;
+
+            case this.PlayerState.HURT:
+                this.SetAnimationFrame(this.hurt.nextFrame(deltaTime));
                 break;
 
             case this.PlayerState.DEAD:
@@ -484,6 +595,7 @@ class Player extends Character {
      * is facing left.
      */
     DrawImage() {
+        if (!this.isVisible) return;
         if (this.isMovingLeft) {
             this.context.save();
             /**

@@ -88,8 +88,9 @@ class Character extends GameObject {
      * Health is limited to a minimum value of 0.
      * Sets {@link Character#isDead} to `true` when health reaches 0.
      * @param {number} amount - The amount of damage to apply.
+     * @param {source} source - The source of the damage that is applied.
      */
-    TakeDamage(amount) {
+    TakeDamage(amount, source = null) {
         this.health -= amount;
         if (this.health < 0) this.health = 0;
         this.isDead = this.health == 0;
