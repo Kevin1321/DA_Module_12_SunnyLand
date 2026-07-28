@@ -46,7 +46,7 @@ class Boss extends Enemy {
 
         this.collisionOffset = {
             top: 30,
-            bottom: 30,
+            bottom: 20,
             left: 20,
             right: 40
         }
@@ -73,10 +73,10 @@ class Boss extends Enemy {
     }
 
     /**
-     * Moves the boss towards the player with a sine wave movement on the Y axis.
-     * Limits the position to the world boundaries.
-     * @param {number} deltaTime - Time in seconds since the last frame.
-     */
+   * Moves the boss towards the player with a sine wave movement on the Y axis.
+   * Limits the position to the world boundaries.
+   * @param {number} deltaTime - Time in seconds since the last frame.
+   */
     Move(deltaTime) {
         // X: towards the player (center boss → center player)
         const targetX = this.player.positionX + this.player.sizeX / 2 - this.sizeX / 2;
@@ -84,16 +84,20 @@ class Boss extends Enemy {
         const distX = Math.abs(dx);
 
         if (distX > 2) {
-            this.positionX += Math.sign(dx) * Math.min(this.speed * deltaTime, distX);
+            this.positionX += Math.sign(dx) * this.speed * deltaTime;
         }
         this.positionX = Util.Clamp(this.positionX, World.WORLD_BOUNDS.minX, World.WORLD_BOUNDS.maxX - this.sizeX);
 
         // Y: sine wave — moves up and down while approaching
         this.sineTime += deltaTime;
-        const AMPLITUDE = 40;  // Height of the vertical movement in pixels
-        const FREQUENCY = 1.2; // Oscillations per second
-        const baseY = Level.GROUND - this.sizeY * 0.5; // slightly above the player
-        this.positionY = baseY + Math.sin(this.sineTime * FREQUENCY * Math.PI * 2) * AMPLITUDE;
+        const AMPLITUDE = 80;
+        const FREQUENCY = 1.2;
+        const baseY = Level.GROUND - this.sizeY * 0.5; // Startpunkt etwas über Boden
+        const targetY = baseY + Math.sin(this.sineTime * FREQUENCY * Math.PI * 2) * AMPLITUDE;
+
+        // Smooth lerp for Y
+        const LERP_SPEED = 2;
+        this.positionY += (targetY - this.positionY) * LERP_SPEED * deltaTime;
         this.positionY = Util.Clamp(
             this.positionY,
             World.WORLD_BOUNDS.minY,
