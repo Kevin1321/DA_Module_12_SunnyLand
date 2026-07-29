@@ -125,6 +125,8 @@ class Boss extends Enemy {
         this.player = player;
         this.state = this.EnemyState.MOVE;
         this.sineTime = 0;
+        AudioManager.Stop(AudioAssets.BACKGROUND_MUSIC);
+        AudioManager.Play(AudioAssets.BOSS_MUSIC, true);
     }
 
     /**
