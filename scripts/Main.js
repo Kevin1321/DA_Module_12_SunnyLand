@@ -68,6 +68,8 @@ function startGame() {
  * Called by {@link World#CheckGameState} when the player dies.
  */
 function showGameOver() {
+    AudioManager.StopAll();
+    AudioManager.Play(AudioAssets.GAME_OVER);
     document.getElementById('game-banner').textContent = '💀 Game Over';
     document.getElementById('game-banner').style.display = 'block';
     document.getElementById('start-btn').textContent = '↺ Restart';
