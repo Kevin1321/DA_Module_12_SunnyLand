@@ -8,6 +8,7 @@
  * Extends {@link Character} with movement, jumping, shooting,
  * collision handling, animations and player state management.
  * Reads input from {@link InputManager}.
+ * Animation logic is delegated to {@link PlayerAnimator}.
  *
  * @extends Character
  */
@@ -21,22 +22,16 @@ class Player extends Character {
     PlayerState = Object.freeze({
         /** Player is standing still. */
         IDLE: "idle",
-
         /** Player has been standing still for an extended time. */
         LONG_IDLE: "longIdle",
-
         /** Player is running. */
         RUN: "run",
-
         /** Player is currently jumping or falling. */
         JUMP: "jump",
-
         /** Player is currently damaged. */
         HURT: "hurt",
-
         /** Player is dead. */
         DEAD: "dead",
-
         /** Player reached the goal and won the game. */
         VICTORY: "victory"
     });
@@ -52,226 +47,59 @@ class Player extends Character {
      */
     constructor(context, positionX, positionY, sizeX, sizeY, projectilePool) {
         super(context, positionX, positionY, sizeX, sizeY);
-
-        this.CreateAnimations();
-
-        /**
-         * Collision layer of the player.
-         * @type {number}
-         */
-        this.layer = CollisionLayers.PLAYER;
-
-        /**
-         * Layers the player can collide with.
-         * @type {number[]}
-         */
-        this.collidableLayers = [
-            CollisionLayers.ENEMY,
-            CollisionLayers.PICKUP,
-            CollisionLayers.GOAL
-        ];
-
-        /**
-         * Maximum health of the player.
-         * @type {number}
-         */
-        this.maxHealth = 5;
-
-        /**
-         * Current health of the player.
-         * @type {number}
-         */
-        this.health = 5;
-
-        /**
-         * Current player state.
-         * @type {string}
-         */
-        this.state = this.PlayerState.IDLE;
-
-        /**
-         * Time the player has remained idle.
-         * @type {number}
-         */
-        this.idleTime = 0;
-
-        /**
-         * Time until long idle animation starts.
-         * @type {number}
-         */
-        this.longIdleTime = 5;
-
-        /**
-         * Vertical movement velocity.
-         * @type {number}
-         */
-        this.velocityY = 0;
-
-        /**
-         * Indicates whether the player is standing on the ground.
-         * @type {boolean}
-         */
-        this.isGrounded = true;
-
-        /**
-         * Horizontal movement speed.
-         * @type {number}
-         */
-        this.speed = 170;
-
-        /**
-         * Jump force applied when jumping.
-         * @type {number}
-         */
-        this.jumpSpeed = 13;
-
-        /**
-         * Gravity force applied while falling.
-         * @type {number}
-         */
-        this.gravity = 30;
-
-        /**
-         * Time between two shots.
-         * @type {number}
-         */
-        this.shootCooldown = 0.5;
-
-        /**
-         * Indicates whether shooting is currently blocked by cooldown.
-         * @type {boolean}
-         */
-        this.isShootOnCooldown = false;
-
-        /**
-         * Current elapsed cooldown time.
-         * @type {number}
-         */
-        this.currentCooldownTime = 0;
-
-        /**
-         * Indicates whether the player is facing left.
-         * @type {boolean}
-         */
-        this.isMovingLeft = false;
-
-        /**
-         * Movement amount during the current frame.
-         * @type {number}
-         */
-        this.moveAmount = 0;
-
-        /**
-         * Amount of collected gems.
-         * @type {number}
-         */
-        this.gemsCollected = 0;
-
-        /**
-         * Amount of collected cherries.
-         * @type {number}
-         */
-        this.cherriesCollected = 0;
-
-        /**
-         * Reusable projectile pool.
-         * @type {Projectile[]}
-         */
         this.projectilePool = projectilePool;
+        this.animator = new PlayerAnimator(this);
+        this.InitState();
+        this.InitPhysics();
+        this.InitCombat();
+    }
 
-        /**
-         * Duration of the hurt state in seconds.
-         * @type {number}
-         */
+    /**
+     * Initializes player state, collision and collection properties.
+     */
+    InitState() {
+        this.layer = CollisionLayers.PLAYER;
+        this.collidableLayers = [CollisionLayers.ENEMY, CollisionLayers.PICKUP, CollisionLayers.GOAL];
+        this.state = this.PlayerState.IDLE;
+        this.maxHealth = 5;
+        this.health = 5;
+        this.idleTime = 0;
+        this.longIdleTime = 5;
+        this.gemsCollected = 0;
+        this.cherriesCollected = 0;
+        this.collisionOffset = { top: 20, bottom: 20, left: 10, right: 20 };
+    }
+
+    /**
+     * Initializes movement and physics properties.
+     */
+    InitPhysics() {
+        this.velocityY = 0;
+        this.isGrounded = true;
+        this.speed = 170;
+        this.jumpSpeed = 13;
+        this.gravity = 30;
+        this.moveAmount = 0;
+        this.isMovingLeft = false;
+    }
+
+    /**
+     * Initializes combat, hurt, knockback and invincibility properties.
+     */
+    InitCombat() {
+        this.shootCooldown = 0.5;
+        this.isShootOnCooldown = false;
+        this.currentCooldownTime = 0;
         this.hurtDuration = 0.6;
-
-        /**
-         * Elapsed time in the current hurt state.
-         * @type {number}
-         */
         this.currentHurtTime = 0;
-
-        /**
-         * Horizontal speed applied as knockback when the player is hurt.
-         * @type {number}
-         */
         this.knockbackSpeed = 125;
-
-        /**
-         * Direction of the knockback (-1 for left, 1 for right).
-         * @type {number}
-         */
         this.knockbackDir = 1;
-
-        /**
-         * Indicates whether the player is currently invincible.
-         * Invincibility is granted after taking damage to prevent immediate follow-up hits.
-         * @type {boolean}
-         */
         this.isInvincible = false;
-
-        /**
-         * Total duration of the invincibility window in seconds.
-         * @type {number}
-         */
         this.invincibleDuration = 1.2;
-
-        /**
-         * Elapsed time since invincibility started.
-         * @type {number}
-         */
         this.currentInvincibleTime = 0;
-
-        /**
-         * Time between visibility toggles during the invincibility blink effect.
-         * @type {number}
-         */
         this.blinkInterval = 0.1;
-
-        /**
-         * Accumulated time since the last blink toggle.
-         * @type {number}
-         */
         this.blinkTimer = 0;
-
-        /**
-         * Whether the player sprite is currently visible.
-         * Toggled during the invincibility blink effect.
-         * @type {boolean}
-         */
         this.isVisible = true;
-
-        /**
-         * Collision offset for more accurate hit detection.
-         * @type {{top:number,bottom:number,left:number,right:number}}
-         */
-        this.collisionOffset = {
-            top: 20,
-            bottom: 20,
-            left: 10,
-            right: 20
-        };
-
-        /**
-         * Jump animation sprites.
-         */
-        this.jumpImg1 = new Image();
-        this.jumpImg1.src = SpriteAssets.PLAYER.JUMP_1;
-
-        this.jumpImg2 = new Image();
-        this.jumpImg2.src = SpriteAssets.PLAYER.JUMP_2;
-
-        /**
-         * Player death sprite.
-         */
-        this.playerDeadImg = new Image();
-        this.playerDeadImg.src = SpriteAssets.PLAYER.DEAD;
-
-        /**
-         * Player victory sprite.
-         */
-        this.playerVictoryImg = new Image();
-        this.playerVictoryImg.src = SpriteAssets.PLAYER.VICTORY;
     }
 
     /**
@@ -281,7 +109,6 @@ class Player extends Character {
      */
     OnCollisionEnter(collider) {
         super.OnCollisionEnter(collider);
-
         if (collider instanceof Cherry) this.cherriesCollected += 1;
         if (collider instanceof Gem) this.gemsCollected += 1;
         if (collider instanceof Minion) this.TakeDamage(0.5, collider);
@@ -290,47 +117,36 @@ class Player extends Character {
 
     /**
      * Updates the player every frame.
-     * Handles input processing, movement, physics,
-     * state updates, animation and rendering.
+     * Handles input, physics, state, animation and rendering.
      * @param {number} deltaTime - Time since the last frame in seconds.
      */
     OnTick(deltaTime) {
         super.OnTick(deltaTime);
-
         this.moveAmount = 0;
-
-        /**
-         * Checks if the player reached ground level.
-         */
-        if (this.positionY >= Level.GROUND) {
-            this.isGrounded = true;
-        }
-
-        /**
-         * Ignore player controls after hurt, death or victory.
-         */
-        if (
-            this.state !== this.PlayerState.HURT &&
-            this.state !== this.PlayerState.DEAD &&
-            this.state !== this.PlayerState.VICTORY
-        ) {
-            this.MoveRight(deltaTime);
-            this.MoveLeft(deltaTime);
-            this.Jump(deltaTime);
-            this.Shoot(deltaTime);
-        }
-
+        if (this.positionY >= Level.GROUND) this.isGrounded = true;
+        this.HandleInput(deltaTime);
         this.UpdateHurt(deltaTime);
         this.ApplyGravity(deltaTime);
         this.SetPlayerState(deltaTime);
-        this.Animate(deltaTime);
+        this.animator.Update(deltaTime, this.state, this.velocityY);
         this.DrawImage();
     }
 
     /**
-     * Moves the player to the right.
-     * Movement is performed while {@link InputManager.RIGHT}
-     * is active.
+     * Processes movement and action input unless the player is in a locked state.
+     * @param {number} deltaTime - Time since the last frame in seconds.
+     */
+    HandleInput(deltaTime) {
+        const locked = [this.PlayerState.HURT, this.PlayerState.DEAD, this.PlayerState.VICTORY];
+        if (locked.includes(this.state)) return;
+        this.MoveRight(deltaTime);
+        this.MoveLeft(deltaTime);
+        this.Jump(deltaTime);
+        this.Shoot(deltaTime);
+    }
+
+    /**
+     * Moves the player to the right while {@link InputManager.RIGHT} is active.
      * @param {number} deltaTime - Time since the last frame in seconds.
      */
     MoveRight(deltaTime) {
@@ -342,7 +158,7 @@ class Player extends Character {
     }
 
     /**
-     * Moves the player to the left.
+     * Moves the player to the left while {@link InputManager.LEFT} is active.
      * Prevents the player from leaving the left world boundary.
      * @param {number} deltaTime - Time since the last frame in seconds.
      */
@@ -350,336 +166,191 @@ class Player extends Character {
         if (InputManager.LEFT) {
             this.moveAmount = deltaTime * this.speed;
             this.positionX -= this.moveAmount;
-
-            if (this.positionX < 0) {
-                this.positionX = 0;
-            }
-
+            if (this.positionX < 0) this.positionX = 0;
             this.isMovingLeft = true;
         }
     }
 
     /**
-     * Makes the player jump.
-     * A jump can only be performed while grounded
-     * and when {@link InputManager.JUMP} is active.
+     * Makes the player jump when grounded and {@link InputManager.JUMP} is active.
      * @param {number} deltaTime - Time since the last frame in seconds.
      */
     Jump(deltaTime) {
         if (this.isGrounded && InputManager.JUMP) {
             this.velocityY = this.jumpSpeed;
             this.isGrounded = false;
-
-            AudioManager.Play(
-                AudioAssets.JUMP,
-                false
-            );
+            AudioManager.Play(AudioAssets.JUMP, false);
         }
     }
 
     /**
-     * Applies gravity to the player while airborne.
-     * Prevents the player from falling below the level ground.
+     * Applies gravity while airborne and clamps the player to ground level.
      * @param {number} deltaTime - Time since the last frame in seconds.
      */
     ApplyGravity(deltaTime) {
         if (!this.isGrounded) {
             this.velocityY -= deltaTime * this.gravity;
             this.positionY -= this.velocityY;
-
-            if (this.positionY > Level.GROUND) {
-                this.positionY = Level.GROUND;
-            }
+            if (this.positionY > Level.GROUND) this.positionY = Level.GROUND;
         }
     }
 
     /**
-     * Shoots a projectile if shooting input is active
-     * and the cooldown has expired.
-     * Uses the reusable projectile pool to find
-     * an available projectile.
+     * Fires a projectile from the pool if shooting input is active and off cooldown.
      * @param {number} deltaTime - Time since the last frame in seconds.
      */
     Shoot(deltaTime) {
-        if (InputManager.SHOOT) {
-            if (!this.isShootOnCooldown) {
-                this.projectilePool.some(projectile => {
-                    if (!projectile.isBeingShot) {
-                        projectile.Shoot(
-                            this.positionX + (this.isMovingLeft ? -15 : 25),
-                            this.positionY + 25,
-                            this.isMovingLeft ? -1 : 1
-                        );
-
-                        return true;
-                    } else {
-                        return false;
-                    }
-                });
-
-                this.isShootOnCooldown = true;
-            }
+        if (InputManager.SHOOT && !this.isShootOnCooldown) {
+            this.projectilePool.some(projectile => {
+                if (!projectile.isBeingShot) {
+                    projectile.Shoot(
+                        this.positionX + (this.isMovingLeft ? -15 : 25),
+                        this.positionY + 25,
+                        this.isMovingLeft ? -1 : 1
+                    );
+                    return true;
+                }
+                return false;
+            });
+            this.isShootOnCooldown = true;
         }
+        this.UpdateShootCooldown(deltaTime);
+    }
 
-        if (this.isShootOnCooldown) {
-            this.currentCooldownTime += deltaTime;
-
-            if (this.currentCooldownTime >= this.shootCooldown) {
-                this.currentCooldownTime = 0;
-                this.isShootOnCooldown = false;
-            }
+    /**
+     * Counts down the shoot cooldown and resets it once expired.
+     * @param {number} deltaTime - Time since the last frame in seconds.
+     */
+    UpdateShootCooldown(deltaTime) {
+        if (!this.isShootOnCooldown) return;
+        this.currentCooldownTime += deltaTime;
+        if (this.currentCooldownTime >= this.shootCooldown) {
+            this.currentCooldownTime = 0;
+            this.isShootOnCooldown = false;
         }
     }
 
     /**
-     * Applies damage to the player and triggers the hurt state.
+     * Applies damage, triggers knockback and starts the invincibility window.
      * Ignored while the player is invincible.
-     * Calculates knockback direction based on the source position,
-     * starts the invincibility window and plays the hurt sound.
      * @param {number} amount - Amount of health to subtract.
-     * @param {GameObject} source - The object that caused the damage, used to determine knockback direction.
+     * @param {GameObject} source - The object that caused the damage.
      */
     TakeDamage(amount, source) {
         if (this.isInvincible) return;
-
         super.TakeDamage(amount, source);
-
-        if (source) {
-            this.knockbackDir = this.positionX > source.positionX ? 1 : -1;
-        }
-
+        if (source) this.knockbackDir = this.positionX > source.positionX ? 1 : -1;
         this.state = this.PlayerState.HURT;
         this.currentHurtTime = 0;
-
-        this.isInvincible = true;
-        this.currentInvincibleTime = 0;
-
+        this.StartInvincibility();
         AudioManager.Play(AudioAssets.HURT, false);
     }
 
     /**
-     * Updates the hurt and invincibility state each frame.
-     * While hurt, applies horizontal knockback and transitions back
-     * to idle once {@link Player#hurtDuration} has elapsed.
-     * While invincible, toggles sprite visibility at {@link Player#blinkInterval}
-     * and ends invincibility after {@link Player#invincibleDuration}.
+     * Resets and starts the invincibility window after taking damage.
+     */
+    StartInvincibility() {
+        this.isInvincible = true;
+        this.currentInvincibleTime = 0;
+        this.blinkTimer = 0;
+        this.isVisible = true;
+    }
+
+    /**
+     * Advances the hurt and invincibility timers each frame.
+     * Delegates to {@link Player#UpdateKnockback} and {@link Player#UpdateInvincibility}.
      * @param {number} deltaTime - Time since the last frame in seconds.
      */
     UpdateHurt(deltaTime) {
-        if (this.state === this.PlayerState.HURT) {
-            this.currentHurtTime += deltaTime;
+        this.UpdateKnockback(deltaTime);
+        this.UpdateInvincibility(deltaTime);
+    }
 
-            this.positionX += this.knockbackDir * this.knockbackSpeed * deltaTime;
+    /**
+     * Applies horizontal knockback while in the hurt state and transitions back to idle.
+     * @param {number} deltaTime - Time since the last frame in seconds.
+     */
+    UpdateKnockback(deltaTime) {
+        if (this.state !== this.PlayerState.HURT) return;
+        this.currentHurtTime += deltaTime;
+        this.positionX += this.knockbackDir * this.knockbackSpeed * deltaTime;
+        if (this.currentHurtTime >= this.hurtDuration) this.state = this.PlayerState.IDLE;
+    }
 
-            if (this.currentHurtTime >= this.hurtDuration) {
-                this.state = this.PlayerState.IDLE;
-            }
+    /**
+     * Handles the blink effect and expiry of the invincibility window.
+     * @param {number} deltaTime - Time since the last frame in seconds.
+     */
+    UpdateInvincibility(deltaTime) {
+        if (!this.isInvincible) return;
+        this.currentInvincibleTime += deltaTime;
+        this.blinkTimer += deltaTime;
+        if (this.blinkTimer >= this.blinkInterval) {
+            this.blinkTimer = 0;
+            this.isVisible = !this.isVisible;
         }
-
-        if (this.isInvincible) {
-            this.currentInvincibleTime += deltaTime;
-
-            this.blinkTimer += deltaTime;
-            if (this.blinkTimer >= this.blinkInterval) {
-                this.blinkTimer = 0;
-                this.isVisible = !this.isVisible;
-            }
-
-            if (this.currentInvincibleTime >= this.invincibleDuration) {
-                this.isInvincible = false;
-                this.isVisible = true;
-            }
+        if (this.currentInvincibleTime >= this.invincibleDuration) {
+            this.isInvincible = false;
+            this.isVisible = true;
         }
     }
 
     /**
-     * Updates the current player state.
-     * The state depends on movement input,
-     * grounded status and idle duration.
+     * Updates the current player state based on input, grounded status and idle duration.
      * @param {number} deltaTime - Time since the last frame in seconds.
      */
     SetPlayerState(deltaTime) {
-        if (this.state == this.PlayerState.VICTORY) return;
-
+        if (this.state === this.PlayerState.VICTORY) return;
         if (this.state === this.PlayerState.HURT) return;
-
-        if (this.isGrounded) {
-            if (InputManager.LEFT || InputManager.RIGHT) {
-                this.state = this.PlayerState.RUN;
-            } else {
-                this.idleTime += deltaTime;
-                if (this.idleTime < this.longIdleTime) {
-                    this.state = this.PlayerState.IDLE;
-                } else {
-                    this.state = this.PlayerState.LONG_IDLE;
-                }
-            }
-        } else {
-            this.state = this.PlayerState.JUMP;
-        }
-
-        if (this.isDead) {
-            this.state = this.PlayerState.DEAD;
-        }
-
-        if (
-            this.state !== this.PlayerState.IDLE &&
-            this.state !== this.PlayerState.LONG_IDLE
-        ) {
-            this.idleTime = 0;
-        }
+        if (this.isDead) { this.state = this.PlayerState.DEAD; return; }
+        if (this.isGrounded) this.SetGroundedState(deltaTime);
+        else this.state = this.PlayerState.JUMP;
+        if (this.state !== this.PlayerState.IDLE && this.state !== this.PlayerState.LONG_IDLE) this.idleTime = 0;
     }
 
     /**
-     * Updates the current animation frame depending on player state.
-     * Handles idle, running, jumping, death and victory animations.
+     * Determines the correct grounded state based on movement input and idle duration.
      * @param {number} deltaTime - Time since the last frame in seconds.
      */
-    Animate(deltaTime) {
-        super.Animate(deltaTime);
-
-        switch (this.state) {
-            case this.PlayerState.IDLE:
-                this.SetAnimationFrame(
-                    this.idle.nextFrame(deltaTime)
-                );
-                break;
-
-            case this.PlayerState.LONG_IDLE:
-                this.SetAnimationFrame(
-                    this.longIdle.nextFrame(deltaTime)
-                );
-                break;
-
-            case this.PlayerState.RUN:
-                this.SetAnimationFrame(
-                    this.run.nextFrame(deltaTime)
-                );
-                break;
-
-            case this.PlayerState.JUMP:
-                this.SetAnimationFrame(
-                    this.velocityY > 0
-                        ? this.jumpImg1
-                        : this.jumpImg2
-                );
-                break;
-
-            case this.PlayerState.HURT:
-                this.SetAnimationFrame(this.hurt.nextFrame(deltaTime));
-                break;
-
-            case this.PlayerState.DEAD:
-                this.SetAnimationFrame(
-                    this.playerDeadImg
-                );
-                break;
-
-            case this.PlayerState.VICTORY:
-                this.SetAnimationFrame(
-                    this.playerVictoryImg
-                );
-                break;
-
-            default:
-                this.SetAnimationFrame(
-                    this.idle.nextFrame(deltaTime)
-                );
-                break;
+    SetGroundedState(deltaTime) {
+        if (InputManager.LEFT || InputManager.RIGHT) {
+            this.state = this.PlayerState.RUN;
+            return;
         }
+        this.idleTime += deltaTime;
+        this.state = this.idleTime < this.longIdleTime
+            ? this.PlayerState.IDLE
+            : this.PlayerState.LONG_IDLE;
     }
 
     /**
-     * Draws the player sprite onto the canvas.
-     * The sprite is horizontally flipped when the player
-     * is facing left.
+     * Draws the player sprite onto the canvas, flipped horizontally when facing left.
      */
     DrawImage() {
         if (!this.isVisible) return;
+        if (this.isMovingLeft) this.ApplyFlipTransform();
+        this.context.drawImage(this.img, this.positionX, this.positionY, this.sizeX, this.sizeY);
         if (this.isMovingLeft) {
-            this.context.save();
-            /**
-             * Flip rendering direction horizontally.
-             */
-            this.context.translate(this.sizeX, 0);
-            this.context.scale(-1, 1);
-
-            /**
-             * Temporarily invert X position because
-             * the canvas transformation changes coordinates.
-             */
-            this.positionX *= -1;
-        }
-
-        this.context.drawImage(
-            this.img,
-            this.positionX,
-            this.positionY,
-            this.sizeX,
-            this.sizeY
-        );
-
-        if (this.isMovingLeft) {
-            /**
-             * Restore original position and canvas state.
-             */
             this.positionX *= -1;
             this.context.restore();
         }
     }
 
     /**
-     * Sets the player state to victory.
-     * Called by {@link Goal} when the player reaches
-     * the end of the level.
+     * Saves the canvas state and applies a horizontal flip transformation for left-facing rendering.
      */
-    Victory() {
-        this.state = this.PlayerState.VICTORY;
+    ApplyFlipTransform() {
+        this.context.save();
+        this.context.translate(this.sizeX, 0);
+        this.context.scale(-1, 1);
+        this.positionX *= -1;
     }
 
     /**
-     * Creates all player animations.
-     * Initializes hurt, idle, long idle and running animations.
+     * Sets the player state to victory.
+     * Called by {@link Goal} when the player reaches the end of the level.
      */
-    CreateAnimations() {
-        /**
-         * Hurt animation.
-         */
-        this.hurt = new Animation([
-            SpriteAssets.PLAYER.HURT_1,
-            SpriteAssets.PLAYER.HURT_2
-        ]);
-
-        /**
-         * Normal idle animation.
-         */
-        this.idle = new Animation([
-            SpriteAssets.PLAYER.IDLE_1,
-            SpriteAssets.PLAYER.IDLE_2,
-            SpriteAssets.PLAYER.IDLE_3,
-            SpriteAssets.PLAYER.IDLE_4
-        ]);
-
-        /**
-         * Extended idle animation.
-         * Played after the player remains inactive
-         * for a longer time.
-         */
-        this.longIdle = new Animation([
-            SpriteAssets.PLAYER.LONG_IDLE_1,
-            SpriteAssets.PLAYER.LONG_IDLE_2
-        ]);
-
-        /**
-         * Running animation.
-         */
-        this.run = new Animation([
-            SpriteAssets.PLAYER.RUN_1,
-            SpriteAssets.PLAYER.RUN_2,
-            SpriteAssets.PLAYER.RUN_3,
-            SpriteAssets.PLAYER.RUN_4,
-            SpriteAssets.PLAYER.RUN_5,
-            SpriteAssets.PLAYER.RUN_6
-        ]);
+    Victory() {
+        this.state = this.PlayerState.VICTORY;
     }
 }
