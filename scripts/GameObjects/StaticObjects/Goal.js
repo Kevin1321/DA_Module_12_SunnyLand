@@ -47,6 +47,8 @@ class Goal extends GameObject {
         super.OnCollision(collider);
 
         if (collider instanceof Player) {
+            AudioManager.StopAll();
+            AudioManager.Play(AudioAssets.VICTORY);
             collider.Victory();
         }
     }
