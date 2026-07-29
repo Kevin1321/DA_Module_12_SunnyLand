@@ -17,6 +17,42 @@ class AudioAssets {
     static BACKGROUND_MUSIC = new Audio("assets/audio/the_valley.ogg");
 
     /**
+    * Background music of the boss fight.
+    * @static
+    * @type {HTMLAudioElement}
+    */
+    static BOSS_MUSIC = new Audio("assets/audio/nyxaurora-final-battle-epic-orchestral-action-background-music-361154.mp3");
+
+    /**
+         * Sound effect played when the projectile hits an enemy.
+         * @static
+         * @type {HTMLAudioElement}
+         */
+    static PROJECTILE_SHOOT = new Audio("assets/audio/effects/floraphonic-metal-whoosh-hit-4-201906.mp3");
+
+    /**
+     * Sound effect played when the projectile hits an enemy.
+     * @static
+     * @type {HTMLAudioElement}
+     */
+    static PROJECTILE_HIT = new Audio("assets/audio/effects/floraphonic-metal-whoosh-hit-5-201907.mp3");
+
+    /**
+     * Sound effect played when the player wins.
+     * @static
+     * @type {HTMLAudioElement}
+     */
+    static VICTORY = new Audio("assets/audio/effects/u_o8xh7gwsrj-cute_happy_victory-476376.mp3");
+
+
+    /**
+     * Sound effect played when the player wins.
+     * @static
+     * @type {HTMLAudioElement}
+     */
+    static GAME_OVER = new Audio("assets/audio/effects/mori_sound-fx-lose-cartoon-521523.mp3");
+
+    /**
      * Sound effect played when the player jumps.
      * @static
      * @type {HTMLAudioElement}
@@ -53,6 +89,11 @@ class AudioAssets {
      */
     static ALL_SOUNDS = [
         AudioAssets.BACKGROUND_MUSIC,
+        AudioAssets.BOSS_MUSIC,
+        AudioAssets.PROJECTILE_SHOOT,
+        AudioAssets.PROJECTILE_HIT,
+        AudioAssets.VICTORY,
+        AudioAssets.GAME_OVER,
         AudioAssets.JUMP,
         AudioAssets.ITEM,
         AudioAssets.HURT,
