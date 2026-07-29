@@ -237,6 +237,7 @@ class Player extends Character {
      * @param {GameObject} source - The object that caused the damage.
      */
     TakeDamage(amount, source) {
+        if (this.isDead) return;
         if (this.isInvincible) return;
         super.TakeDamage(amount, source);
         if (source) this.knockbackDir = this.positionX > source.positionX ? 1 : -1;
@@ -301,8 +302,8 @@ class Player extends Character {
      */
     SetPlayerState(deltaTime) {
         if (this.state === this.PlayerState.VICTORY) return;
-        if (this.state === this.PlayerState.HURT) return;
         if (this.isDead) { this.state = this.PlayerState.DEAD; return; }
+        if (this.state === this.PlayerState.HURT) return;
         if (this.isGrounded) this.SetGroundedState(deltaTime);
         else this.state = this.PlayerState.JUMP;
         if (this.state !== this.PlayerState.IDLE && this.state !== this.PlayerState.LONG_IDLE) this.idleTime = 0;
