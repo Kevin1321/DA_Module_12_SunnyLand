@@ -71,6 +71,7 @@ class Projectile extends GameObject {
         super.OnCollisionEnter(collider);
         if (collider instanceof Enemy) {
             collider.TakeDamage(1);
+            AudioManager.Play(AudioAssets.PROJECTILE_HIT);
             this.ResetProjectile();
         }
     }
@@ -83,6 +84,7 @@ class Projectile extends GameObject {
      * @param {number} direction - Flight direction: 1 = right, -1 = left.
      */
     Shoot(startPositionX, startPositionY, direction) {
+        AudioManager.Play(AudioAssets.PROJECTILE_SHOOT);
         this.isBeingShot = true;
         this.positionX = startPositionX;
         this.positionY = startPositionY;
