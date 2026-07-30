@@ -51,8 +51,8 @@ class PickUp extends GameObject {
      * Must be overridden by subclasses to implement animations and rendering.
      * @param {number} deltaTime - Time in seconds since the last frame.
      */
-    OnTick(deltaTime) {
-        super.OnTick(deltaTime);
+    onTick(deltaTime) {
+        super.onTick(deltaTime);
     }
 
     /**
@@ -60,8 +60,8 @@ class PickUp extends GameObject {
      * Must be overridden by subclasses to implement the collection logic.
      * @param {GameObject} collider - The object that touched the PickUp.
      */
-    OnCollisionEnter(collider) {
-        super.OnCollisionEnter(collider);
+    onCollisionEnter(collider) {
+        super.onCollisionEnter(collider);
     }
 
     /**

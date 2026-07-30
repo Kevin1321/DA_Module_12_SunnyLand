@@ -29,8 +29,8 @@ window.addEventListener("keydown", (event) => {
  * Initializes the {@link AudioManager} and {@link InputManager} and displays the start button.
  */
 function main() {
-    AudioManager.Init();
-    InputManager.Initialize();
+    AudioManager.init();
+    InputManager.init();
 
     canvas = document.getElementById('game-canvas');
 
@@ -66,7 +66,7 @@ function setStartButton() {
 function startGame() {
     document.getElementById('start-btn').style.display = 'none';
     document.getElementById('game-banner').style.display = 'none';
-    if (world) world.Destroy();
+    if (world) world.destroy();
     world = new World(canvas);
 
     if (window.matchMedia("(pointer: coarse)").matches) toggleFullscreen();
@@ -77,8 +77,8 @@ function startGame() {
  * Called by {@link World#CheckGameState} when the player dies.
  */
 function showGameOver() {
-    AudioManager.StopAll();
-    AudioManager.Play(AudioAssets.GAME_OVER);
+    AudioManager.stopAll();
+    AudioManager.play(AudioAssets.GAME_OVER);
     document.getElementById('game-banner').textContent = '💀 Game Over';
     document.getElementById('game-banner').style.display = 'block';
     document.getElementById('start-btn').textContent = '↺ Restart';

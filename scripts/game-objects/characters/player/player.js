@@ -49,15 +49,15 @@ class Player extends Character {
         super(context, positionX, positionY, sizeX, sizeY);
         this.projectilePool = projectilePool;
         this.animator = new PlayerAnimator(this);
-        this.InitState();
-        this.InitPhysics();
-        this.InitCombat();
+        this.initState();
+        this.initPhysics();
+        this.initCombat();
     }
 
     /**
      * Initializes player state, collision and collection properties.
      */
-    InitState() {
+    initState() {
         this.layer = CollisionLayers.PLAYER;
         this.collidableLayers = [CollisionLayers.ENEMY, CollisionLayers.PICKUP, CollisionLayers.GOAL];
         this.state = this.PlayerState.IDLE;
@@ -73,7 +73,7 @@ class Player extends Character {
     /**
      * Initializes movement and physics properties.
      */
-    InitPhysics() {
+    initPhysics() {
         this.velocityY = 0;
         this.isGrounded = true;
         this.speed = 170;
@@ -86,7 +86,7 @@ class Player extends Character {
     /**
      * Initializes combat, hurt, knockback and invincibility properties.
      */
-    InitCombat() {
+    initCombat() {
         this.shootCooldown = 0.5;
         this.isShootOnCooldown = false;
         this.currentCooldownTime = 0;
@@ -107,12 +107,12 @@ class Player extends Character {
      * Collects pickups and receives damage from enemies.
      * @param {GameObject} collider - Object that started the collision.
      */
-    OnCollisionEnter(collider) {
-        super.OnCollisionEnter(collider);
+    onCollisionEnter(collider) {
+        super.onCollisionEnter(collider);
         if (collider instanceof Cherry) this.cherriesCollected += 1;
         if (collider instanceof Gem) this.gemsCollected += 1;
-        if (collider instanceof Minion) this.TakeDamage(0.5, collider);
-        if (collider instanceof Boss) this.TakeDamage(1, collider);
+        if (collider instanceof Minion) this.takeDamage(0.5, collider);
+        if (collider instanceof Boss) this.takeDamage(1, collider);
     }
 
     /**
@@ -120,36 +120,36 @@ class Player extends Character {
      * Handles input, physics, state, animation and rendering.
      * @param {number} deltaTime - Time since the last frame in seconds.
      */
-    OnTick(deltaTime) {
-        super.OnTick(deltaTime);
+    onTick(deltaTime) {
+        super.onTick(deltaTime);
         this.moveAmount = 0;
         if (this.positionY >= Level.GROUND) this.isGrounded = true;
-        this.HandleInput(deltaTime);
-        this.UpdateHurt(deltaTime);
-        this.ApplyGravity(deltaTime);
-        this.SetPlayerState(deltaTime);
-        this.animator.Update(deltaTime, this.state, this.velocityY);
-        this.DrawImage();
+        this.handleInput(deltaTime);
+        this.updateHurt(deltaTime);
+        this.applyGravity(deltaTime);
+        this.setPlayerState(deltaTime);
+        this.animator.update(deltaTime, this.state, this.velocityY);
+        this.drawImage();
     }
 
     /**
      * Processes movement and action input unless the player is in a locked state.
      * @param {number} deltaTime - Time since the last frame in seconds.
      */
-    HandleInput(deltaTime) {
+    handleInput(deltaTime) {
         const locked = [this.PlayerState.HURT, this.PlayerState.DEAD, this.PlayerState.VICTORY];
         if (locked.includes(this.state)) return;
-        this.MoveRight(deltaTime);
-        this.MoveLeft(deltaTime);
-        this.Jump(deltaTime);
-        this.Shoot(deltaTime);
+        this.moveRight(deltaTime);
+        this.moveLeft(deltaTime);
+        this.jump(deltaTime);
+        this.shoot(deltaTime);
     }
 
     /**
      * Moves the player to the right while {@link InputManager.RIGHT} is active.
      * @param {number} deltaTime - Time since the last frame in seconds.
      */
-    MoveRight(deltaTime) {
+    moveRight(deltaTime) {
         if (InputManager.RIGHT) {
             this.moveAmount = deltaTime * this.speed;
             this.positionX += this.moveAmount;
@@ -162,7 +162,7 @@ class Player extends Character {
      * Prevents the player from leaving the left world boundary.
      * @param {number} deltaTime - Time since the last frame in seconds.
      */
-    MoveLeft(deltaTime) {
+    moveLeft(deltaTime) {
         if (InputManager.LEFT) {
             this.moveAmount = deltaTime * this.speed;
             this.positionX -= this.moveAmount;
@@ -175,11 +175,11 @@ class Player extends Character {
      * Makes the player jump when grounded and {@link InputManager.JUMP} is active.
      * @param {number} deltaTime - Time since the last frame in seconds.
      */
-    Jump(deltaTime) {
+    jump(deltaTime) {
         if (this.isGrounded && InputManager.JUMP) {
             this.velocityY = this.jumpSpeed * deltaTime;
             this.isGrounded = false;
-            AudioManager.Play(AudioAssets.JUMP, false);
+            AudioManager.play(AudioAssets.JUMP, false);
         }
     }
 
@@ -187,7 +187,7 @@ class Player extends Character {
      * Applies gravity while airborne and clamps the player to ground level.
      * @param {number} deltaTime - Time since the last frame in seconds.
      */
-    ApplyGravity(deltaTime) {
+    applyGravity(deltaTime) {
         if (!this.isGrounded) {
             this.velocityY -= deltaTime * this.gravity;
             this.positionY -= this.velocityY;
@@ -199,11 +199,11 @@ class Player extends Character {
      * Fires a projectile from the pool if shooting input is active and off cooldown.
      * @param {number} deltaTime - Time since the last frame in seconds.
      */
-    Shoot(deltaTime) {
+    shoot(deltaTime) {
         if (InputManager.SHOOT && !this.isShootOnCooldown) {
             this.projectilePool.some(projectile => {
                 if (!projectile.isBeingShot) {
-                    projectile.Shoot(
+                    projectile.shoot(
                         this.positionX + (this.isMovingLeft ? -15 : 25),
                         this.positionY + 25,
                         this.isMovingLeft ? -1 : 1
@@ -214,14 +214,14 @@ class Player extends Character {
             });
             this.isShootOnCooldown = true;
         }
-        this.UpdateShootCooldown(deltaTime);
+        this.updateShootCooldown(deltaTime);
     }
 
     /**
      * Counts down the shoot cooldown and resets it once expired.
      * @param {number} deltaTime - Time since the last frame in seconds.
      */
-    UpdateShootCooldown(deltaTime) {
+    updateShootCooldown(deltaTime) {
         if (!this.isShootOnCooldown) return;
         this.currentCooldownTime += deltaTime;
         if (this.currentCooldownTime >= this.shootCooldown) {
@@ -236,21 +236,21 @@ class Player extends Character {
      * @param {number} amount - Amount of health to subtract.
      * @param {GameObject} source - The object that caused the damage.
      */
-    TakeDamage(amount, source) {
+    takeDamage(amount, source) {
         if (this.isDead) return;
         if (this.isInvincible) return;
-        super.TakeDamage(amount, source);
+        super.takeDamage(amount, source);
         if (source) this.knockbackDir = this.positionX > source.positionX ? 1 : -1;
         this.state = this.PlayerState.HURT;
         this.currentHurtTime = 0;
-        this.StartInvincibility();
-        AudioManager.Play(AudioAssets.HURT, false);
+        this.startInvincibility();
+        AudioManager.play(AudioAssets.HURT, false);
     }
 
     /**
      * Resets and starts the invincibility window after taking damage.
      */
-    StartInvincibility() {
+    startInvincibility() {
         this.isInvincible = true;
         this.currentInvincibleTime = 0;
         this.blinkTimer = 0;
@@ -262,16 +262,16 @@ class Player extends Character {
      * Delegates to {@link Player#UpdateKnockback} and {@link Player#UpdateInvincibility}.
      * @param {number} deltaTime - Time since the last frame in seconds.
      */
-    UpdateHurt(deltaTime) {
-        this.UpdateKnockback(deltaTime);
-        this.UpdateInvincibility(deltaTime);
+    updateHurt(deltaTime) {
+        this.updateKnockback(deltaTime);
+        this.updateInvincibility(deltaTime);
     }
 
     /**
      * Applies horizontal knockback while in the hurt state and transitions back to idle.
      * @param {number} deltaTime - Time since the last frame in seconds.
      */
-    UpdateKnockback(deltaTime) {
+    updateKnockback(deltaTime) {
         if (this.state !== this.PlayerState.HURT) return;
         this.currentHurtTime += deltaTime;
         this.positionX += this.knockbackDir * this.knockbackSpeed * deltaTime;
@@ -282,7 +282,7 @@ class Player extends Character {
      * Handles the blink effect and expiry of the invincibility window.
      * @param {number} deltaTime - Time since the last frame in seconds.
      */
-    UpdateInvincibility(deltaTime) {
+    updateInvincibility(deltaTime) {
         if (!this.isInvincible) return;
         this.currentInvincibleTime += deltaTime;
         this.blinkTimer += deltaTime;
@@ -300,11 +300,11 @@ class Player extends Character {
      * Updates the current player state based on input, grounded status and idle duration.
      * @param {number} deltaTime - Time since the last frame in seconds.
      */
-    SetPlayerState(deltaTime) {
+    setPlayerState(deltaTime) {
         if (this.state === this.PlayerState.VICTORY) return;
         if (this.isDead) { this.state = this.PlayerState.DEAD; return; }
         if (this.state === this.PlayerState.HURT) return;
-        if (this.isGrounded) this.SetGroundedState(deltaTime);
+        if (this.isGrounded) this.setGroundedState(deltaTime);
         else this.state = this.PlayerState.JUMP;
         if (this.state !== this.PlayerState.IDLE && this.state !== this.PlayerState.LONG_IDLE) this.idleTime = 0;
     }
@@ -313,7 +313,7 @@ class Player extends Character {
      * Determines the correct grounded state based on movement input and idle duration.
      * @param {number} deltaTime - Time since the last frame in seconds.
      */
-    SetGroundedState(deltaTime) {
+    setGroundedState(deltaTime) {
         if (InputManager.LEFT || InputManager.RIGHT) {
             this.state = this.PlayerState.RUN;
             return;
@@ -327,9 +327,9 @@ class Player extends Character {
     /**
      * Draws the player sprite onto the canvas, flipped horizontally when facing left.
      */
-    DrawImage() {
+    drawImage() {
         if (!this.isVisible) return;
-        if (this.isMovingLeft) this.ApplyFlipTransform();
+        if (this.isMovingLeft) this.applyFlipTransform();
         this.context.drawImage(this.img, this.positionX, this.positionY, this.sizeX, this.sizeY);
         if (this.isMovingLeft) {
             this.positionX *= -1;
@@ -340,7 +340,7 @@ class Player extends Character {
     /**
      * Saves the canvas state and applies a horizontal flip transformation for left-facing rendering.
      */
-    ApplyFlipTransform() {
+    applyFlipTransform() {
         this.context.save();
         this.context.translate(this.sizeX, 0);
         this.context.scale(-1, 1);
@@ -351,7 +351,7 @@ class Player extends Character {
      * Sets the player state to victory.
      * Called by {@link Goal} when the player reaches the end of the level.
      */
-    Victory() {
+    victory() {
         this.state = this.PlayerState.VICTORY;
     }
 }

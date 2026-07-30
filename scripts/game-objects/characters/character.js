@@ -47,8 +47,8 @@ class Character extends GameObject {
      * Can be overridden by subclasses.
      * @param {number} deltaTime - Time in seconds since the last frame.
      */
-    OnTick(deltaTime) {
-        super.OnTick(deltaTime);
+    onTick(deltaTime) {
+        super.onTick(deltaTime);
     }
 
     /**
@@ -56,31 +56,31 @@ class Character extends GameObject {
      * Must be implemented by subclasses.
      * @param {number} deltaTime - Time in seconds since the last frame.
      */
-    Animate(deltaTime) {
+    animate(deltaTime) {
     }
 
     /**
      * Called once when a new collision begins.
      * @param {GameObject} collider - The object that started the collision.
      */
-    OnCollisionEnter(collider) {
-        super.OnCollisionEnter(collider);
+    onCollisionEnter(collider) {
+        super.onCollisionEnter(collider);
     }
 
     /**
      * Called every frame while a collision is active.
      * @param {GameObject} collider - The object currently colliding with this object.
      */
-    OnCollision(collider) {
-        super.OnCollision(collider);
+    onCollision(collider) {
+        super.onCollision(collider);
     }
 
     /**
      * Called once when a collision ends.
      * @param {GameObject} collider - The object that the collision ended with.
      */
-    OnCollisionExit(collider) {
-        super.OnCollisionExit(collider);
+    onCollisionExit(collider) {
+        super.onCollisionExit(collider);
     }
 
     /**
@@ -90,7 +90,7 @@ class Character extends GameObject {
      * @param {number} amount - The amount of damage to apply.
      * @param {source} source - The source of the damage that is applied.
      */
-    TakeDamage(amount, source = null) {
+    takeDamage(amount, source = null) {
         this.health -= amount;
         if (this.health < 0) this.health = 0;
         this.isDead = this.health == 0;

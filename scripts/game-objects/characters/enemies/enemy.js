@@ -48,8 +48,8 @@ class Enemy extends Character {
      * Can be overridden by subclasses.
      * @param {number} deltaTime - Time in seconds since the last frame.
      */
-    OnTick(deltaTime) {
-        super.OnTick(deltaTime);
+    onTick(deltaTime) {
+        super.onTick(deltaTime);
     }
 
     /**
@@ -57,8 +57,8 @@ class Enemy extends Character {
      * Must be implemented by subclasses.
      * @param {number} deltaTime - Time in seconds since the last frame.
      */
-    Animate(deltaTime) {
-        super.Animate(deltaTime);
+    animate(deltaTime) {
+        super.animate(deltaTime);
     }
 
     /**
@@ -66,7 +66,7 @@ class Enemy extends Character {
      * Plays the death effect if the enemy is still active.
      * Can be overridden by subclasses to add additional logic.
      */
-    EnemyDead() {
+    enemyDead() {
         if (this.isActive) AudioManager.Play(AudioAssets.ENEMY_DEATH, false);
     }
 }

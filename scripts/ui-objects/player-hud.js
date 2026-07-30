@@ -42,14 +42,14 @@ class PlayerHUD extends UIObject {
             this.context.fillStyle = "#2c2122";
         });
 
-        this.CreateFrame();
-        this.CreateFoxyPortrait();
-        this.CreateEmptyHeart();
-        this.CreateFullHeart();
-        this.CreateHalfHeart();
-        this.CreateItemSlot();
-        this.CreateCherry();
-        this.CreateGem();
+        this.createFrame();
+        this.createFoxyPortrait();
+        this.createEmptyHeart();
+        this.createFullHeart();
+        this.createHalfHeart();
+        this.createItemSlot();
+        this.createCherry();
+        this.createGem();
     }
 
     /**
@@ -57,21 +57,21 @@ class PlayerHUD extends UIObject {
      * Renders all HUD elements relative to the camera position onto the canvas.
      * @param {number} deltaTime - Time in seconds since the last frame.
      */
-    OnTick(deltaTime) {
-        super.OnTick(deltaTime);
+    onTick(deltaTime) {
+        super.onTick(deltaTime);
         this.context.drawImage(this.frame, this.camera.x, this.camera.y, this.frame.width, this.frame.height);
         this.context.drawImage(this.foxyPortait, this.camera.x + this.foxyPortaitXOffset, this.camera.y + this.foxyPortaitYOffest, this.foxyPortait.width, this.foxyPortait.height);
-        this.DrawEmptyHearts();
-        this.DrawFullHearts();
-        this.DrawItemSlots();
-        this.DrawCherry();
-        this.DrawGem();
+        this.drawEmptyHearts();
+        this.drawFullHearts();
+        this.drawItemSlots();
+        this.drawCherry();
+        this.drawGem();
     }
 
     /**
      * Loads and initializes the HUD frame sprite.
      */
-    CreateFrame() {
+    createFrame() {
         this.frame = new Image(96, 96);
         this.frame.src = SpriteAssets.UI.PLAYER_HUD.FRAME;
     }
@@ -79,7 +79,7 @@ class PlayerHUD extends UIObject {
     /**
      * Loads and initializes the Foxy portrait sprite.
      */
-    CreateFoxyPortrait() {
+    createFoxyPortrait() {
         this.foxyPortait = new Image(48, 48);
         this.foxyPortait.src = SpriteAssets.UI.PLAYER_HUD.FOXY_PORTAIT;
     }
@@ -87,7 +87,7 @@ class PlayerHUD extends UIObject {
     /**
      * Loads and initializes the empty heart sprite.
      */
-    CreateEmptyHeart() {
+    createEmptyHeart() {
         this.emptyHeart = new Image(64, 64);
         this.emptyHeart.src = SpriteAssets.UI.PLAYER_HUD.HEART_EMPTY;
     }
@@ -95,7 +95,7 @@ class PlayerHUD extends UIObject {
     /**
      * Loads and initializes the full heart sprite.
      */
-    CreateFullHeart() {
+    createFullHeart() {
         this.fullHeart = new Image(64, 64);
         this.fullHeart.src = SpriteAssets.UI.PLAYER_HUD.HEART_FULL;
     }
@@ -104,7 +104,7 @@ class PlayerHUD extends UIObject {
      * Loads and initializes the half heart sprite.
      * Displayed when the player has half a health point.
      */
-    CreateHalfHeart() {
+    createHalfHeart() {
         this.halfHeart = new Image(64, 64);
         this.halfHeart.src = SpriteAssets.UI.PLAYER_HUD.HEART_HALF;
     }
@@ -112,7 +112,7 @@ class PlayerHUD extends UIObject {
     /**
      * Loads and initializes the item slot sprite.
      */
-    CreateItemSlot() {
+    createItemSlot() {
         this.itemSlot = new Image(48, 48);
         this.itemSlot.src = SpriteAssets.UI.PLAYER_HUD.ITEM_SLOT;
     }
@@ -120,7 +120,7 @@ class PlayerHUD extends UIObject {
     /**
      * Loads and initializes the cherry sprite for the item slot.
      */
-    CreateCherry() {
+    createCherry() {
         this.cherry = new Image(24, 24);
         this.cherry.src = SpriteAssets.PICK_UPS.CHERRY_1;
     }
@@ -128,7 +128,7 @@ class PlayerHUD extends UIObject {
     /**
      * Loads and initializes the gem sprite for the item slot.
      */
-    CreateGem() {
+    createGem() {
         this.gem = new Image(24, 24);
         this.gem.src = SpriteAssets.PICK_UPS.GEM_1;
     }
@@ -137,7 +137,7 @@ class PlayerHUD extends UIObject {
      * Draws empty hearts for all of the player's maximum health points.
      * Serves as the background for the full hearts.
      */
-    DrawEmptyHearts() {
+    drawEmptyHearts() {
         for (let index = 0; index < this.player.maxHealth; index++) {
             this.context.drawImage(
                 this.emptyHeart,
@@ -153,7 +153,7 @@ class PlayerHUD extends UIObject {
      * Draws full and half hearts based on the player's current health.
      * Uses the half heart sprite when the player has half a health point.
      */
-    DrawFullHearts() {
+    drawFullHearts() {
         for (let index = 0; index < this.player.health; index++) {
             if (this.player.health % 1 !== 0 && index == this.player.health - .5) {
                 this.context.drawImage(this.halfHeart, (this.camera.x + this.frame.width + ((this.halfHeart.width - this.heartXOffset) * index)), 0, this.halfHeart.width, this.halfHeart.height);
@@ -167,7 +167,7 @@ class PlayerHUD extends UIObject {
      * Draws two item slots below the health bar.
      * One for cherries and one for gems.
      */
-    DrawItemSlots() {
+    drawItemSlots() {
         this.context.drawImage(this.itemSlot, this.camera.x + this.frame.width, this.camera.y + this.emptyHeart.height, this.itemSlot.width, this.itemSlot.height);
         this.context.drawImage(this.itemSlot, this.camera.x + this.frame.width + this.itemSlot.width, this.camera.y + this.emptyHeart.height, this.itemSlot.width, this.itemSlot.height);
     }
@@ -176,7 +176,7 @@ class PlayerHUD extends UIObject {
      * Draws the cherry icon and counter in the first item slot.
      * Not rendered if no cherries have been collected yet.
      */
-    DrawCherry() {
+    drawCherry() {
         if (this.player.cherriesCollected <= 0) return;
         let positionX = this.camera.x + this.frame.width + 16;
         let positionY = this.camera.y + this.emptyHeart.height + 16;
@@ -188,7 +188,7 @@ class PlayerHUD extends UIObject {
      * Draws the gem icon and counter in the second item slot.
      * Not rendered if no gems have been collected yet.
      */
-    DrawGem() {
+    drawGem() {
         if (this.player.gemsCollected <= 0) return;
         let positionX = this.camera.x + this.frame.width + this.itemSlot.width + 12;
         let positionY = this.camera.y + this.emptyHeart.height + 16;

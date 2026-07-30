@@ -16,7 +16,7 @@ class PlayerAnimator {
      */
     constructor(player) {
         this.player = player;
-        this.CreateAnimations();
+        this.createAnimations();
     }
 
     /**
@@ -25,17 +25,17 @@ class PlayerAnimator {
      * @param {string} state - The current player state from {@link Player#PlayerState}.
      * @param {number} velocityY - The player's current vertical velocity, used to select jump frames.
      */
-    Update(deltaTime, state, velocityY) {
+    update(deltaTime, state, velocityY) {
         const P = this.player.PlayerState;
         switch (state) {
-            case P.IDLE:        this.player.SetAnimationFrame(this.idle.nextFrame(deltaTime)); break;
-            case P.LONG_IDLE:   this.player.SetAnimationFrame(this.longIdle.nextFrame(deltaTime)); break;
-            case P.RUN:         this.player.SetAnimationFrame(this.run.nextFrame(deltaTime)); break;
-            case P.HURT:        this.player.SetAnimationFrame(this.hurt.nextFrame(deltaTime)); break;
-            case P.DEAD:        this.player.SetAnimationFrame(this.playerDeadImg); break;
-            case P.VICTORY:     this.player.SetAnimationFrame(this.playerVictoryImg); break;
-            case P.JUMP:        this.player.SetAnimationFrame(velocityY > 0 ? this.jumpImg1 : this.jumpImg2); break;
-            default:            this.player.SetAnimationFrame(this.idle.nextFrame(deltaTime)); break;
+            case P.IDLE:        this.player.setAnimationFrame(this.idle.nextFrame(deltaTime)); break;
+            case P.LONG_IDLE:   this.player.setAnimationFrame(this.longIdle.nextFrame(deltaTime)); break;
+            case P.RUN:         this.player.setAnimationFrame(this.run.nextFrame(deltaTime)); break;
+            case P.HURT:        this.player.setAnimationFrame(this.hurt.nextFrame(deltaTime)); break;
+            case P.DEAD:        this.player.setAnimationFrame(this.playerDeadImg); break;
+            case P.VICTORY:     this.player.setAnimationFrame(this.playerVictoryImg); break;
+            case P.JUMP:        this.player.setAnimationFrame(velocityY > 0 ? this.jumpImg1 : this.jumpImg2); break;
+            default:            this.player.setAnimationFrame(this.idle.nextFrame(deltaTime)); break;
         }
     }
 
@@ -44,9 +44,9 @@ class PlayerAnimator {
      * Delegates to {@link PlayerAnimator#CreateIdleAnimations} and
      * {@link PlayerAnimator#CreateMovementAnimations}.
      */
-    CreateAnimations() {
-        this.CreateIdleAnimations();
-        this.CreateMovementAnimations();
+    createAnimations() {
+        this.createIdleAnimations();
+        this.createMovementAnimations();
 
         this.jumpImg1 = new Image();
         this.jumpImg1.src = SpriteAssets.PLAYER.JUMP_1;
@@ -64,7 +64,7 @@ class PlayerAnimator {
     /**
      * Initializes idle, long idle and hurt animations.
      */
-    CreateIdleAnimations() {
+    createIdleAnimations() {
         this.idle = new Animation([
             SpriteAssets.PLAYER.IDLE_1,
             SpriteAssets.PLAYER.IDLE_2,
@@ -86,7 +86,7 @@ class PlayerAnimator {
     /**
      * Initializes the running animation.
      */
-    CreateMovementAnimations() {
+    createMovementAnimations() {
         this.run = new Animation([
             SpriteAssets.PLAYER.RUN_1,
             SpriteAssets.PLAYER.RUN_2,

@@ -26,6 +26,6 @@ class UIObject {
      * Can be overridden by subclasses to implement UI logic and rendering.
      * @param {number} deltaTime - Time in seconds since the previous frame.
      */
-    OnTick(deltaTime) {
+    onTick(deltaTime) {
     }
 }

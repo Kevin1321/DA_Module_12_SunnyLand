@@ -49,15 +49,15 @@ class Projectile extends GameObject {
      * Renders the projectile only while it is active.
      * @param {number} deltaTime - Time in seconds since the last frame.
      */
-    OnTick(deltaTime) {
-        super.OnTick(deltaTime);
+    onTick(deltaTime) {
+        super.onTick(deltaTime);
         if (this.isBeingShot) {
             this.positionX += this.projectileSpeed * this.direction * deltaTime;
             this.context.drawImage(this.img, this.positionX, this.positionY, this.sizeX, this.sizeY);
             this.currentTimeAlife += deltaTime;
 
             if (this.currentTimeAlife >= this.lifetime) {
-                this.ResetProjectile();
+                this.resetProjectile();
             }
         }
     }
@@ -67,12 +67,12 @@ class Projectile extends GameObject {
      * Deals 1 damage to the enemy and resets the projectile.
      * @param {GameObject} collider - The object that was hit.
      */
-    OnCollisionEnter(collider) {
-        super.OnCollisionEnter(collider);
+    onCollisionEnter(collider) {
+        super.onCollisionEnter(collider);
         if (collider instanceof Enemy) {
-            collider.TakeDamage(1);
-            AudioManager.Play(AudioAssets.PROJECTILE_HIT);
-            this.ResetProjectile();
+            collider.takeDamage(1);
+            AudioManager.play(AudioAssets.PROJECTILE_HIT);
+            this.resetProjectile();
         }
     }
 
@@ -83,8 +83,8 @@ class Projectile extends GameObject {
      * @param {number} startPositionY - Starting Y position in pixels.
      * @param {number} direction - Flight direction: 1 = right, -1 = left.
      */
-    Shoot(startPositionX, startPositionY, direction) {
-        AudioManager.Play(AudioAssets.PROJECTILE_SHOOT);
+    shoot(startPositionX, startPositionY, direction) {
+        AudioManager.play(AudioAssets.PROJECTILE_SHOOT);
         this.isBeingShot = true;
         this.positionX = startPositionX;
         this.positionY = startPositionY;
@@ -95,7 +95,7 @@ class Projectile extends GameObject {
      * Resets the projectile and parks it outside the visible area.
      * Called when the lifetime expires or an enemy is hit.
      */
-    ResetProjectile() {
+    resetProjectile() {
         this.currentTimeAlife = 0;
         this.isBeingShot = false;
         this.positionX = -500;

@@ -21,7 +21,7 @@ class Util {
      * Util.Clamp(-5, 0, 10); // returns 0
      * Util.Clamp(5, 0, 10);  // returns 5
      */
-    static Clamp(value, min, max) {
+    static clamp(value, min, max) {
         return Math.max(min, Math.min(max, value));
     }
 
@@ -30,7 +30,7 @@ class Util {
      * @static
      * @returns {number} Random value in the range [-1.0, 1.0] with one decimal place.
      */
-    static GetRandomNormalized() {
+    static getRandomNormalized() {
         return (Math.random() * 2 - 1).toFixed(1);
     }
 
@@ -44,7 +44,7 @@ class Util {
      * Util.GetRandomRange(0, 100); // e.g. 42.7
      * Util.GetRandomRange(200, 300); // e.g. 263.4
      */
-    static GetRandomRange(min, max) {
+    static getRandomRange(min, max) {
         return Math.random() * (max - min) + min;
     }
 }

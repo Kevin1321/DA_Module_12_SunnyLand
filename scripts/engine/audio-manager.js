@@ -32,7 +32,7 @@ class AudioManager {
      * @param {HTMLAudioElement} sound - The sound from {@link AudioAssets} to play.
      * @param {boolean} [isLooping=false] - Whether the sound should loop.
      */
-    static Play(sound, isLooping) {
+    static play(sound, isLooping) {
         sound.volume = AudioManager.isMuted ? 0 : AudioManager.currentVolume;
         sound.currentTime = 0;
         sound.loop = isLooping;
@@ -43,7 +43,7 @@ class AudioManager {
      * Pauses all sounds in {@link AudioAssets.ALL_SOUNDS}.
      * @static
      */
-    static StopAll() {
+    static stopAll() {
         AudioAssets.ALL_SOUNDS.forEach(sound => sound.pause());
     }
 
@@ -52,7 +52,7 @@ class AudioManager {
      * @static
      * @param {HTMLAudioElement} sound - The sound to pause.
      */
-    static Stop(sound) {
+    static stop(sound) {
         sound.pause();
     }
 
@@ -62,7 +62,7 @@ class AudioManager {
      * @static
      * @param {number} value - The new volume (0.0–1.0).
      */
-    static SetVolume(value) {
+    static setVolume(value) {
         AudioManager.currentVolume = value;
         localStorage.setItem('volume', value);
         AudioAssets.ALL_SOUNDS.forEach(sound => {
@@ -75,7 +75,7 @@ class AudioManager {
      * Stores the new state in localStorage.
      * @static
      */
-    static ToggleMute() {
+    static toggleMute() {
         AudioManager.isMuted = !AudioManager.isMuted;
         localStorage.setItem('isMuted', AudioManager.isMuted);
         AudioAssets.ALL_SOUNDS.forEach(sound => {
@@ -95,7 +95,7 @@ class AudioManager {
      * using the settings stored in localStorage.
      * @static
      */
-    static Init() {
+    static init() {
         document.getElementById('volume-slider').value = AudioManager.currentVolume;
         document.getElementById('mute-btn').src = AudioManager.isMuted
             ? "assets/sprites/UI/audio-disabled.png"

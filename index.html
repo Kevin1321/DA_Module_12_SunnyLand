@@ -62,9 +62,9 @@
                 <div id="game-controls">
                     <div id="audio-controls">
                         <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.1"
-                            oninput="AudioManager.SetVolume(parseFloat(this.value))">
+                            oninput="AudioManager.setVolume(parseFloat(this.value))">
                         <img id="mute-btn" src="assets/sprites/UI/audio-enabled.png"
-                            onclick="AudioManager.ToggleMute()">
+                            onclick="AudioManager.toggleMute()">
                         <button id="fullscreen-btn" onclick="toggleFullscreen()">⛶</button>
                         <button id="touch-toggle-btn" onclick="toggleTouchControls()">✋</button>
                     </div>
@@ -80,9 +80,9 @@
                     <!-- Fullscreen UI -->
                     <div id="fullscreen-audio">
                         <input type="range" id="fs-volume-slider" min="0" max="1" step="0.01" value="0.1"
-                            oninput="AudioManager.SetVolume(parseFloat(this.value))">
+                            oninput="AudioManager.setVolume(parseFloat(this.value))">
                         <img id="fs-mute-btn" src="assets/sprites/UI/audio-enabled.png"
-                            onclick="AudioManager.ToggleMute()">
+                            onclick="AudioManager.toggleMute()">
                         <button id="fullscreen-btn" onclick="toggleFullscreen()">⛶</button>
                         <button id="touch-toggle-btn" onclick="toggleTouchControls()">✋</button>
                     </div>

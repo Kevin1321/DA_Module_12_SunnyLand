@@ -39,10 +39,10 @@ class World {
             y: 0
         };
 
-        this.Tick = this.Tick.bind(this);
-        this.CreateGameObjects();
-        this.Tick();
-        AudioManager.Play(AudioAssets.BACKGROUND_MUSIC, true);
+        this.tick = this.tick.bind(this);
+        this.createGameObjects();
+        this.tick();
+        AudioManager.play(AudioAssets.BACKGROUND_MUSIC, true);
     }
 
     /**
@@ -50,8 +50,8 @@ class World {
      * Calculates deltaTime and delegates execution to {@link World#OnTick}.
      * @param {DOMHighResTimeStamp} now - Timestamp of the current frame in milliseconds.
      */
-    Tick(now) {
-        this.rafId = requestAnimationFrame(this.Tick);
+    tick(now) {
+        this.rafId = requestAnimationFrame(this.tick);
 
         if (!this.lastTime) {
             this.lastTime = now;
@@ -70,14 +70,14 @@ class World {
             this.fpsAccum = 0;
         }
 
-        this.OnTick(deltaTime);
+        this.onTick(deltaTime);
     }
 
     /**
      * Updates the camera position based on the player's position.
      * Clamps the camera position to the world boundaries.
      */
-    UpdateCamera() {
+    updateCamera() {
         let xTranslation = this.player.positionX - this.canvas.width / 2 + this.player.sizeX / 2;
 
         if (xTranslation < World.WORLD_BOUNDS.minX) xTranslation = World.WORLD_BOUNDS.minX;
@@ -90,8 +90,8 @@ class World {
      * camera, rendering, GameObjects, UI, collisions, and game state.
      * @param {number} deltaTime - Time in seconds since the previous frame.
      */
-    OnTick(deltaTime) {
-        this.UpdateCamera();
+    onTick(deltaTime) {
+        this.updateCamera();
 
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -99,29 +99,29 @@ class World {
 
         this.context.translate(-this.camera.x, 0);
 
-        this.UpdateGameObjects(deltaTime);
+        this.updateGameObjects(deltaTime);
 
-        this.UpdateUIObjects(deltaTime);
+        this.updateUIObjects(deltaTime);
 
-        this.CheckCollisions();
+        this.checkCollisions();
 
         this.context.restore();
 
         this.frame++;
         if (this.frame == Infinity) this.frame = 0;
 
-        this.StartBossFight();
+        this.startBossFight();
 
-        this.CheckGameState();
+        this.checkGameState();
     }
 
     /**
      * Calls {@link GameObject#OnTick} for all GameObjects.
      * @param {number} deltaTime - Time in seconds since the previous frame.
      */
-    UpdateGameObjects(deltaTime) {
+    updateGameObjects(deltaTime) {
         this.gameObjects.forEach(gameObject => {
-            gameObject.OnTick(deltaTime);
+            gameObject.onTick(deltaTime);
         });
     }
 
@@ -129,8 +129,8 @@ class World {
      * Calls {@link PlayerHUD#OnTick} for all UI objects.
      * @param {number} deltaTime - Time in seconds since the previous frame.
      */
-    UpdateUIObjects(deltaTime) {
-        this.playerHUD.OnTick(deltaTime);
+    updateUIObjects(deltaTime) {
+        this.playerHUD.onTick(deltaTime);
     }
     /**
      * Checks whether two GameObjects collide based on their bounding boxes and collision offsets.
@@ -138,7 +138,7 @@ class World {
      * @param {GameObject} b - Second GameObject.
      * @returns {boolean} `true` if the two objects are colliding.
      */
-    IsColliding(a, b) {
+    isColliding(a, b) {
         return (
             a.positionX + a.collisionOffset.left <
             b.positionX + b.sizeX - b.collisionOffset.right &&
@@ -158,7 +158,7 @@ class World {
      * Collects all active collisions of the current frame
      * and passes them to {@link World#ResolveCollisions}.
      */
-    CheckCollisions() {
+    checkCollisions() {
         const activeCollisions = new Map();
 
         for (let i = 0; i < this.gameObjects.length; i++) {
@@ -172,14 +172,14 @@ class World {
                 const bCanHitA = b.collidableLayers.includes(a.layer);
 
                 if (!aCanHitB && !bCanHitA) continue;
-                if (!this.IsColliding(a, b)) continue;
+                if (!this.isColliding(a, b)) continue;
 
-                if (aCanHitB) this.RegisterCollision(activeCollisions, a, b);
-                if (bCanHitA) this.RegisterCollision(activeCollisions, b, a);
+                if (aCanHitB) this.registerCollision(activeCollisions, a, b);
+                if (bCanHitA) this.registerCollision(activeCollisions, b, a);
             }
         }
 
-        this.ResolveCollisions(activeCollisions);
+        this.resolveCollisions(activeCollisions);
     }
 
     /**
@@ -188,7 +188,7 @@ class World {
      * @param {GameObject} a - The colliding object.
      * @param {GameObject} b - The target object of the collision.
      */
-    RegisterCollision(activeCollisions, a, b) {
+    registerCollision(activeCollisions, a, b) {
         if (!activeCollisions.has(a)) activeCollisions.set(a, new Set());
         activeCollisions.get(a).add(b);
     }
@@ -197,25 +197,25 @@ class World {
      * Resolves collision events: OnCollision (Stay), OnCollisionEnter, and OnCollisionExit.
      * @param {Map<GameObject, Set<GameObject>>} activeCollisions - All active collisions of the current frame.
      */
-    ResolveCollisions(activeCollisions) {
+    resolveCollisions(activeCollisions) {
         this.gameObjects.forEach(obj => {
             if (obj.collidableLayers.length === 0) return;
 
             const currentHits = activeCollisions.get(obj) ?? new Set();
 
             currentHits.forEach(other => {
-                obj.OnCollision(other);
+                obj.onCollision(other);
             });
 
             currentHits.forEach(other => {
                 if (!obj.currentCollisions.has(other)) {
-                    obj.OnCollisionEnter(other);
+                    obj.onCollisionEnter(other);
                 }
             });
 
             obj.currentCollisions.forEach(other => {
                 if (!currentHits.has(other)) {
-                    obj.OnCollisionExit(other);
+                    obj.onCollisionExit(other);
                 }
             });
 
@@ -226,23 +226,23 @@ class World {
     /**
      * Initializes all GameObjects of the world in the correct rendering order.
      */
-    CreateGameObjects() {
-        this.CreateBackgrounds();
-        this.CreateLevel();
-        this.CreateProps();
-        this.CreateGoal();
-        this.CreatePickUps();
-        this.CreateEnemies();
-        this.CreateProjectiles();
-        this.CreatePlayer();
-        this.CreateGrass();
-        this.CreateUI();
+    createGameObjects() {
+        this.createBackgrounds();
+        this.createLevel();
+        this.createProps();
+        this.createGoal();
+        this.createPickUps();
+        this.createEnemies();
+        this.createProjectiles();
+        this.createPlayer();
+        this.createGrass();
+        this.createUI();
     }
 
     /**
      * Creates background and middleground tiles for the entire world width.
      */
-    CreateBackgrounds() {
+    createBackgrounds() {
         for (let index = 0; index < 4; index++) {
             this.gameObjects.push(new Background(this.context, 720 * index, 0, 721, 480, SpriteAssets.BACKGROUNDS.SUNNY_LAND_BASE));
         }
@@ -254,25 +254,25 @@ class World {
     /**
      * Creates the main level ground.
      */
-    CreateLevel() {
+    createLevel() {
         this.gameObjects.push(this.level_1 = new Level(this.context, 0, 400, 2880, 80, SpriteAssets.LEVEL.LEVEL_1));
     }
 
     /**
      * Creates the grass layer above the main ground.
      */
-    CreateGrass() {
+    createGrass() {
         this.gameObjects.push(this.level_1_grass = new Level(this.context, 0, 386, 2880, 16, SpriteAssets.LEVEL.LEVEL_1_GRASS));
     }
 
     /**
   * Creates all decorative props (trees, rocks, mushrooms) with random positioning.
   */
-    CreateProps() {
-        this.CreateProp(SpriteAssets.PROPS.TREE, 15, 79, 100, 176, 200);
-        this.CreateProp(SpriteAssets.PROPS.ROCK_2, 7, 66, 80, 55, 70);
-        this.CreateProp(SpriteAssets.PROPS.ROCK, 12, 28, 40, 15, 30);
-        this.CreateProp(SpriteAssets.PROPS.SHROOMS, 30, 16, 20, 15, 20);
+    createProps() {
+        this.createProp(SpriteAssets.PROPS.TREE, 15, 79, 100, 176, 200);
+        this.createProp(SpriteAssets.PROPS.ROCK_2, 7, 66, 80, 55, 70);
+        this.createProp(SpriteAssets.PROPS.ROCK, 12, 28, 40, 15, 30);
+        this.createProp(SpriteAssets.PROPS.SHROOMS, 30, 16, 20, 15, 20);
     }
 
     /**
@@ -284,11 +284,11 @@ class World {
      * @param {number} minY - Minimum height of the prop in pixels.
      * @param {number} maxY - Maximum height of the prop in pixels.
      */
-    CreateProp(sprite, amount, minX, maxX, minY, maxY) {
+    createProp(sprite, amount, minX, maxX, minY, maxY) {
         for (let index = 0; index < amount; index++) {
-            let positionX = index * Util.GetRandomRange(200, 300) + Util.GetRandomRange(0, 500);
-            let sizeX = Util.GetRandomRange(minX, maxX);
-            let sizeY = Util.GetRandomRange(minY, maxY);
+            let positionX = index * Util.getRandomRange(200, 300) + Util.getRandomRange(0, 500);
+            let sizeX = Util.getRandomRange(minX, maxX);
+            let sizeY = Util.getRandomRange(minY, maxY);
             let positionY = World.WORLD_BOUNDS.maxY - sizeY - this.level_1.sizeY;
             this.gameObjects.push(new Prop(this.context, positionX, positionY, sizeX, sizeY, sprite))
         }
@@ -297,21 +297,21 @@ class World {
     /**
      * Creates the goal object (wooden house) at the end of the level.
      */
-    CreateGoal() {
+    createGoal() {
         this.gameObjects.push(this.woodenHouse = new Goal(this.context, 2760, 302, 112, 98, SpriteAssets.PROPS.WOODEN_HOUSE));
     }
 
     /**
      * Creates all collectible objects (cherries and gems) with random positioning.
      */
-    CreatePickUps() {
+    createPickUps() {
         for (let index = 0; index < 10; index++) {
-            let cherry = new Cherry(this.context, index * 200 + Util.GetRandomRange(100, 400), 360, 32, 32);
+            let cherry = new Cherry(this.context, index * 200 + Util.getRandomRange(100, 400), 360, 32, 32);
             this.gameObjects.push(cherry);
         }
 
         for (let index = 0; index < 10; index++) {
-            let gem = new Gem(this.context, index * 200 + Util.GetRandomRange(100, 400), 360, 32, 32);
+            let gem = new Gem(this.context, index * 200 + Util.getRandomRange(100, 400), 360, 32, 32);
             this.gameObjects.push(gem);
         }
     }
@@ -319,9 +319,9 @@ class World {
     /**
      * Creates all enemies: 5 minions with random positions and a boss at the end of the level.
      */
-    CreateEnemies() {
+    createEnemies() {
         for (let index = 0; index < 5; index++) {
-            let positionX = index * Util.GetRandomRange(200, 300) + Util.GetRandomRange(0, 500);
+            let positionX = index * Util.getRandomRange(200, 300) + Util.getRandomRange(0, 500);
             if(positionX < 60) positionX = 60;
             let minion = new Minion(this.context, positionX, 336, 64, 64);
             this.gameObjects.push(minion);
@@ -334,7 +334,7 @@ class World {
      * Creates a pool of 7 projectiles that are reused by the player.
      * Inactive projectiles are parked outside the visible area.
      */
-    CreateProjectiles() {
+    createProjectiles() {
         this.projectilePool = [
             new Projectile(this.context, -500, -500, 32, 32),
             new Projectile(this.context, -500, -500, 32, 32),
@@ -353,14 +353,14 @@ class World {
     /**
      * Creates the player and provides the projectile pool.
      */
-    CreatePlayer() {
+    createPlayer() {
         this.gameObjects.push(this.player = new Player(this.context, 0, 336, 64, 64, this.projectilePool));
     }
 
     /**
      * Creates the player's HUD (Heads-Up Display).
      */
-    CreateUI() {
+    createUI() {
         this.playerHUD = new PlayerHUD(this.context, this.camera, this.player);
     }
 
@@ -368,16 +368,16 @@ class World {
      * Starts the boss fight when the player gets close enough to the boss.
      * Will not trigger again after the fight has started.
      */
-    StartBossFight() {
+    startBossFight() {
         if (this.boss.fightStarted) return;
-        if (this.player.positionX >= 2320) this.boss.BeginFight(this.player);
+        if (this.player.positionX >= 2320) this.boss.beginFight(this.player);
     }
 
     /**
      * Checks every frame whether the game has been won or lost
      * and triggers the corresponding UI function.
      */
-    CheckGameState() {
+    checkGameState() {
         if (this.gameEnded) return;
 
         if (this.player.state === this.player.PlayerState.DEAD) {
@@ -394,8 +394,8 @@ class World {
   * Stops the game loop and stops all audio playback.
   * Should be called when the World instance is no longer needed.
   */
-    Destroy() {
+    destroy() {
         cancelAnimationFrame(this.rafId);
-        AudioManager.StopAll();
+        AudioManager.stopAll();
     }
 }

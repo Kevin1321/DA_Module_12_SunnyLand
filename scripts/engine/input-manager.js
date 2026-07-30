@@ -66,10 +66,10 @@ class InputManager {
      * Can be called multiple times — listeners are only registered once.
      * @static
      */
-    static Initialize() {
+    static init() {
         if (this.isInitialized) return;
-        this.RegisterKeyDown();
-        this.RegisterKeyUp();
+        this.registerKeyDown();
+        this.registerKeyUp();
         this.isInitialized = true;
     }
 
@@ -78,7 +78,7 @@ class InputManager {
      * Ignores held keys (event.repeat).
      * @static
      */
-    static RegisterKeyDown() {
+    static registerKeyDown() {
         window.addEventListener("keydown", (event) => {
             if (event.repeat) return;
             switch (event.code) {
@@ -102,7 +102,7 @@ class InputManager {
      * Registers the keyup event listener and sets the corresponding flags to `false`.
      * @static
      */
-    static RegisterKeyUp() {
+    static registerKeyUp() {
         window.addEventListener("keyup", (event) => {
             switch (event.code) {
                 case "KeyW": InputManager.UP = false;

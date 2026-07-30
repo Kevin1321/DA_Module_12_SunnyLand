@@ -33,8 +33,8 @@ class Goal extends GameObject {
      * Called every frame and renders the goal object onto the canvas.
      * @param {number} deltaTime - Time in seconds since the last frame.
      */
-    OnTick(deltaTime) {
-        super.OnTick(deltaTime);
+    onTick(deltaTime) {
+        super.onTick(deltaTime);
         this.context.drawImage(this.img, this.positionX, this.positionY, this.sizeX, this.sizeY);
     }
 
@@ -43,13 +43,13 @@ class Goal extends GameObject {
      * Sets the player into the Victory state via {@link Player#Victory}.
      * @param {GameObject} collider - The object that touched the goal.
      */
-    OnCollisionEnter(collider) {
-        super.OnCollision(collider);
+    onCollisionEnter(collider) {
+        super.onCollision(collider);
 
         if (collider instanceof Player) {
-            AudioManager.StopAll();
-            AudioManager.Play(AudioAssets.VICTORY);
-            collider.Victory();
+            AudioManager.stopAll();
+            AudioManager.play(AudioAssets.VICTORY);
+            collider.victory();
         }
     }
 }

@@ -43,15 +43,15 @@ class Cherry extends PickUp {
      * Does nothing if the cherry is no longer active.
      * @param {number} deltaTime - Time in seconds since the last frame.
      */
-    OnTick(deltaTime) {
-        super.OnTick(deltaTime);
+    onTick(deltaTime) {
+        super.onTick(deltaTime);
 
         if (!this.isActive) return;
 
         if (this.hasBeenPickedUp) {
-            this.SetAnimationFrame(this.pickedUp.nextFrame(deltaTime));
+            this.setAnimationFrame(this.pickedUp.nextFrame(deltaTime));
         } else {
-            this.SetAnimationFrame(this.idle.nextFrame(deltaTime));
+            this.setAnimationFrame(this.idle.nextFrame(deltaTime));
         }
 
         this.context.drawImage(this.img, this.positionX, this.positionY, this.sizeX, this.sizeY);
@@ -63,9 +63,9 @@ class Cherry extends PickUp {
      * The {@link Player#cherriesCollected} counter is increased in {@link Player#OnCollisionEnter}.
      * @param {GameObject} collider - The object that touched the cherry.
      */
-    OnCollisionEnter(collider) {
-        super.OnCollisionEnter(collider);
+    onCollisionEnter(collider) {
+        super.onCollisionEnter(collider);
         this.hasBeenPickedUp = true;
-        AudioManager.Play(AudioAssets.ITEM, false);
+        AudioManager.play(AudioAssets.ITEM, false);
     }
 }

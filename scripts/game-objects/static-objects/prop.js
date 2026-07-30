@@ -30,8 +30,8 @@ class Prop extends GameObject {
      * Called every frame and renders the prop onto the canvas.
      * @param {number} deltaTime - Time in seconds since the last frame.
      */
-    OnTick(deltaTime) {
-        super.OnTick(deltaTime);
+    onTick(deltaTime) {
+        super.onTick(deltaTime);
         this.context.drawImage(this.img, this.positionX, this.positionY, this.sizeX, this.sizeY);
     }
 }

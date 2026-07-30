@@ -63,7 +63,7 @@ class GameObject {
      * Sets the current animation frame as the image to be rendered.
      * @param {HTMLImageElement} img - The new animation frame from an {@link Animation}.
      */
-    SetAnimationFrame(img) {
+    setAnimationFrame(img) {
         this.img = img;
     }
 
@@ -72,7 +72,7 @@ class GameObject {
      * Can be overridden by subclasses to implement gameplay logic.
      * @param {number} deltaTime - Time in seconds since the previous frame.
      */
-    OnTick(deltaTime) {
+    onTick(deltaTime) {
     }
 
     /**
@@ -80,7 +80,7 @@ class GameObject {
      * Can be overridden by subclasses.
      * @param {GameObject} collider - The object that initiated the collision.
      */
-    OnCollisionEnter(collider) {
+    onCollisionEnter(collider) {
     }
 
     /**
@@ -88,7 +88,7 @@ class GameObject {
      * Can be overridden by subclasses.
      * @param {GameObject} collider - The object currently colliding with this object.
      */
-    OnCollision(collider) {
+    onCollision(collider) {
     }
 
     /**
@@ -96,14 +96,14 @@ class GameObject {
      * Can be overridden by subclasses.
      * @param {GameObject} collider - The object the collision ended with.
      */
-    OnCollisionExit(collider) {
+    onCollisionExit(collider) {
     }
 
     /**
      * Draws the object's collision box as a green rectangle on the canvas.
      * Useful for debugging collision issues.
      */
-    DrawCollisionRect() {
+    drawCollisionRect() {
         this.context.beginPath();
         this.context.lineWidth = "2";
         this.context.strokeStyle = "green";

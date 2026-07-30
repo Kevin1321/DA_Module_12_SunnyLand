@@ -21,7 +21,7 @@ class Boss extends Enemy {
      */
     constructor(context, positionX, positionY, sizeX, sizeY) {
         super(context, positionX, positionY, sizeX, sizeY);
-        this.CreateAnimations();
+        this.createAnimations();
         this.state = this.EnemyState.IDLE;
         this.health = 5;
         this.speed = 50;
@@ -64,11 +64,11 @@ class Boss extends Enemy {
      * Checks if the boss is dead, moves it and renders it.
      * @param {number} deltaTime - Time in seconds since the last frame.
      */
-    OnTick(deltaTime) {
-        super.OnTick(deltaTime);
-        if (this.isDead && this.state != this.EnemyState.DEAD) this.EnemyDead();
-        if (this.state == this.EnemyState.MOVE) this.Move(deltaTime);
-        this.Animate(deltaTime);
+    onTick(deltaTime) {
+        super.onTick(deltaTime);
+        if (this.isDead && this.state != this.EnemyState.DEAD) this.enemyDead();
+        if (this.state == this.EnemyState.MOVE) this.move(deltaTime);
+        this.animate(deltaTime);
         this.context.drawImage(this.img, this.positionX, this.positionY, this.sizeX, this.sizeY);
     }
 
@@ -77,7 +77,7 @@ class Boss extends Enemy {
    * Limits the position to the world boundaries.
    * @param {number} deltaTime - Time in seconds since the last frame.
    */
-    Move(deltaTime) {
+    move(deltaTime) {
         // X: towards the player (center boss → center player)
         const targetX = this.player.positionX + this.player.sizeX / 2 - this.sizeX / 2;
         const dx = targetX - this.positionX;
@@ -86,7 +86,7 @@ class Boss extends Enemy {
         if (distX > 2) {
             this.positionX += Math.sign(dx) * this.speed * deltaTime;
         }
-        this.positionX = Util.Clamp(this.positionX, World.WORLD_BOUNDS.minX, World.WORLD_BOUNDS.maxX - this.sizeX);
+        this.positionX = Util.clamp(this.positionX, World.WORLD_BOUNDS.minX, World.WORLD_BOUNDS.maxX - this.sizeX);
 
         // Y: sine wave — moves up and down while approaching
         this.sineTime += deltaTime;
@@ -98,7 +98,7 @@ class Boss extends Enemy {
         // Smooth lerp for Y
         const LERP_SPEED = 2;
         this.positionY += (targetY - this.positionY) * LERP_SPEED * deltaTime;
-        this.positionY = Util.Clamp(
+        this.positionY = Util.clamp(
             this.positionY,
             World.WORLD_BOUNDS.minY,
             Level.GROUND - this.sizeY + 50
@@ -109,24 +109,24 @@ class Boss extends Enemy {
      * Sets the correct animation frame based on the current state.
      * @param {number} deltaTime - Time in seconds since the last frame.
      */
-    Animate(deltaTime) {
-        super.Animate(deltaTime);
-        if (this.state == this.EnemyState.IDLE) this.SetAnimationFrame(this.idle.nextFrame(deltaTime));
-        if (this.state == this.EnemyState.MOVE) this.SetAnimationFrame(this.flying.nextFrame(deltaTime));
-        if (this.state == this.EnemyState.DEAD) this.SetAnimationFrame(this.death.nextFrame(deltaTime));
+    animate(deltaTime) {
+        super.animate(deltaTime);
+        if (this.state == this.EnemyState.IDLE) this.setAnimationFrame(this.idle.nextFrame(deltaTime));
+        if (this.state == this.EnemyState.MOVE) this.setAnimationFrame(this.flying.nextFrame(deltaTime));
+        if (this.state == this.EnemyState.DEAD) this.setAnimationFrame(this.death.nextFrame(deltaTime));
     }
 
     /**
      * Starts the boss fight.
      * @param {Player} player - Reference to the player for the tracking logic.
      */
-    BeginFight(player) {
+    beginFight(player) {
         this.fightStarted = true;
         this.player = player;
         this.state = this.EnemyState.MOVE;
         this.sineTime = 0;
-        AudioManager.Stop(AudioAssets.BACKGROUND_MUSIC);
-        AudioManager.Play(AudioAssets.BOSS_MUSIC, true);
+        AudioManager.stop(AudioAssets.BACKGROUND_MUSIC);
+        AudioManager.play(AudioAssets.BOSS_MUSIC, true);
     }
 
     /**
@@ -134,9 +134,9 @@ class Boss extends Enemy {
      * Cancels the running direction timeout, sets the state to DEAD
      * and plays the death effect.
      */
-    EnemyDead() {
+    enemyDead() {
         this.state = this.EnemyState.DEAD;
-        AudioManager.Play(AudioAssets.ENEMY_DEATH);
+        AudioManager.play(AudioAssets.ENEMY_DEATH);
     }
 
     /**
@@ -154,7 +154,7 @@ class Boss extends Enemy {
      * Initializes all {@link Animation} instances for idle, flying and death.
      * Registers the {@link Boss#OnEndOfAnimation} callback on the death animation.
      */
-    CreateAnimations() {
+    createAnimations() {
         this.idle = new Animation([
             SpriteAssets.VULTURE.IDLE_1,
             SpriteAssets.VULTURE.IDLE_2,

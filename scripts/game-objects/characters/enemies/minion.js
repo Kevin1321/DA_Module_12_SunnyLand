@@ -21,7 +21,7 @@ class Minion extends Enemy {
      */
     constructor(context, positionX, positionY, sizeX, sizeY) {
         super(context, positionX, positionY, sizeX, sizeY);
-        this.CreateAnimations();
+        this.createAnimations();
 
         this.state = this.EnemyState.IDLE;
         this.health = 1;
@@ -33,7 +33,7 @@ class Minion extends Enemy {
          * Random interval in milliseconds between direction changes and idle pauses.
          * @type {number}
          */
-        this.timeOut = Util.GetRandomRange(3000, 6000);
+        this.timeOut = Util.getRandomRange(3000, 6000);
 
         this.collisionOffset = {
             top: 20,
@@ -46,7 +46,7 @@ class Minion extends Enemy {
          * ID of the currently running timeout — required for {@link Minion#EnemyDead}.
          * @type {number}
          */
-        this.timeoutId = setTimeout(() => this.SwitchDirection(), this.timeOut);
+        this.timeoutId = setTimeout(() => this.switchDirection(), this.timeOut);
     }
 
     /**
@@ -54,19 +54,19 @@ class Minion extends Enemy {
      * Checks if the Minion is dead, moves it and renders it.
      * @param {number} deltaTime - Time in seconds since the last frame.
      */
-    OnTick(deltaTime) {
-        super.OnTick(deltaTime);
-        if (this.isDead && this.state != this.EnemyState.DEAD) this.EnemyDead();
-        if (this.state == this.EnemyState.MOVE) this.Move(deltaTime);
-        this.Animate(deltaTime);
-        this.DrawImage();
+    onTick(deltaTime) {
+        super.onTick(deltaTime);
+        if (this.isDead && this.state != this.EnemyState.DEAD) this.enemyDead();
+        if (this.state == this.EnemyState.MOVE) this.patrol(deltaTime);
+        this.animate(deltaTime);
+        this.drawImage();
     }
 
     /**
      * Moves the Minion in its current direction.
      * @param {number} deltaTime - Time in seconds since the last frame.
      */
-    Move(deltaTime) {
+    patrol(deltaTime) {
         this.positionX += this.speed * this.direction * deltaTime;
     }
 
@@ -74,18 +74,18 @@ class Minion extends Enemy {
      * Sets the correct animation frame based on the current state.
      * @param {number} deltaTime - Time in seconds since the last frame.
      */
-    Animate(deltaTime) {
-        super.Animate(deltaTime);
-        if (this.state == this.EnemyState.IDLE) this.SetAnimationFrame(this.idle.nextFrame(deltaTime));
-        if (this.state == this.EnemyState.MOVE) this.SetAnimationFrame(this.move.nextFrame(deltaTime));
-        if (this.state == this.EnemyState.DEAD) this.SetAnimationFrame(this.death.nextFrame(deltaTime));
+    animate(deltaTime) {
+        super.animate(deltaTime);
+        if (this.state == this.EnemyState.IDLE) this.setAnimationFrame(this.idle.nextFrame(deltaTime));
+        if (this.state == this.EnemyState.MOVE) this.setAnimationFrame(this.move.nextFrame(deltaTime));
+        if (this.state == this.EnemyState.DEAD) this.setAnimationFrame(this.death.nextFrame(deltaTime));
     }
 
     /**
      * Draws the Minion onto the canvas.
      * Flips the sprite horizontally when the Minion moves to the right.
      */
-    DrawImage() {
+    drawImage() {
         if (this.isMovingRight) {
             this.context.save();
             this.context.translate(this.sizeX, 0);
@@ -104,7 +104,7 @@ class Minion extends Enemy {
     /**
      * Changes the Minion's movement direction and starts a new timeout for {@link Minion#Idle}.
      */
-    SwitchDirection() {
+    switchDirection() {
         this.state = this.EnemyState.MOVE;
 
         if (this.isMovingRight) {
@@ -115,25 +115,25 @@ class Minion extends Enemy {
             this.direction = 1;
         }
 
-        this.timeoutId = setTimeout(() => this.Idle(), this.timeOut);
+        this.timeoutId = setTimeout(() => this.pausePatrol(), this.timeOut);
     }
 
     /**
      * Sets the Minion into the idle state and starts a timeout for {@link Minion#SwitchDirection}.
      */
-    Idle() {
+    pausePatrol() {
         this.state = this.EnemyState.IDLE;
-        this.timeoutId = setTimeout(() => this.SwitchDirection(), this.timeOut);
+        this.timeoutId = setTimeout(() => this.switchDirection(), this.timeOut);
     }
 
     /**
      * Called when the Minion dies.
      * Cancels the running timeout, sets the state to DEAD and plays the death effect.
      */
-    EnemyDead() {
+    enemyDead() {
         clearTimeout(this.timeoutId);
         this.state = this.EnemyState.DEAD;
-        AudioManager.Play(AudioAssets.ENEMY_DEATH);
+        AudioManager.play(AudioAssets.ENEMY_DEATH);
     }
 
     /**
@@ -151,7 +151,7 @@ class Minion extends Enemy {
      * Initializes all {@link Animation} instances for idle, movement and death.
      * Registers the {@link Minion#OnEndOfAnimation} callback on the death animation.
      */
-    CreateAnimations() {
+    createAnimations() {
         this.idle = new Animation([
             SpriteAssets.SLIMER.IDLE_1,
             SpriteAssets.SLIMER.IDLE_2,
