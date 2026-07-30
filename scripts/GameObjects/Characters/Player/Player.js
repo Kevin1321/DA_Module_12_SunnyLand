@@ -77,7 +77,7 @@ class Player extends Character {
         this.velocityY = 0;
         this.isGrounded = true;
         this.speed = 170;
-        this.jumpSpeed = 13;
+        this.jumpSpeed = 850;
         this.gravity = 30;
         this.moveAmount = 0;
         this.isMovingLeft = false;
@@ -177,7 +177,7 @@ class Player extends Character {
      */
     Jump(deltaTime) {
         if (this.isGrounded && InputManager.JUMP) {
-            this.velocityY = this.jumpSpeed;
+            this.velocityY = this.jumpSpeed * deltaTime;
             this.isGrounded = false;
             AudioManager.Play(AudioAssets.JUMP, false);
         }
