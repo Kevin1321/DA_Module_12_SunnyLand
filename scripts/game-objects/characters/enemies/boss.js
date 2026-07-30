@@ -24,7 +24,10 @@ class Boss extends Enemy {
         this.createAnimations();
         this.state = this.EnemyState.IDLE;
         this.health = 5;
-        this.speed = 50;
+        this.minSpeed = 50;
+        this.maxSpeed = 150;
+        this.speedCycleDuration = 5;
+        this.speedCycleTimer = 0;
 
         /**
          * Current movement direction on the X axis (-1, 0 or 1).
@@ -66,10 +69,30 @@ class Boss extends Enemy {
      */
     onTick(deltaTime) {
         super.onTick(deltaTime);
+
         if (this.isDead && this.state != this.EnemyState.DEAD) this.enemyDead();
-        if (this.state == this.EnemyState.MOVE) this.move(deltaTime);
+        if (this.state == this.EnemyState.MOVE) {
+            this.updateSpeedCycle(deltaTime);
+            this.move(deltaTime);
+        }
         this.animate(deltaTime);
         this.drawImage();
+    }
+    
+    /**
+     * Increases the boss speed linearly from {@link Boss#minSpeed} to {@link Boss#maxSpeed}
+     * over {@link Boss#speedCycleDuration} seconds, then resets back to {@link Boss#minSpeed}.
+     * Only active while the boss is in the MOVE state.
+     * @param {number} deltaTime - Time in seconds since the last frame.
+     */
+    updateSpeedCycle(deltaTime) {
+        this.speedCycleTimer += deltaTime;
+        const t = this.speedCycleTimer / this.speedCycleDuration; // 0 → 1
+        this.speed = this.minSpeed + (this.maxSpeed - this.minSpeed) * t;
+        if (this.speedCycleTimer >= this.speedCycleDuration) {
+            this.speedCycleTimer = 0;
+            this.speed = this.minSpeed;
+        }
     }
 
     /**
