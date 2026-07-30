@@ -87,7 +87,7 @@ class Player extends Character {
      * Initializes combat, hurt, knockback and invincibility properties.
      */
     initCombat() {
-        this.shootCooldown = 0.5;
+        this.shootCooldown = 1;
         this.isShootOnCooldown = false;
         this.currentCooldownTime = 0;
         this.hurtDuration = 0.6;
