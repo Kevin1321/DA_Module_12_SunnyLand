@@ -45,6 +45,12 @@
 </head>
 
 <body onload="main()">
+    <div id="portrait-overlay">
+        <div id="portrait-overlay-content">
+            <span id="portrait-icon">📱</span>
+            <p>Bitte drehe dein Gerät ins <strong>Querformat</strong></p>
+        </div>
+    </div>
     <header>
         <h1>Sunny Land</h1>
     </header>
@@ -77,6 +83,7 @@
                             oninput="AudioManager.SetVolume(parseFloat(this.value))">
                         <img id="fs-mute-btn" src="assets/sprites/UI/audio-enabled.png"
                             onclick="AudioManager.ToggleMute()">
+                        <button id="fullscreen-btn" onclick="toggleFullscreen()">⛶</button>
                         <button id="touch-toggle-btn" onclick="toggleTouchControls()">✋</button>
                     </div>
 

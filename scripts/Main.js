@@ -37,11 +37,20 @@ function main() {
     if (window.matchMedia("(pointer: coarse)").matches) {
         document.addEventListener('fullscreenchange', () => {
             if (!document.fullscreenElement) {
-                document.getElementById('fullscreen-controls').style.display = 'none';
+                document.getElementById('fullscreen-controls').style.display = 'flex';
             }
         });
+
+        checkOrientation();
+        screen.orientation.addEventListener('change', checkOrientation);
     }
     setStartButton();
+}
+
+function checkOrientation() {
+    const overlay = document.getElementById('portrait-overlay');
+    const isPortrait = window.matchMedia("(orientation: portrait)").matches;
+    overlay.style.display = isPortrait ? 'flex' : 'none';
 }
 
 function setStartButton() {
@@ -60,7 +69,7 @@ function startGame() {
     if (world) world.Destroy();
     world = new World(canvas);
 
-    setMobileScreenOrientationLandscape();
+    if (window.matchMedia("(pointer: coarse)").matches) toggleFullscreen();
 }
 
 /**
@@ -95,7 +104,16 @@ function showVictory() {
 function toggleFullscreen() {
     const container = document.getElementById('canvas-container');
     if (!document.fullscreenElement) {
-        setMobileScreenOrientationLandscape();
+        if (window.matchMedia("(pointer: coarse)").matches) {
+            const container = document.getElementById('canvas-container');
+            container.requestFullscreen().then(() => {
+                screen.orientation.lock("landscape").catch(() => {
+                });
+                document.getElementById('fullscreen-controls').style.display = 'flex';
+            });
+        } else {
+            container.requestFullscreen();
+        }
     } else {
         document.exitFullscreen();
     }
@@ -109,15 +127,4 @@ function toggleTouchControls() {
     const controls = document.getElementById('fullscreen-controls');
     const isVisible = controls.style.display === 'flex';
     controls.style.display = isVisible ? 'none' : 'flex';
-}
-
-function setMobileScreenOrientationLandscape() {
-    if (window.matchMedia("(pointer: coarse)").matches) {
-        const container = document.getElementById('canvas-container');
-        container.requestFullscreen().then(() => {
-            screen.orientation.lock("landscape").catch(() => {
-            });
-            document.getElementById('fullscreen-controls').style.display = 'flex';
-        });
-    }
 }

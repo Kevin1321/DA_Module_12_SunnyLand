@@ -426,3 +426,57 @@ kbd {
         width: 50%;
     }
 }
+
+#portrait-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #1a1a2e;
+    color: #f0e6d3;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: inherit;
+    padding: 2rem;
+}
+
+#portrait-overlay-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+#portrait-icon {
+    font-size: 4rem;
+    animation: rotate-hint 1.8s ease-in-out infinite;
+    display: block;
+    transform-origin: center;
+}
+
+#portrait-overlay-content p {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    max-width: 260px;
+    margin: 0;
+}
+
+@keyframes rotate-hint {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    30% {
+        transform: rotate(90deg);
+    }
+
+    70% {
+        transform: rotate(90deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
+}
