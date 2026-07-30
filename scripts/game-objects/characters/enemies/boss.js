@@ -69,7 +69,7 @@ class Boss extends Enemy {
         if (this.isDead && this.state != this.EnemyState.DEAD) this.enemyDead();
         if (this.state == this.EnemyState.MOVE) this.move(deltaTime);
         this.animate(deltaTime);
-        this.context.drawImage(this.img, this.positionX, this.positionY, this.sizeX, this.sizeY);
+        this.drawImage();
     }
 
     /**
@@ -85,6 +85,7 @@ class Boss extends Enemy {
 
         if (distX > 2) {
             this.positionX += Math.sign(dx) * this.speed * deltaTime;
+            this.xDirection = Math.sign(dx);
         }
         this.positionX = Util.clamp(this.positionX, World.WORLD_BOUNDS.minX, World.WORLD_BOUNDS.maxX - this.sizeX);
 
@@ -114,6 +115,22 @@ class Boss extends Enemy {
         if (this.state == this.EnemyState.IDLE) this.setAnimationFrame(this.idle.nextFrame(deltaTime));
         if (this.state == this.EnemyState.MOVE) this.setAnimationFrame(this.flying.nextFrame(deltaTime));
         if (this.state == this.EnemyState.DEAD) this.setAnimationFrame(this.death.nextFrame(deltaTime));
+    }
+
+
+    /**
+     * Draws the boss sprite onto the canvas, flipped horizontally when facing right.
+     */
+    drawImage() {
+        if (this.xDirection === 1) {
+            this.context.save();
+            this.context.translate(this.positionX * 2 + this.sizeX, 0);
+            this.context.scale(-1, 1);
+        }
+        this.context.drawImage(this.img, this.positionX, this.positionY, this.sizeX, this.sizeY);
+        if (this.xDirection === 1) {
+            this.context.restore();
+        }
     }
 
     /**
