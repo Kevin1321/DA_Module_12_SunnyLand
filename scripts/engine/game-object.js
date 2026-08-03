@@ -9,7 +9,6 @@
  * All gameplay-related objects inherit from this class.
  */
 class GameObject {
-
     /**
      * Creates a new GameObject.
      * @param {CanvasRenderingContext2D} context - The canvas rendering context.
