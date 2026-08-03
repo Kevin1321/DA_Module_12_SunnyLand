@@ -10,7 +10,7 @@
  * @extends Enemy
  */
 class Boss extends Enemy {
-
+    
     /**
      * Creates a new Boss.
      * @param {CanvasRenderingContext2D} context - The canvas rendering context.
@@ -28,7 +28,7 @@ class Boss extends Enemy {
         this.maxSpeed = 150;
         this.speedCycleDuration = 5;
         this.speedCycleTimer = 0;
-
+        
         /**
          * Current movement direction on the X axis (-1, 0 or 1).
          * @type {number}
@@ -47,6 +47,9 @@ class Boss extends Enemy {
          */
         this.timeOut = 2000;
 
+        /**
+         * Offset for collision calculations.
+         */
         this.collisionOffset = {
             top: 30,
             bottom: 20,
@@ -69,7 +72,6 @@ class Boss extends Enemy {
      */
     onTick(deltaTime) {
         super.onTick(deltaTime);
-
         if (this.isDead && this.state != this.EnemyState.DEAD) this.enemyDead();
         if (this.state == this.EnemyState.MOVE) {
             this.updateSpeedCycle(deltaTime);
@@ -96,30 +98,24 @@ class Boss extends Enemy {
     }
 
     /**
-   * Moves the boss towards the player with a sine wave movement on the Y axis.
-   * Limits the position to the world boundaries.
-   * @param {number} deltaTime - Time in seconds since the last frame.
-   */
+     * Moves the boss towards the player with a sine wave movement on the Y axis.
+     * Limits the position to the world boundaries.
+     * @param {number} deltaTime - Time in seconds since the last frame.
+     */
     move(deltaTime) {
-        // X: towards the player (center boss → center player)
         const targetX = this.player.positionX + this.player.sizeX / 2 - this.sizeX / 2;
         const dx = targetX - this.positionX;
         const distX = Math.abs(dx);
-
         if (distX > 2) {
             this.positionX += Math.sign(dx) * this.speed * deltaTime;
             this.xDirection = Math.sign(dx);
         }
         this.positionX = Util.clamp(this.positionX, World.WORLD_BOUNDS.minX, World.WORLD_BOUNDS.maxX - this.sizeX);
-
-        // Y: sine wave — moves up and down while approaching
         this.sineTime += deltaTime;
         const AMPLITUDE = 80;
         const FREQUENCY = 1.2;
-        const baseY = Level.GROUND - this.sizeY * 0.5; // Startpunkt etwas über Boden
+        const baseY = Level.GROUND - this.sizeY * 0.5;
         const targetY = baseY + Math.sin(this.sineTime * FREQUENCY * Math.PI * 2) * AMPLITUDE;
-
-        // Smooth lerp for Y
         const LERP_SPEED = 2;
         this.positionY += (targetY - this.positionY) * LERP_SPEED * deltaTime;
         this.positionY = Util.clamp(
@@ -139,7 +135,6 @@ class Boss extends Enemy {
         if (this.state == this.EnemyState.MOVE) this.setAnimationFrame(this.flying.nextFrame(deltaTime));
         if (this.state == this.EnemyState.DEAD) this.setAnimationFrame(this.death.nextFrame(deltaTime));
     }
-
 
     /**
      * Draws the boss sprite onto the canvas, flipped horizontally when facing right.
@@ -201,14 +196,12 @@ class Boss extends Enemy {
             SpriteAssets.VULTURE.IDLE_3,
             SpriteAssets.VULTURE.IDLE_4
         ]);
-
         this.flying = new Animation([
             SpriteAssets.VULTURE.FLYING_1,
             SpriteAssets.VULTURE.FLYING_2,
             SpriteAssets.VULTURE.FLYING_3,
             SpriteAssets.VULTURE.FLYING_4
         ]);
-
         this.death = new Animation([
             SpriteAssets.VFX.ENEMY_DEATH_1,
             SpriteAssets.VFX.ENEMY_DEATH_2,
@@ -217,7 +210,6 @@ class Boss extends Enemy {
             SpriteAssets.VFX.ENEMY_DEATH_5,
             SpriteAssets.VFX.ENEMY_DEATH_6
         ]);
-
         this.death.addEventListener("EndOfAnimation", this.OnEndOfAnimation);
     }
 }

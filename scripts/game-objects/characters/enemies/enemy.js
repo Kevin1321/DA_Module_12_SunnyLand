@@ -37,7 +37,6 @@ class Enemy extends Character {
      */
     constructor(context, positionX, positionY, sizeX, sizeY) {
         super(context, positionX, positionY, sizeX, sizeY);
-
         this.health = 1;
         this.layer = CollisionLayers.ENEMY;
         this.collidableLayers = [CollisionLayers.PLAYER, CollisionLayers.PROJECTILE];

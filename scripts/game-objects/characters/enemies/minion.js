@@ -35,13 +35,16 @@ class Minion extends Enemy {
          */
         this.timeOut = Util.getRandomRange(3000, 6000);
 
+        /**
+         * Offset for collision calculations.
+         */
         this.collisionOffset = {
             top: 20,
             bottom: 20,
             left: 15,
             right: 15
         }
-
+        
         /**
          * ID of the currently running timeout — required for {@link Minion#EnemyDead}.
          * @type {number}
@@ -92,9 +95,7 @@ class Minion extends Enemy {
             this.context.scale(-1, 1);
             this.positionX *= -1;
         }
-
         this.context.drawImage(this.img, this.positionX, this.positionY, this.sizeX, this.sizeY);
-
         if (this.isMovingRight) {
             this.positionX *= -1;
             this.context.restore();
@@ -106,7 +107,6 @@ class Minion extends Enemy {
      */
     switchDirection() {
         this.state = this.EnemyState.MOVE;
-
         if (this.isMovingRight) {
             this.isMovingRight = false;
             this.direction = -1;
@@ -114,7 +114,6 @@ class Minion extends Enemy {
             this.isMovingRight = true;
             this.direction = 1;
         }
-
         this.timeoutId = setTimeout(() => this.pausePatrol(), this.timeOut);
     }
 
@@ -162,7 +161,6 @@ class Minion extends Enemy {
             SpriteAssets.SLIMER.IDLE_7,
             SpriteAssets.SLIMER.IDLE_8
         ]);
-
         this.move = new Animation([
             SpriteAssets.SLIMER.MOVE_1,
             SpriteAssets.SLIMER.MOVE_2,
@@ -172,7 +170,6 @@ class Minion extends Enemy {
             SpriteAssets.SLIMER.MOVE_6,
             SpriteAssets.SLIMER.MOVE_7
         ]);
-
         this.death = new Animation([
             SpriteAssets.VFX.ENEMY_DEATH_1,
             SpriteAssets.VFX.ENEMY_DEATH_2,
@@ -181,7 +178,6 @@ class Minion extends Enemy {
             SpriteAssets.VFX.ENEMY_DEATH_5,
             SpriteAssets.VFX.ENEMY_DEATH_6
         ]);
-
         this.death.addEventListener("EndOfAnimation", this.OnEndOfAnimation);
     }
 }

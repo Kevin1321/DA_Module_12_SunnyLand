@@ -47,13 +47,11 @@ class Cherry extends PickUp {
         super.onTick(deltaTime);
 
         if (!this.isActive) return;
-
         if (this.hasBeenPickedUp) {
             this.setAnimationFrame(this.pickedUp.nextFrame(deltaTime));
         } else {
             this.setAnimationFrame(this.idle.nextFrame(deltaTime));
         }
-
         this.context.drawImage(this.img, this.positionX, this.positionY, this.sizeX, this.sizeY);
     }
 

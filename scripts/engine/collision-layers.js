@@ -1,15 +1,15 @@
 /**
- * @fileoverview Defines all collision layers used in the game as an immutable object.
- * @module CollisionLayers
- */
+* @fileoverview Defines all collision layers used in the game as an immutable object.
+* @module CollisionLayers
+*/
 
 /**
- * Enum-like object containing all available collision layers.
- * Used by {@link GameObject} to define which collision layer an object belongs to.
- * Frozen with {@link Object.freeze} to prevent accidental modifications.
- * @readonly
- * @enum {string}
- */
+* Enum-like object containing all available collision layers.
+* Used by {@link GameObject} to define which collision layer an object belongs to.
+* Frozen with {@link Object.freeze} to prevent accidental modifications.
+* @readonly
+* @enum {string}
+*/
 const CollisionLayers = Object.freeze({
     /** Default layer for generic objects. */
     DEFAULT: "default",

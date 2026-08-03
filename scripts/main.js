@@ -31,16 +31,13 @@ window.addEventListener("keydown", (event) => {
 function main() {
     AudioManager.init();
     InputManager.init();
-
     canvas = document.getElementById('game-canvas');
-
     if (window.matchMedia("(pointer: coarse)").matches) {
         document.addEventListener('fullscreenchange', () => {
             if (!document.fullscreenElement) {
                 document.getElementById('fullscreen-controls').style.display = 'flex';
             }
         });
-
         checkOrientation();
         screen.orientation.addEventListener('change', checkOrientation);
     }

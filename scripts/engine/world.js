@@ -33,12 +33,10 @@ class World {
         this.requiredElapsed = 0.1;
         this.gameObjects = [];
         this.frame = 0;
-
         this.camera = {
             x: 0,
             y: 0
         };
-
         this.tick = this.tick.bind(this);
         this.createGameObjects();
         this.tick();
@@ -52,24 +50,19 @@ class World {
      */
     tick(now) {
         this.rafId = requestAnimationFrame(this.tick);
-
         if (!this.lastTime) {
             this.lastTime = now;
             return;
         }
-
         let deltaTime = (now - this.lastTime) / 1000;
         this.lastTime = now;
-
         this.frameCount = (this.frameCount || 0) + 1;
         this.fpsAccum = (this.fpsAccum || 0) + deltaTime;
-
         if (this.fpsAccum >= 1) {
             this.fps = Math.round(this.frameCount / this.fpsAccum);
             this.frameCount = 0;
             this.fpsAccum = 0;
         }
-
         this.onTick(deltaTime);
     }
 
@@ -92,26 +85,16 @@ class World {
      */
     onTick(deltaTime) {
         this.updateCamera();
-
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
         this.context.save();
-
         this.context.translate(-this.camera.x, 0);
-
         this.updateGameObjects(deltaTime);
-
         this.updateUIObjects(deltaTime);
-
         this.checkCollisions();
-
         this.context.restore();
-
         this.frame++;
         if (this.frame == Infinity) this.frame = 0;
-
         this.startBossFight();
-
         this.checkGameState();
     }
 
@@ -132,6 +115,7 @@ class World {
     updateUIObjects(deltaTime) {
         this.playerHUD.onTick(deltaTime);
     }
+
     /**
      * Checks whether two GameObjects collide based on their bounding boxes and collision offsets.
      * @param {GameObject} a - First GameObject.
@@ -160,25 +144,19 @@ class World {
      */
     checkCollisions() {
         const activeCollisions = new Map();
-
         for (let i = 0; i < this.gameObjects.length; i++) {
             const a = this.gameObjects[i];
             if (a.collidableLayers.length === 0) continue;
-
             for (let j = i + 1; j < this.gameObjects.length; j++) {
                 const b = this.gameObjects[j];
-
                 const aCanHitB = a.collidableLayers.includes(b.layer);
                 const bCanHitA = b.collidableLayers.includes(a.layer);
-
                 if (!aCanHitB && !bCanHitA) continue;
                 if (!this.isColliding(a, b)) continue;
-
                 if (aCanHitB) this.registerCollision(activeCollisions, a, b);
                 if (bCanHitA) this.registerCollision(activeCollisions, b, a);
             }
         }
-
         this.resolveCollisions(activeCollisions);
     }
 
@@ -200,25 +178,20 @@ class World {
     resolveCollisions(activeCollisions) {
         this.gameObjects.forEach(obj => {
             if (obj.collidableLayers.length === 0) return;
-
             const currentHits = activeCollisions.get(obj) ?? new Set();
-
             currentHits.forEach(other => {
                 obj.onCollision(other);
             });
-
             currentHits.forEach(other => {
                 if (!obj.currentCollisions.has(other)) {
                     obj.onCollisionEnter(other);
                 }
             });
-
             obj.currentCollisions.forEach(other => {
                 if (!currentHits.has(other)) {
                     obj.onCollisionExit(other);
                 }
             });
-
             obj.currentCollisions = currentHits;
         });
     }
@@ -309,7 +282,6 @@ class World {
             let cherry = new Cherry(this.context, index * 200 + Util.getRandomRange(100, 400), 360, 32, 32);
             this.gameObjects.push(cherry);
         }
-
         for (let index = 0; index < 10; index++) {
             let gem = new Gem(this.context, index * 200 + Util.getRandomRange(100, 400), 360, 32, 32);
             this.gameObjects.push(gem);
@@ -322,11 +294,10 @@ class World {
     createEnemies() {
         for (let index = 0; index < 5; index++) {
             let positionX = index * Util.getRandomRange(200, 300) + Util.getRandomRange(0, 500);
-            if(positionX < 60) positionX = 60;
+            if (positionX < 60) positionX = 60;
             let minion = new Minion(this.context, positionX, 336, 64, 64);
             this.gameObjects.push(minion);
         }
-
         this.gameObjects.push(this.boss = new Boss(this.context, 2560, 272, 128, 128));
     }
 
@@ -343,8 +314,7 @@ class World {
             new Projectile(this.context, -500, -500, 32, 32),
             new Projectile(this.context, -500, -500, 32, 32),
             new Projectile(this.context, -500, -500, 32, 32)
-        ]
-
+        ];
         this.projectilePool.forEach(projectile => {
             this.gameObjects.push(projectile);
         })
@@ -379,7 +349,6 @@ class World {
      */
     checkGameState() {
         if (this.gameEnded) return;
-
         if (this.player.state === this.player.PlayerState.DEAD) {
             this.gameEnded = true;
             showGameOver();
@@ -391,9 +360,9 @@ class World {
     }
 
     /**
-  * Stops the game loop and stops all audio playback.
-  * Should be called when the World instance is no longer needed.
-  */
+     * Stops the game loop and stops all audio playback.
+     * Should be called when the World instance is no longer needed.
+     */
     destroy() {
         cancelAnimationFrame(this.rafId);
         AudioManager.stopAll();

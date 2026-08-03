@@ -24,7 +24,6 @@ class Projectile extends GameObject {
 
         this.layer = CollisionLayers.PROJECTILE;
         this.collidableLayers = [CollisionLayers.ENEMY];
-
         this.img.src = SpriteAssets.PROJECTILS.STAR;
 
         /** @type {number} Maximum lifetime of the projectile in seconds. */
@@ -55,7 +54,6 @@ class Projectile extends GameObject {
             this.positionX += this.projectileSpeed * this.direction * deltaTime;
             this.context.drawImage(this.img, this.positionX, this.positionY, this.sizeX, this.sizeY);
             this.currentTimeAlife += deltaTime;
-
             if (this.currentTimeAlife >= this.lifetime) {
                 this.resetProjectile();
             }

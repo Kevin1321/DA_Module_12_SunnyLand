@@ -42,7 +42,6 @@ class PickUp extends GameObject {
             SpriteAssets.VFX.ITEM_FEEDBACK_3,
             SpriteAssets.VFX.ITEM_FEEDBACK_4
         ]);
-
         this.pickedUp.addEventListener("EndOfAnimation", this.OnEndOfAnimation);
     }
 
