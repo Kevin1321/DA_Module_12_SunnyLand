@@ -28,7 +28,7 @@ class World {
     constructor(canvas) {
         this.canvas = canvas;
         this.context = canvas.getContext('2d');
-
+        this.context.imageSmoothingEnabled = false;
         this.lastTime;
         this.requiredElapsed = 0.1;
         this.gameObjects = [];
