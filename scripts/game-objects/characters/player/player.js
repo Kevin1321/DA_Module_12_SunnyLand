@@ -237,6 +237,7 @@ class Player extends Character {
      * @param {GameObject} source - The object that caused the damage.
      */
     takeDamage(amount, source) {
+        if (this.state === this.PlayerState.VICTORY) return;
         if (this.isDead) return;
         if (this.isInvincible) return;
         super.takeDamage(amount, source);
